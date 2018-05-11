@@ -29,7 +29,12 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "./node_modules/jquery/dist/jquery.min.js",
+              "./node_modules/raphael/raphael.min.js",
+              "./node_modules/jquery-mapael/js/jquery.mapael.min.js",
+              "src/assets/scripts/risk_board.js"
+            ]
           },
           "configurations": {
             "production": {
