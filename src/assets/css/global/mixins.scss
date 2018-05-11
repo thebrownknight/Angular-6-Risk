@@ -49,11 +49,11 @@
 @mixin quicksand() {
     font-family: 'Quicksand', sans-serif;
 }
-@mixin regular() {
+@mixin quicksand-regular() {
     @include quicksand();
     font-weight: 400;
 }
-@mixin bold() {
+@mixin quicksand-bold() {
     @include quicksand();
     font-weight: 700;
 }
