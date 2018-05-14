@@ -16,11 +16,31 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    $('.risk-board').mapael({
+    const $mapArea = $('.risk-board');
+    $mapArea.mapael({
       map: {
-        name: 'risk_board'
+        name: 'risk_board',
+        zoom: {
+          enabled: true,
+          maxLevel: 15
+        },
+        defaultArea: {
+          eventHandlers: {
+            click: function (e, id) {
+              $mapArea.trigger('zoom', {
+                area: id,
+                areaMargin: 10
+              });
+            }
+          }
+        }
       }
     });
+  }
+
+  clearZoom() {
+    const $mapArea = $('.risk-board');
+    $mapArea.trigger('zoom', { level: 0 });
   }
 
 }
