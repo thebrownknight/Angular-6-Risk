@@ -1,0 +1,19 @@
+{
+    "name": "angular6-risk-server",
+    "version": "1.0.0",
+    "description": "Server for Angular 6 Risk game",
+    "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "body-parser": "^1.18.3",
+        "cors": "^2.8.4",
+        "express": "^4.16.3",
+        "express-jwt": "^5.3.1",
+        "jsonwebtoken": "^8.2.1",
+        "lodash": "^4.17.10",
+        "mongoose": "^5.1.1",
+        "q": "^1.5.1",
+        "request": "^2.85.0",
+        "rootpath": "^0.1.2"
+    },
+    "license": "MIT"
+}
