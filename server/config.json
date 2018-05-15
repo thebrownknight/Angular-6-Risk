@@ -1,3 +1,6 @@
 {
-    "mongodb": "mongodb://206.189.183.156:27017/riskdb"
+    "port": 3000,
+    "mongodbLocal": "mongodb://localhost:27017/riskdb",
+    "mongodbProd": "mongodb://206.189.183.156:27017/riskdb",
+    "secretKey": "*G0biB3ar"
 }

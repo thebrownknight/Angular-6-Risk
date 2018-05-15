@@ -13,12 +13,14 @@ import { ErrorInterceptorProvider } from './helpers/error.interceptor';
 import { AuthenticationService } from './services/authentication.service';
 import { MapComponent } from './components/map/map.component';
 import { LoginComponent } from './components/login/login.component';
+import { RegisterComponent } from './register/register.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MapComponent,
     LoginComponent,
+    RegisterComponent,
   ],
   imports: [
     BrowserModule,
