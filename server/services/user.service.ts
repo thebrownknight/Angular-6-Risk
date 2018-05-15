@@ -1,3 +1,4 @@
+// https://www.sitepoint.com/user-authentication-mean-stack/
 const config = require('config.json');
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
