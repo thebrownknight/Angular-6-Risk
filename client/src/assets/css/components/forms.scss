@@ -1,0 +1,12 @@
+.site-form {
+    max-width: 600px;
+    margin: 0 auto;
+
+    .ng-valid[required], .ng-valid.required {
+        border-left: 5px solid $aqua-blue;
+    }
+
+    .ng-invalid:not(form) {
+        border-left: 5px solid $red;
+    }
+}

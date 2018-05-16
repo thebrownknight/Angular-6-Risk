@@ -1,11 +1,20 @@
 const mongoose = require('mongoose');
 const config = require('../../config.json');
+const argv = require('minimist')(process.argv.slice(2));
 
-var gracefulShutdown;
-let dbURI = config["mongodbLocal"];
-if (process.env.NODE_ENV === 'production') {
-    dbURI = config["mongodbProd"];
+const dbURI = config["mongodbUri"];
+
+// Make sure we have the password for MongoDB before we proceed
+if (!argv.mongou || !argv.mongop) {
+    process.exit(0);
 }
+
+let gracefulShutdown;
+const options = {
+    user: `${argv.mongou}`,
+    pass: `${argv.mongop}`
+};
+console.log(options);
 
 mongoose.connect(dbURI);
 const db = mongoose.connection;

@@ -7,7 +7,7 @@ import { routing } from './app.routing';
 
 import { AppComponent } from './app.component';
 
-import { AuthGuard } from './services/auth.guard';
+import { AuthGuardService } from './services/auth-guard.service';
 import { JwtInterceptorProvider } from './helpers/jwt.interceptor';
 import { ErrorInterceptorProvider } from './helpers/error.interceptor';
 import { AuthenticationService } from './services/authentication.service';
@@ -29,10 +29,10 @@ import { RegisterComponent } from './components/register/register.component';
     routing
   ],
   providers: [
-      AuthGuard,
-      AuthenticationService,
-      JwtInterceptorProvider,
-      ErrorInterceptorProvider
+    AuthGuardService,
+    AuthenticationService,
+    JwtInterceptorProvider,
+    ErrorInterceptorProvider
   ],
   bootstrap: [AppComponent]
 })
