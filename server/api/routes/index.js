@@ -11,9 +11,9 @@ var auth = jwt({
 let userController = require('../controllers/user.controller.js');
 let authController = require('../controllers/authentication');
 
-router.get('/users/:userid', auth, userController.getUserById);
+router.get('/user/profile', auth, userController.getProfile);
 
-router.post('/users/register', authController.register);
-router.post('/users/login', authController.login);
+router.post('/user/register', authController.register);
+router.post('/user/login', authController.login);
 
 module.exports = router;
