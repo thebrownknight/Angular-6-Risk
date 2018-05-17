@@ -2,17 +2,35 @@ html, body {
     height: 100%;
 }
 
-h1 {
+h1, h2, h3 {
     @include quicksand-bold();
 }
 
+/* Structural CSS */
+.clearfix {
+    &:after {
+        display: block;
+        clear: both;
+        content: "";
+    }
+}
 .container {
-    max-width: 1170px;
-    margin: auto;
-    padding-left: 15px;
+    width: 100%;
     padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
 
+    @include mq("phablet") {
+        max-width: 540px;
+    }
     @include mq("tablet") {
-
+        max-width: 720px;
+    }
+    @include mq("tablet-wide") {
+        max-width: 1000px;
+    }
+    @include mq("desktop") {
+        max-width: 1140px;
     }
 }

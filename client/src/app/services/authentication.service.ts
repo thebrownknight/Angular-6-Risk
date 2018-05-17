@@ -23,9 +23,9 @@ interface TokenResponse {
 }
 
 export interface TokenPayload {
-  email: string;
-  username: string;
-  password: string;
+    email?: string;
+    username: string;
+    password: string;
 }
 
 // providedIn parameter set to 'root' means this Injectable will be registered as a singleton

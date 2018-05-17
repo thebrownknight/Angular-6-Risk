@@ -1,3 +1,22 @@
+@import '../../../assets/css/global/variables';
+
+header {
+    background: $light-blue;
+    padding: 10px 0;
+
+    &:after {
+        display: block;
+        clear: both;
+        content: "";
+    }
+
+    h1 {
+        float: left;
+    }
+    .logout {
+        float: right;
+    }
+}
 .risk-board {
     .map {
         height: 100%;

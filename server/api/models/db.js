@@ -14,9 +14,8 @@ const options = {
     user: `${argv.mongou}`,
     pass: `${argv.mongop}`
 };
-console.log(options);
 
-mongoose.connect(dbURI);
+mongoose.connect(dbURI, options);
 const db = mongoose.connection;
 
 // Connection Events

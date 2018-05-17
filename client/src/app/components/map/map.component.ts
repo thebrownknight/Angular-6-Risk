@@ -1,4 +1,5 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { AuthenticationService, UserDetails } from '../../services/authentication.service';
 
 // jQuery declaration
 declare var $: any;
@@ -9,38 +10,50 @@ declare var $: any;
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit, AfterViewInit {
+    userDetails: UserDetails = {
+        _id: '',
+        email: '',
+        username: '',
+        exp: -1,
+        iat: -1
+    };
 
-  constructor() { }
+    constructor(private auth: AuthenticationService) { }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
+        this.userDetails = this.auth.getUserDetails();
+    }
 
-  ngAfterViewInit() {
+    ngAfterViewInit() {
     const $mapArea = $('.risk-board');
     $mapArea.mapael({
-      map: {
+        map: {
         name: 'risk_board',
         zoom: {
-          enabled: true,
-          maxLevel: 15
+            enabled: true,
+            maxLevel: 15
         },
         defaultArea: {
-          eventHandlers: {
+            eventHandlers: {
             click: function (e, id) {
-              $mapArea.trigger('zoom', {
+                $mapArea.trigger('zoom', {
                 area: id,
                 areaMargin: 10
-              });
+                });
             }
-          }
+            }
         }
-      }
+        }
     });
-  }
+    }
 
-  clearZoom() {
-    const $mapArea = $('.risk-board');
-    $mapArea.trigger('zoom', { level: 0 });
-  }
+    clearZoom() {
+        const $mapArea = $('.risk-board');
+        $mapArea.trigger('zoom', { level: 0 });
+    }
+
+    logout() {
+        this.auth.logout();
+    }
 
 }
