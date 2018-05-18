@@ -1,12 +1,15 @@
+<risk-header></risk-header>
 <div class="register-form site-form">
-    <h2>Registration Form</h2>
+    <div class="form-header">
+        <h2>Register</h2>
+    </div>
     <form (ngSubmit)="register()" #registerForm="ngForm">
         <div class="form-group">
             <span class="input">
                 <input type="email" class="input-field" id="email"
                         required email
                         [(ngModel)]="credentials.email" name="email"
-                        #email="ngModel">
+                        #email="ngModel" placeholder="Email Address">
                 <label class="input-label" for="email">
                     <i class="fas fa-envelope input-icon"></i>
                 </label>
@@ -17,7 +20,7 @@
                 <input type="text" class="input-field" id="username"
                         required
                         [(ngModel)]="credentials.username" name="username"
-                        #username="ngModel">
+                        #username="ngModel" placeholder="Username">
                 <label class="input-label" for="username">
                     <i class="fas fa-user-astronaut input-icon"></i>
                 </label>
@@ -28,12 +31,12 @@
                 <input type="password" class="input-field" id="password"
                         required
                         [(ngModel)]="credentials.password" name="password"
-                        #password="ngModel">
+                        #password="ngModel" placeholder="Password">
                 <label class="input-label" for="password">
                     <i class="fas fa-key input-icon"></i>
                 </label>
             </span>
         </div>
-        <button type="submit" class="btn btn-success" [disabled]="!registerForm.form.valid">Submit</button>
+        <button type="submit" class="btn btn-green submit-button" [disabled]="!registerForm.form.valid">Register</button>
     </form>
 </div>

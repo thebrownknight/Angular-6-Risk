@@ -1,0 +1,31 @@
+@import '../../../assets/css/global/variables';
+@import '../../../assets/css/global/mixins';
+
+header {
+    background: $dark-blue;
+    padding: 10px 0;
+    box-shadow: 0px 1px 3px darken($dark-blue, 10%);
+    text-align: center;
+
+    &:after {
+        display: block;
+        clear: both;
+        content: "";
+    }
+
+    .risk-logo {
+        display: inline-block;
+        @include breeserif();
+        color: $white;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.01em;
+
+        @include mq('tablet') {
+            @include rem(font-size, 30px);
+        }
+    }
+    .logout-button {
+        float: right;
+    }
+}

@@ -64,6 +64,18 @@
 	user-select: $value;
 }
 
+@mixin placeholder($color, $weight) {
+    :-moz-placeholder {
+        color: $color;
+        font-weight: $weight;
+    }
+
+    ::-webkit-input-placeholder {
+        color: $color;
+        font-weight: $weight;
+    }
+}
+
 @mixin clearfix() {
     &:before,
     &:after {
@@ -144,6 +156,18 @@
     @include opensans();
     font-weight: 700;
 }
+@mixin raleway() {
+    font-family: 'Raleway', sans-serif;
+}
+@mixin raleway-regular() {
+    @include raleway();
+    font-weight: 400;
+}
+@mixin raleway-bold() {
+    @include raleway();
+    font-weight: 700;
+}
+
 
 //-----------------------------
 // Media Queries

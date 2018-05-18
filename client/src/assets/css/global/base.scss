@@ -6,9 +6,15 @@ html, body {
     height: 100%;
 }
 
+body {
+    background: $off-white;
+    position: relative;
+}
+
 /* Typography */
 h2, h3, h4, h5, h6 {
     @include opensans-bold();
+    margin: 0;
 }
 
 p, a {

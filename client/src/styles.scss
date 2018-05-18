@@ -1,9 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
-@import url('https://fonts.googleapis.com/css?family=Bree+Serif|Open+Sans:400,600,700');
+@import url('https://fonts.googleapis.com/css?family=Bree+Serif|Open+Sans:400,600,700|Raleway:400,700');
 
 @import './assets/css/global/variables';
 @import './assets/css/global/mixins';
 @import './assets/css/global/reboot';
 @import './assets/css/global/base';
 
+@import './assets/css/components/buttons';
 @import './assets/css/components/forms';

@@ -10,18 +10,10 @@ declare var $: any;
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit, AfterViewInit {
-    userDetails: UserDetails = {
-        _id: '',
-        email: '',
-        username: '',
-        exp: -1,
-        iat: -1
-    };
 
     constructor(private auth: AuthenticationService) { }
 
     ngOnInit() {
-        this.userDetails = this.auth.getUserDetails();
     }
 
     ngAfterViewInit() {

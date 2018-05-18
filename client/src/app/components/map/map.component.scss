@@ -1,24 +1,3 @@
-@import '../../../assets/css/global/variables';
-@import '../../../assets/css/global/mixins';
-
-header {
-    background: $off-white;
-    padding: 10px 0;
-
-    &:after {
-        display: block;
-        clear: both;
-        content: "";
-    }
-
-    .risk-logo {
-        float: left;
-        @include breeserif();
-    }
-    .logout {
-        float: right;
-    }
-}
 .risk-board {
     .map {
         height: 100%;

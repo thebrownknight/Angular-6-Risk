@@ -1,0 +1,6 @@
+<header>
+    <div class="container">
+        <h1 class="risk-logo">Risk</h1>
+        <a href [hidden]="!isLoggedIn" class="profile-link" (click)="logout()">Logout {{userDetails.email}}</a>
+    </div>
+</header>
