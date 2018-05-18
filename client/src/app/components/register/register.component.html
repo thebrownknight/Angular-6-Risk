@@ -2,26 +2,37 @@
     <h2>Registration Form</h2>
     <form (ngSubmit)="register()" #registerForm="ngForm">
         <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" class="form-control" id="email"
-                    required email
-                    [(ngModel)]="credentials.email" name="email"
-                    #email="ngModel">
-            <div [hidden]="email.valid || email.pristine" class="alert alert-danger">Email is required</div>
+            <span class="input">
+                <input type="email" class="input-field" id="email"
+                        required email
+                        [(ngModel)]="credentials.email" name="email"
+                        #email="ngModel">
+                <label class="input-label" for="email">
+                    <i class="fas fa-envelope input-icon"></i>
+                </label>
+            </span>
         </div>
         <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" class="form-control" id="username"
-                    required
-                    [(ngModel)]="credentials.username" name="username"
-                    #username="ngModel">
+            <span class="input">
+                <input type="text" class="input-field" id="username"
+                        required
+                        [(ngModel)]="credentials.username" name="username"
+                        #username="ngModel">
+                <label class="input-label" for="username">
+                    <i class="fas fa-user-astronaut input-icon"></i>
+                </label>
+            </span>
         </div>
         <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" id="password"
-                    required
-                    [(ngModel)]="credentials.password" name="password"
-                    #password="ngModel">
+            <span class="input">
+                <input type="password" class="input-field" id="password"
+                        required
+                        [(ngModel)]="credentials.password" name="password"
+                        #password="ngModel">
+                <label class="input-label" for="password">
+                    <i class="fas fa-key input-icon"></i>
+                </label>
+            </span>
         </div>
         <button type="submit" class="btn btn-success" [disabled]="!registerForm.form.valid">Submit</button>
     </form>

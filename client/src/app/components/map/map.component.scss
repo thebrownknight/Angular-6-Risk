@@ -1,7 +1,8 @@
 @import '../../../assets/css/global/variables';
+@import '../../../assets/css/global/mixins';
 
 header {
-    background: $light-blue;
+    background: $off-white;
     padding: 10px 0;
 
     &:after {
@@ -10,8 +11,9 @@ header {
         content: "";
     }
 
-    h1 {
+    .risk-logo {
         float: left;
+        @include breeserif();
     }
     .logout {
         float: right;

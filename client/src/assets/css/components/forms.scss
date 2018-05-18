@@ -1,12 +1,118 @@
+@import "../node_modules/@fortawesome/fontawesome-free-webfonts/scss/fontawesome.scss";
+@import "../node_modules/@fortawesome/fontawesome-free-webfonts/scss/fa-solid.scss";
+@import "../node_modules/@fortawesome/fontawesome-free-webfonts/scss/fa-brands.scss";
+
 .site-form {
-    max-width: 600px;
+    width: 600px;
     margin: 0 auto;
+    @include flexbox();
+    @include flex-flow(column wrap);
+    @include flex-basis(100%);
+    @include justify-content(space-between);
+    @include align-items(center);
 
-    .ng-valid[required], .ng-valid.required {
-        border-left: 5px solid $aqua-blue;
-    }
+    form {
+        width: 80%;
 
-    .ng-invalid:not(form) {
-        border-left: 5px solid $red;
+        .form-group {
+            width: 100%;
+
+            /* Inputs */
+            .input {
+                position: relative;
+                z-index: 1;
+                display: inline-block;
+                margin: 1em;
+                width: calc(100% - 2em);
+                max-width: 500px;
+                vertical-align: top;
+                overflow: hidden;
+                background: $off-white;
+                font-size: 150%;
+
+                .input-field {
+                    position: relative;
+                    display: block;
+                    float: right;
+                    @include rem(padding, 18px 20px 18px 70px);
+                    width: 100%;
+                    @include rem(font-size, 16px);
+                    background: transparent;
+                    @include transform(translate3d(1em, 0, 0));
+                    @include transition(transform 0.3s);
+                    border: none;
+                    @include border-radius(0);
+                    color: $dark-blue;
+                    @include opensans-regular();
+                    @include appearance(none);
+
+                    &:focus {
+                        @include transform(translate3d(0, 0, 0));
+                        outline: none;
+
+                        + .input-label {
+                            &:before {
+                                @include transform(scale3d(0.8, 1, 1));
+                            }
+                            .input-icon {
+                                @include transform(scale3d(0.6, 0.6, 1));
+                            }
+                        }
+                    }
+
+                    &.ng-valid[required], .ng-valid.required {
+                        + .input-label {
+                            &:before {
+                                background: $green;
+                            }
+                        }
+                    }
+
+                    &.ng-invalid.ng-touched:not(form) {
+                        + .input-label {
+                            &:before {
+                                background: $red;
+                            }
+                        }
+                    }
+                }
+
+                .input-label {
+                    position: absolute;
+                    padding: 1.25em 0 0;
+                    margin: 0;
+                    width: 4em;
+                    height: 100%;
+                    @include user-select(none);
+                    text-align: center;
+
+                    &:before {
+                        content: '';
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        z-index: -1;
+                        width: 4em;
+                        height: 100%;
+                        background: $sky-blue;
+                        @include transform-origin(0% 50%);
+                        @include transition(transform 0.3s);
+                    }
+
+                    .input-icon {
+                        @include fa-icon;
+                        @extend .fas;
+
+                        width: 1.28571429em;
+                        text-align: center;
+                        font-size: 150%;
+                        color: $off-white;
+                        @include transform(scale3d(1, 1, 1));
+                        @include transform-origin(0% 50%);
+                        @include transition(transform 0.3s);
+                    }
+                }
+            }
+        }
     }
 }
