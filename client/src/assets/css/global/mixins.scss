@@ -65,12 +65,12 @@
 }
 
 @mixin placeholder($color, $weight) {
-    :-moz-placeholder {
+    &:-moz-placeholder {
         color: $color;
         font-weight: $weight;
     }
 
-    ::-webkit-input-placeholder {
+    &::-webkit-input-placeholder {
         color: $color;
         font-weight: $weight;
     }
@@ -163,9 +163,42 @@
     @include raleway();
     font-weight: 400;
 }
+@mixin raleway-semibold() {
+    @include raleway();
+    font-weight: 600;
+}
 @mixin raleway-bold() {
     @include raleway();
     font-weight: 700;
+}
+
+//-----------------------------
+// Animation Mixins
+//-----------------------------
+@mixin keyframes($animation_name) {
+    @-webkit-keyframes $animation_name {
+        @content;
+    }
+
+    @-moz-keyframes $animation_name {
+        @content;
+    }
+
+    @-o-keyframes $animation_name {
+        @content;
+    }
+
+    @keyframes $animation_name {
+        @content;
+    }
+}
+
+@mixin animation($value) {
+    -webkit-animation: #{$value};
+       -moz-animation: #{$value};
+        -ms-animation: #{$value};
+         -o-animation: #{$value};
+            animation: #{$value};
 }
 
 

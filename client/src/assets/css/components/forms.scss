@@ -1,44 +1,46 @@
 @import "../node_modules/@fortawesome/fontawesome-free-webfonts/scss/fontawesome.scss";
 @import "../node_modules/@fortawesome/fontawesome-free-webfonts/scss/fa-solid.scss";
-@import "../node_modules/@fortawesome/fontawesome-free-webfonts/scss/fa-brands.scss";
 
 .site-form {
     width: 500px;
-    height: 420px;
-    margin: 0 auto;
+    height: auto;
     position: absolute;
     left: 0;
     right: 0;
-    top: 0;
-    bottom: 0;
+    top: 50%;
     margin: auto;
     background-color: $white;
-    box-shadow: 0px 2px 7px lighten($dark-gray, 40%);
+    box-shadow: 0px 2px 7px $dark-gray;
+    border-top: 5px solid $powder;
+    @include transform(translateY(-50%));
+    @include border-radius(3px);
+    @include rem(padding, 30px 0 45px);
 
     .form-header {
-        border-bottom: 1px solid $off-white;
         width: 100%;
         text-align: center;
-        @include rem(padding, 10px 0);
+        @include rem(padding, 0 0 10px);
 
         h2 {
-            color: $dark-blue;
-            @include raleway-regular();
+            color: $dark-gray;
+            @include raleway-bold();
+            text-transform: uppercase;
 
             @include mq('tablet') {
-                @include rem(font-size, 16px);
+                @include rem(font-size, 32px);
             }
         }
     }
 
     form {
-        width: 100%;
+        width: 90%;
+        margin: 0 auto;
         @include flexbox();
         @include flex-flow(column wrap);
         @include flex-basis(100%);
         @include justify-content(space-between);
         @include align-items(center);
-        @include rem(padding, 0 30px 20px);
+        @include rem(padding, 0 30px);
 
         .form-group {
             width: 100%;
@@ -53,24 +55,23 @@
                 max-width: 500px;
                 vertical-align: top;
                 overflow: hidden;
-                background: $off-white;
-                font-size: 150%;
+                background: transparent;
 
                 .input-field {
                     position: relative;
                     display: block;
-                    float: right;
-                    @include rem(padding, 18px 20px 18px 70px);
+                    @include rem(padding, 20px 20px 20px 50px);
                     width: 100%;
                     @include rem(font-size, 16px);
                     background: transparent;
-                    @include transform(translate3d(1em, 0, 0));
-                    @include transition(transform 0.3s);
                     border: none;
                     @include border-radius(0);
                     color: $dark-gray;
                     @include opensans-regular();
                     @include appearance(none);
+                    outline: none;
+
+                    @include placeholder($light-gray, 400);
 
                     &:-webkit-autofill, &:-webkit-autofill:hover, &:-webkit-autofill:focus {
                         background-color: transparent !important;
@@ -80,15 +81,14 @@
                     }
 
                     &:focus {
-                        @include transform(translate3d(0, 0, 0));
-                        outline: none;
-
                         + .input-label {
-                            &:before {
-                                @include transform(scale3d(0.8, 1, 1));
+                            &:after {
+                                @include transform(translate3d(0, 0, 0));
+                                border-bottom: 3px solid $powder;
                             }
+
                             .input-icon {
-                                @include transform(scale3d(0.6, 0.6, 1));
+                                color: $powder;
                             }
                         }
                     }
@@ -96,19 +96,7 @@
                     &.ng-valid[required], .ng-valid.required {
                         + .input-label {
                             .input-icon {
-                                color: lighten($green, 20%);
-
-                                &.user-icon {
-                                    &:before {
-                                        content: '\f501';
-                                    }
-                                }
-
-                                &.password-icon {
-                                    &:before {
-                                        content: '\f023';
-                                    }
-                                }
+                                color: $aqua;
                             }
                         }
                     }
@@ -116,19 +104,7 @@
                     &.ng-invalid.ng-touched.ng-dirty {
                         + .input-label {
                             .input-icon {
-                                color: $red;
-
-                                &.user-icon {
-                                    &:before {
-                                        content: '\f007';
-                                    }
-                                }
-
-                                &.password-icon {
-                                    &:before {
-                                        content: '\f3c1';
-                                    }
-                                }
+                                color: $vermillion;
                             }
                         }
                     }
@@ -136,49 +112,46 @@
 
                 .input-label {
                     position: absolute;
-                    padding: 1.25em 0 0;
+                    bottom: 0;
+                    left: 0;
+                    padding: 0 0 .25em;
                     margin: 0;
-                    width: 4em;
-                    height: 100%;
+                    width: 100%;
+                    height: calc(100% - 1em);
                     @include user-select(none);
                     text-align: center;
                     z-index: 2;
+                    pointer-events: none;
 
-                    &:before {
+                    &:before, &:after {
                         content: '';
                         position: absolute;
                         top: 0;
                         left: 0;
                         z-index: -1;
-                        width: 4em;
-                        height: 100%;
-                        background: $dark-blue;
-                        @include transform-origin(0% 50%);
+                        width: 100%;
+                        height: calc(100% - 10px);
+                        border-bottom: 1px solid $light-gray;
+                    }
+
+                    &:after {
+                        margin-top: 2px;
+                        border-bottom: 3px solid $light-gray;
+                        @include transform(translate3d(-100%, 0, 0));
                         @include transition(transform 0.3s);
                     }
 
                     .input-icon {
                         @include fa-icon;
                         @extend .fas;
+                        @include transition(all 0.3s);
 
-                        width: 1.28571429em;
-                        text-align: center;
-                        font-size: 150%;
-                        color: $white;
-                        @include transform(scale3d(1, 1, 1));
-                        @include transform-origin(0% 50%);
-                        @include transition(transform 0.3s);
+                        position: absolute;
+                        left: 10px;
+                        @include rem(font-size, 22px);
+                        @include rem(padding-top, 10px);
 
-                        &.user-icon {
-                            &:before {
-                                content: '\f007';
-                            }
-                        }
-                        &.password-icon {
-                            &:before {
-                                content: '\f3c1';
-                            }
-                        }
+                        color: $light-gray;
                     }
                 }
             }
@@ -193,4 +166,19 @@
             }
         }
     }
+}
+
+@include keyframes(border-slide) {
+    50% {
+		opacity: 0;
+        @include transform(translate3d(1em, 0, 0));
+	}
+	51% {
+		opacity: 0;
+        @include transform(translate3d(-1em, -40%, 0));
+	}
+	100% {
+		opacity: 1;
+        @include transform(translate3d(0, -40%, 0));
+	}
 }

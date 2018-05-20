@@ -5,15 +5,15 @@
     </div>
     <form name="login-form" (ngSubmit)="login()" #loginForm="ngForm" novalidate>
         <div class="form-group">
-            <span class="input">
+            <span [ngClass]="{'input': true}">
                 <input type="text" class="input-field" id="username"
                         required
                         [(ngModel)]="credentials.username" name="username"
                         #username="ngModel" placeholder="Username">
-                <label class="input-label" for="username">
-                    <i class="fas input-icon user-icon"></i>
-                </label>
-            </span>
+				<label class="input-label" for="username">
+					<i class="fas fa-user input-icon user-icon"></i>
+				</label>
+			</span>
         </div>
         <div class="form-group">
             <span class="input">
@@ -22,12 +22,12 @@
                         [(ngModel)]="credentials.password" name="password"
                         #password="ngModel" placeholder="Password">
                 <label class="input-label" for="password">
-                    <i class="fas input-icon password-icon"></i>
+                    <i class="fas fa-key input-icon password-icon"></i>
                 </label>
             </span>
         </div>
         <div class="form-group">
-            <button [disabled]="!loginForm.form.valid" class="btn btn-green submit-button">Login</button>
+            <button [disabled] = "!loginForm.form.valid" class="btn btn-aqua submit-button">Login</button>
         </div>
     </form>
 </div>

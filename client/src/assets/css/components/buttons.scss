@@ -3,7 +3,7 @@
 //---------------------------------
 .btn {
     cursor: pointer;
-    @include border-radius(0);
+    @include border-radius(3px);
     border: none;
     //box-shadow: 0px 2px 4px $dark-gray;
     @include rem(padding, 10px 20px);
@@ -12,25 +12,29 @@
     text-transform: uppercase;
     @include raleway-bold();
     letter-spacing: 0.04em;
-    outline: none;
+    outline: 0;
 
     @include mq("tablet") {
         @include rem(font-size, 16px);
     }
 
-    &.btn-blue {
-        background: $summer-blue;
+    &:focus, &:active {
+        outline: 0;
+    }
 
-        &:hover {
-            background: darken($summer-blue, 10%);
+    &.btn-aqua {
+        background: $aqua;
+
+        &:hover, &:focus, &:active {
+            background: darken($aqua, 10%);
         }
     }
 
-    &.btn-green {
-        background: $green;
+    &.btn-yellow {
+        background: $sunshine;
 
-        &:hover {
-            background: darken($green, 10%);
+        &:hover, &:focus, &:active {
+            background: darken($sunshine, 10%);
         }
     }
 
