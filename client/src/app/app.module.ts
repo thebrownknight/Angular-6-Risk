@@ -15,6 +15,11 @@ import { MapComponent } from './components/map/map.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { HeaderComponent } from './components/header/header.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { PublicGamesComponent } from './components/dashboard/public-games/public-games.component';
+import { UserSettingsComponent } from './components/dashboard/user-settings/user-settings.component';
+import { UserStatsComponent } from './components/dashboard/user-stats/user-stats.component';
+import { UserGamesComponent } from './components/dashboard/user-games/user-games.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +28,11 @@ import { HeaderComponent } from './components/header/header.component';
     LoginComponent,
     RegisterComponent,
     HeaderComponent,
+    DashboardComponent,
+    PublicGamesComponent,
+    UserSettingsComponent,
+    UserStatsComponent,
+    UserGamesComponent,
   ],
   imports: [
     BrowserModule,

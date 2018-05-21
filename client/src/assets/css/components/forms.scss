@@ -75,8 +75,8 @@
 
                     &:-webkit-autofill, &:-webkit-autofill:hover, &:-webkit-autofill:focus {
                         background-color: transparent !important;
-                        -webkit-box-shadow: inset 0 0 0px 9999px $off-white;
-                        box-shadow: inset 0 0 0px 9999px $off-white;
+                        -webkit-box-shadow: inset 0 0 0px 9999px $white;
+                        box-shadow: inset 0 0 0px 9999px $white;
                         color: $dark-gray;
                     }
 
