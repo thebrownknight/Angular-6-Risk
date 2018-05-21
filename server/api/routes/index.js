@@ -13,19 +13,17 @@ var auth = jwt({
 
 let userController = require('../controllers/user.controller.js');
 let authController = require('../controllers/authentication');
+let gameController = require('../controllers/game.controller.js');
 
-router.get('/user/profile', auth, userController.getProfile);
+/*** USER ROUTES ***/
+router.post('/users/register', authController.register);
+router.post('/users/login', authController.login);
 
-router.post('/user/register', authController.register);
-router.post('/user/login', authController.login);
+/*** GAME ROUTES ***/
+router.post('/game/create', auth, gameController.createGame);
 
-/*************************************
- * Game instance variables and routes
- ************************************/
-// let gameController = require('../controllers/game.controller.js');
-//
-// router.get('/game/:gameId', gameController.getGameById);
-//
+// router.get('/games/all', gameController.getAllGames);
+
 // router.post('/game/create', gameController.createGame);
 
 module.exports = router;

@@ -1,1 +1,38 @@
+@import '../../../assets/css/global/variables';
+@import '../../../assets/css/global/mixins';
 
+.forgot-password {
+    text-align: center;
+    @include rem(font-size, 14px);
+    @include rem(padding-top, 8px);
+
+    > a {
+        color: $light-gray;
+        
+        &:hover {
+            color: $aqua;
+        }
+    }
+}
+
+.register-account {
+    text-align: center;
+    border-top: 1px solid $off-white;
+    @include rem(padding-top, 30px);
+    @include rem(margin-top, 20px);
+
+    > p {
+        @include rem(font-size, 16px);
+        color: $light-gray;
+        margin: 0;
+
+        a {
+            color: $powder;
+            text-decoration: underline;
+
+            &:hover {
+                color: $aqua;
+            }
+        }
+    }
+}

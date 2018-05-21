@@ -20,10 +20,14 @@ import { PublicGamesComponent } from './components/dashboard/public-games/public
 import { UserSettingsComponent } from './components/dashboard/user-settings/user-settings.component';
 import { UserStatsComponent } from './components/dashboard/user-stats/user-stats.component';
 import { UserGamesComponent } from './components/dashboard/user-games/user-games.component';
+import { TabsComponent } from './components/tabs/tabs.component';
+import { TabComponent } from './components/tabs/tab/tab.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    TabsComponent,
+    TabComponent,
     MapComponent,
     LoginComponent,
     RegisterComponent,

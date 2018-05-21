@@ -14,7 +14,7 @@
     border-top: 5px solid $powder;
     @include transform(translateY(-50%));
     @include border-radius(3px);
-    @include rem(padding, 30px 0 45px);
+    @include rem(padding, 30px 0);
 
     .form-header {
         width: 100%;

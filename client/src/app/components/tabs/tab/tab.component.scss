@@ -1,0 +1,10 @@
+@import '../../../../assets/css/global/variables';
+@import '../../../../assets/css/global/mixins';
+
+.tab-content {
+    @include rem(padding, 20px);
+    background: $white;
+    border-left: 2px solid lighten($light-gray, 10%);
+    border-bottom: 2px solid lighten($light-gray, 10%);
+    border-right: 2px solid lighten($light-gray, 10%);
+}

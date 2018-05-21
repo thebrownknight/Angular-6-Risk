@@ -2,8 +2,12 @@ const mongoose = require('mongoose');
 const config = require('../../config.json');
 
 let gameSchema = new mongoose.Schema({
-    creator: { type.Schema.ObjectId, ref: 'User' },
-    players: [{ type.Schema.ObjectId, ref: 'User' }],
+    title: String,
+    creator: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
+    },
+    players: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
     endDate: { type: Date },
     private: Boolean,
     historyLog: Array

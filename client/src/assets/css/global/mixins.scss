@@ -175,20 +175,20 @@
 //-----------------------------
 // Animation Mixins
 //-----------------------------
-@mixin keyframes($animation_name) {
-    @-webkit-keyframes $animation_name {
+@mixin keyframes($animation) {
+    @-webkit-keyframes #{$animation} {
         @content;
     }
 
-    @-moz-keyframes $animation_name {
+    @-moz-keyframes #{$animation} {
         @content;
     }
 
-    @-o-keyframes $animation_name {
+    @-o-keyframes #{$animation} {
         @content;
     }
 
-    @keyframes $animation_name {
+    @keyframes #{$animation} {
         @content;
     }
 }

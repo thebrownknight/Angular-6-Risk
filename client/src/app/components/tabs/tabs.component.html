@@ -1,0 +1,13 @@
+<div class="tabs">
+    <nav>
+        <ul>
+            <li *ngFor="let tab of tabs" [ngClass]="tab.active ? 'active tab' : 'tab'">
+                <a [routerLink]="" (click)="selectTab(tab)">
+                    <i [ngClass]="tab.iconClass !== '' ? tab.iconClass + ' fas icon' : 'fas icon'"></i>
+                    <span>{{tab.title}}</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+<ng-content></ng-content>

@@ -1,34 +1,17 @@
 <risk-header></risk-header>
-<div class="tabs">
-    <nav>
-        <ul>
-            <li>
-                <a href="#user_games">
-                    <i class="fas fa-user-astronaut icon"></i>
-                    <span>Games</span>
-                </a>
-            </li>
-            <li>
-                <a href="#user_stats">
-                    <i class="fas fa-chart-line icon"></i>
-                    <span>Statistics</span>
-                </a>
-            </li>
-            <li>
-                <a href="#user_settings">
-                    <i class="fas fa-cogs icon"></i>
-                    <span>Settings</span>
-                </a>
-            </li>
-            <li>
-                <a href="#public_games">
-                    <i class="fas fa-globe icon"></i>
-                    <span>Public Games</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-</div>
-<div id="user_games">
-    <risk-user-games></risk-user-games>
+<div class="container dashboard">
+    <risk-tabs>
+        <risk-tab title="Games" iconClass="fa-user-astronaut">
+            <risk-user-games></risk-user-games>
+        </risk-tab>
+        <risk-tab title="Statistics" iconClass="fa-chart-line">
+            <risk-user-stats></risk-user-stats>
+        </risk-tab>
+        <risk-tab title="Settings" iconClass="fa-cogs">
+            <risk-user-settings></risk-user-settings>
+        </risk-tab>
+        <risk-tab title="Public Games" iconClass="fa-globe">
+            <risk-public-games></risk-public-games>
+        </risk-tab>
+    </risk-tabs>
 </div>

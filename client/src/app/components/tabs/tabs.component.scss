@@ -1,0 +1,114 @@
+@import '../../../assets/css/global/variables';
+@import '../../../assets/css/global/mixins';
+
+.tabs {
+    position: relative;
+    overflow: hidden;
+    margin: 0 auto;
+    width: 100%;
+
+    nav {
+        background: $white;
+        text-align: center;
+
+        ul {
+            position: relative;
+            @include flexbox();
+            margin: 0 auto;
+            padding: 0;
+            max-width: 1170px;
+            list-style: none;
+            @include flex-flow(row wrap);
+            @include justify-content(center);
+
+            .tab {
+                background: $white;
+                position: relative;
+                z-index: 1;
+                display: block;
+                margin: 0;
+                text-align: center;
+                @include flex(1);
+            
+                &:last-child {
+                    a {
+                        border-right: 2px solid lighten($light-gray, 10%);
+                    }
+                }
+            
+                &.active {
+                    background: $powder;
+            
+                    > a {
+                        color: $white;
+            
+                        &:hover {
+                            color: $white;
+                        }
+                        &:after {
+                            @include transform(translate3d(0, 0, 0));
+                        }
+                    }
+                }
+            
+                > a {
+                    position: relative;
+                    display: block;
+                    overflow: hidden;
+                    border-left: 2px solid lighten($light-gray, 10%);
+                    border-top: 2px solid lighten($light-gray, 10%);
+                    border-bottom: 2px solid lighten($light-gray, 10%);
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    @include rem(padding, 20px 0);
+                    color: $dark-gray;
+                    line-height: 1;
+                    @include transition(color 0.3s);
+            
+                    &:hover {
+                        text-decoration: none;
+                        color: $powder;
+                    }
+            
+                    &:after {
+                        position: absolute;
+                        bottom: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 7px;
+                        background: $tan;
+                        content: '';
+                        @include transition(transform 0.3s);
+                        @include transform(translate3d(0, 150%, 0));
+                    }
+            
+                    .icon {
+                        -webkit-font-smoothing: antialiased;
+                        -moz-osx-font-smoothing: grayscale;
+                        display: inline-block;
+                        font-style: normal;
+                        font-variant: normal;
+                        font-weight: normal;
+                        line-height: 1;
+                        vertical-align: -.125em;
+                        font-family: 'Font Awesome 5 Free';
+                        font-weight: 900;
+            
+                        z-index: 10;
+                        display: inline-block;
+                        @include rem(margin, 0 10px 0 0);
+                        vertical-align: middle;
+                        text-transform: none;
+                        @include rem(font-size, 25px);
+                    }
+            
+                    span {
+                        vertical-align: middle;
+                        @include raleway-regular();
+                        @include rem(font-size, 18px);
+                    }
+                }
+            }
+        }
+    }
+}
