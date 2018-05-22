@@ -22,6 +22,7 @@ import { UserStatsComponent } from './components/dashboard/user-stats/user-stats
 import { UserGamesComponent } from './components/dashboard/user-games/user-games.component';
 import { TabsComponent } from './components/tabs/tabs.component';
 import { TabComponent } from './components/tabs/tab/tab.component';
+import { ModalComponent } from './components/modal/modal.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { TabComponent } from './components/tabs/tab/tab.component';
     UserSettingsComponent,
     UserStatsComponent,
     UserGamesComponent,
+    ModalComponent,
   ],
   imports: [
     BrowserModule,

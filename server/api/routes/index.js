@@ -11,8 +11,8 @@ var auth = jwt({
     userProperty: 'payload'
 });
 
-let userController = require('../controllers/user.controller.js');
 let authController = require('../controllers/authentication');
+let userController = require('../controllers/user.controller.js');
 let gameController = require('../controllers/game.controller.js');
 
 /*** USER ROUTES ***/
@@ -20,10 +20,12 @@ router.post('/users/register', authController.register);
 router.post('/users/login', authController.login);
 
 /*** GAME ROUTES ***/
-router.post('/game/create', auth, gameController.createGame);
+// Display list of all public games
+router.get('/games', gameController.getPublicGames);
+// Get all games created by a specific user
+router.get('/games/:userId', gameController.getGamesByUser);
+// Create a game with a specific user
+router.post('/games/:userId/create', gameController.createGame);
 
-// router.get('/games/all', gameController.getAllGames);
-
-// router.post('/game/create', gameController.createGame);
 
 module.exports = router;

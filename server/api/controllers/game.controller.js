@@ -1,8 +1,11 @@
 const mongoose = require('mongoose');
 let Game = mongoose.model('Game');
 
-module.exports.getAllGames = function(req, res) {
-
+module.exports.getPublicGames = function(req, res) {
+    Game.
+        find({
+            private: false
+        });
 };
 
 module.exports.getGamesByUser = function(req, res) {
