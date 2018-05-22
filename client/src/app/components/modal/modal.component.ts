@@ -10,6 +10,7 @@ export class ModalComponent implements OnInit {
     // https://github.com/ng-bootstrap/ng-bootstrap/tree/master/src
     // https://github.com/lansana/ng2-modals
     // https://github.com/cornflourblue/angular2-custom-modal
+    // https://alligator.io/angular/using-renderer2/
   constructor() { }
 
   ngOnInit() {
