@@ -1,3 +1,15 @@
 <div class="user-games">
-    <button class="btn btn-yellow create-game"><i class="fas fa-plus"></i> Create Game</button>
+    <ng-template #userGamesContent let-c="close" let-d="dismiss">
+        <div class="modal-header">
+            <h3 class="modal-title">Create your game</h3>
+            <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>One fine body&hellip;</p>
+        </div>
+    </ng-template>
+    <button class="btn btn-yellow create-game" (click)="open(userGamesContent)"><i class="fas fa-plus"></i> Create Game</button>
+    <p>{{closeResult}}</p>
 </div>

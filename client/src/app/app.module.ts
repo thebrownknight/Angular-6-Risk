@@ -22,7 +22,8 @@ import { UserStatsComponent } from './components/dashboard/user-stats/user-stats
 import { UserGamesComponent } from './components/dashboard/user-games/user-games.component';
 import { TabsComponent } from './components/tabs/tabs.component';
 import { TabComponent } from './components/tabs/tab/tab.component';
-import { ModalComponent } from './components/modal/modal.component';
+
+import { RiskModalModule } from './components/modal/modal.module';
 
 @NgModule({
   declarations: [
@@ -38,13 +39,13 @@ import { ModalComponent } from './components/modal/modal.component';
     UserSettingsComponent,
     UserStatsComponent,
     UserGamesComponent,
-    ModalComponent,
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpClientModule,
-    routing
+    routing,
+    RiskModalModule.forRoot()
   ],
   providers: [
     AuthGuardService,
