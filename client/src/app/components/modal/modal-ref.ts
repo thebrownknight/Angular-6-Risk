@@ -49,7 +49,9 @@ export class RiskModalRef {
         private _windowCmptRef: ComponentRef<ModalWindowComponent>, private _contentRef: ContentRef,
         private _backdropCmptRef?: ComponentRef<ModalBackdropComponent>, private _beforeDismiss?: Function
     ) {
-        _windowCmptRef.instance.dismissEvent.subscribe((reason: any) => { this.dismiss(reason); });
+        _windowCmptRef.instance.dismissEvent.subscribe((reason: any) => {
+            this.dismiss(reason);
+        });
 
         this.result = new Promise((resolve, reject) => {
             this._resolve = resolve;

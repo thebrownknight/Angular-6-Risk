@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms'; // <-- NgModel lives here
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // <-- NgModel lives here
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { routing } from './app.routing';
@@ -43,6 +43,7 @@ import { RiskModalModule } from './components/modal/modal.module';
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     routing,
     RiskModalModule.forRoot()

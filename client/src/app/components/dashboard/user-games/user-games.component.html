@@ -7,9 +7,15 @@
             </button>
         </div>
         <div class="modal-body">
-            <p>One fine body&hellip;</p>
+            <form [formGroup]="gameCreationForm">
+                <div class="form-group">
+                    <input class="input-field" formControlName="title">
+                    <label class="input-label"></label>
+                </div>
+                <!-- TODO: Use FormBuilder -->
+            </form>
+            
         </div>
     </ng-template>
     <button class="btn btn-yellow create-game" (click)="open(userGamesContent)"><i class="fas fa-plus"></i> Create Game</button>
-    <p>{{closeResult}}</p>
 </div>

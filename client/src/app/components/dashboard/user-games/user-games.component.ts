@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 
 import { RiskModal, ModalDismissReasons } from '../../modal/modal.module';
 
@@ -9,6 +10,9 @@ import { RiskModal, ModalDismissReasons } from '../../modal/modal.module';
 })
 export class UserGamesComponent implements OnInit {
     closeResult: string;
+    gameCreationForm = new FormGroup ({
+        title: new FormControl()
+    });
 
     constructor(private modalService: RiskModal) { }
 

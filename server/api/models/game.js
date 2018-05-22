@@ -10,6 +10,7 @@ let gameSchema = new mongoose.Schema({
     players: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
     endDate: { type: Date },
     private: Boolean,
+    playCode: String,
     historyLog: Array
 }, { timestamps: true });
 
