@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { RiskModal, ModalDismissReasons } from '../../modal/modal.module';
 
@@ -9,21 +9,21 @@ import { RiskModal, ModalDismissReasons } from '../../modal/modal.module';
   styleUrls: ['./user-games.component.scss']
 })
 export class UserGamesComponent implements OnInit {
-    closeResult: string;
-    gameCreationForm = new FormGroup ({
-        title: new FormControl()
-    });
+    gameCreationForm: FormGroup;
 
-    constructor(private modalService: RiskModal) { }
+    constructor(private modalService: RiskModal,
+        private formBuilder: FormBuilder) {
+        this.createForm();
+    }
 
     ngOnInit() {
     }
 
     open(content) {
         this.modalService.open(content).result.then((result) => {
-            this.closeResult = `Closed with: ${result}`;
+            console.log(`Closed with: ${result}`);
         }, (reason) => {
-            this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+            console.log(`Dismissed ${this.getDismissReason(reason)}`);
         });
     }
 
@@ -35,6 +35,14 @@ export class UserGamesComponent implements OnInit {
         } else {
             return `with ${reason}`;
         }
+    }
+
+    // Reactive form methods
+    private createForm() {
+        this.gameCreationForm = this.formBuilder.group({
+            title: ['', Validators.required],
+            private: ''
+        });
     }
 
 }

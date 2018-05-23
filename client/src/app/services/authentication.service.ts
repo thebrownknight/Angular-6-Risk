@@ -57,9 +57,9 @@ export class AuthenticationService {
       let baseUrl;
 
       if (method === 'post') {
-        baseUrl = this.http.post(`/api/user/${type}`, user);
+        baseUrl = this.http.post(`/api/users/${type}`, user);
       } else {
-        baseUrl = this.http.get(`/api/user/${type}`, {
+        baseUrl = this.http.get(`/api/users/${type}`, {
           headers: { Authorization: `Bearer ${this.getToken()}` }
         });
       }

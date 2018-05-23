@@ -3,6 +3,7 @@ const config = require('../../config.json');
 
 let gameSchema = new mongoose.Schema({
     title: String,
+    numberOfPlayers: Number,
     creator: {
         type: mongoose.Schema.ObjectId,
         ref: 'User'
@@ -10,8 +11,7 @@ let gameSchema = new mongoose.Schema({
     players: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
     endDate: { type: Date },
     private: Boolean,
-    playCode: String,
-    historyLog: Array
+    code: String
 }, { timestamps: true });
 
 // Virtual for game URL

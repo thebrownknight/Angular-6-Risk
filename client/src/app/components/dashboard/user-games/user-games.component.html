@@ -1,20 +1,32 @@
-<div class="user-games">
+<div class="user-games-modal">
     <ng-template #userGamesContent let-c="close" let-d="dismiss">
         <div class="modal-header">
             <h3 class="modal-title">Create your game</h3>
-            <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
-                <span aria-hidden="true">&times;</span>
+            <button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')">
+                <i class="fas fa-times"></i>
+                <span aria-hidden="true"></span>
             </button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body game-form">
             <form [formGroup]="gameCreationForm">
                 <div class="form-group">
-                    <input class="input-field" formControlName="title">
-                    <label class="input-label"></label>
+                    <label class="input-label">
+                        <span class="input-label-content">Game Title</span>
+                        <input type="text" class="input-field" formControlName="title">
+                    </label>
                 </div>
-                <!-- TODO: Use FormBuilder -->
+                <div class="form-group">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="private_game" class="checkbox-field" formControlName="private"/>
+                        <label for="private_game" class="checkbox-label"></label>
+                        <label class="input-label">
+                            <span class="input-label-content">Private game?</span>
+                        </label>
+                    </div>
+                </div>
             </form>
-            
+            <p>Form value: {{ gameCreationForm.value | json }}</p>
+            <p>Form status: {{ gameCreationForm.status | json }}</p>
         </div>
     </ng-template>
     <button class="btn btn-yellow create-game" (click)="open(userGamesContent)"><i class="fas fa-plus"></i> Create Game</button>
