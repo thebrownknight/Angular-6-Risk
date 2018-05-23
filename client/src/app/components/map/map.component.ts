@@ -1,11 +1,11 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { AuthenticationService, UserDetails } from '../../services/authentication.service';
+import { AuthenticationService } from '../../services/authentication.service';
 
 // jQuery declaration
 declare var $: any;
 
 @Component({
-  selector: 'app-risk-map',
+  selector: 'risk-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })

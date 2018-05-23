@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { RiskModal, ModalDismissReasons } from '../../modal/modal.module';
+import { DashboardService } from '../../../services/dashboard.service';
+
+import { GamePayload } from '../../../helpers/data-models';
 
 @Component({
   selector: 'risk-user-games',
@@ -10,9 +13,11 @@ import { RiskModal, ModalDismissReasons } from '../../modal/modal.module';
 })
 export class UserGamesComponent implements OnInit {
     gameCreationForm: FormGroup;
+    gamesList: GamePayload[] = [];
 
     constructor(private modalService: RiskModal,
-        private formBuilder: FormBuilder) {
+        private formBuilder: FormBuilder,
+        private dashboardService: DashboardService) {
         this.createForm();
     }
 
@@ -24,6 +29,26 @@ export class UserGamesComponent implements OnInit {
             console.log(`Closed with: ${result}`);
         }, (reason) => {
             console.log(`Dismissed ${this.getDismissReason(reason)}`);
+        });
+    }
+
+    getUserGames() {
+
+    }
+
+    createGame() {
+        const formModel = this.gameCreationForm.value;
+        // Create the gameDetails containing values from the form
+        const gameDetails: GamePayload = {
+            title: formModel.title as string,
+            numPlayers: formModel.numberOfPlayers as number,
+            private: formModel.private as boolean
+        };
+
+        this.dashboardService.createNewGame(gameDetails).subscribe(() => {
+
+        }, (err) => {
+            console.error(err);
         });
     }
 
@@ -41,6 +66,7 @@ export class UserGamesComponent implements OnInit {
     private createForm() {
         this.gameCreationForm = this.formBuilder.group({
             title: ['', Validators.required],
+            numberOfPlayers: ['2', Validators.required],
             private: ''
         });
     }

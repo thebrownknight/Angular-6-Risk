@@ -38,6 +38,14 @@
         }
     }
 
+    &.btn-vermillion {
+        background: $vermillion;
+
+        &:hover, &:focus, &:active {
+            background: darken($vermillion, 10%);
+        }
+    }
+
     &[disabled], &:disabled {
         pointer-events: none;
         background: lighten($dark-gray, 20%);

@@ -25,6 +25,9 @@ header {
             @include mq('tablet') {
                 @include rem(font-size, 45px);
             }
+            @include mq('desktop') {
+                @include rem(font-size, 55px);
+            }
         }
         .profile-manager {
             cursor: pointer;

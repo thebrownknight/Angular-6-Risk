@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const crypto = require('crypto');
 const config = require('../../config.json');
 
 let gameSchema = new mongoose.Schema({
@@ -9,16 +10,31 @@ let gameSchema = new mongoose.Schema({
         ref: 'User'
     },
     players: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
-    endDate: { type: Date },
+    endDate: {
+        type: Date,
+        default: null
+    },
     private: Boolean,
-    code: String
+    code: {
+        type: String,
+        unique: true
+    },
+    status: {
+        type: String,
+        default: 'CREATED'
+    }
 }, { timestamps: true });
 
-// Virtual for game URL
+// Method to generate a code for the game
+gameSchema.methods.generateCode = function() {
+    this.code = crypto.randomBytes(16).toString('hex').slice(0, 4).toUpperCase();
+};
+
+// Virtual for game URL with code (used to send to other players)
 gameSchema
-.virtual('url')
+.virtual('gameCodeUrl')
 .get(function() {
-    return '/game/' + this._id;
+    return '/game/' + this.code;
 });
 
 mongoose.model('Game', gameSchema);

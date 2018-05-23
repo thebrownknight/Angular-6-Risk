@@ -5,27 +5,12 @@ import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 import { appConfig } from '../app.config';
-
-// Export interfaces to handle data types
-// Getting user profile returns an object formatted as UserDetails
-export interface UserDetails {
-  _id: string;
-  email: string;
-  username: string;
-  exp: number;
-  iat: number;
-}
+import { UserDetails, TokenPayload } from '../helpers/data-models';
 
 // Login and register endpoints expect a TokenPayload during the request
 // and return a TokenResponse object
 interface TokenResponse {
   token: string;
-}
-
-export interface TokenPayload {
-    email?: string;
-    username: string;
-    password: string;
 }
 
 // providedIn parameter set to 'root' means this Injectable will be registered as a singleton

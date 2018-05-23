@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthenticationService, TokenPayload } from '../../services/authentication.service';
+import { AuthenticationService } from '../../services/authentication.service';
+import { TokenPayload } from '../../helpers/data-models';
 
 @Component({
     templateUrl: './login.component.html',

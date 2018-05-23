@@ -192,6 +192,9 @@
         @include justify-content(space-between);
         @include align-items(center);
 
+        width: 90%;
+        margin: 0 auto;
+
         .form-group {
             width: 100%;
 
@@ -209,7 +212,6 @@
                     position: relative;
                     @include rem(margin-bottom, 8px);
                     color: $aqua;
-                    text-transform: uppercase;
                     @include rem(font-size, 14px);
                     @include opensans-bold();
                 }
@@ -220,7 +222,7 @@
                 color: $dark-gray;
                 @include opensans-regular();
                 @include appearance(none);
-                @include rem(padding, 15px);
+                @include rem(padding, 10px 15px);
                 @include rem(font-size, 16px);
                 position: relative;
                 display: block;
@@ -284,6 +286,29 @@
                 .input-label {
                     width: 80%;
                     @include rem(margin-left, 10px);
+                }
+            }
+
+            .select-container {
+                position: relative;
+
+                .select-box {
+                    width: 100%;
+                    border: 2px solid $aqua;
+                    background: transparent;
+                    @include opensans-regular();
+                    @include rem(font-size, 16px);
+                    @include rem(padding, 10px 15px);
+                    color: $dark-gray;
+                    @include appearance(none);
+                }
+
+                i {
+                    position: absolute;
+                    right: 15px;
+                    bottom: 20px;
+                    color: $aqua;
+                    @include rem(font-size, 20px);
                 }
             }
         }

@@ -8,12 +8,25 @@
             </button>
         </div>
         <div class="modal-body game-form">
-            <form [formGroup]="gameCreationForm">
+            <form [formGroup]="gameCreationForm" (ngSubmit)="createGame()">
                 <div class="form-group">
                     <label class="input-label">
                         <span class="input-label-content">Game Title</span>
                         <input type="text" class="input-field" formControlName="title">
                     </label>
+                </div>
+                <div class="form-group">
+                    <div class="select-container">
+                        <label class="input-label">
+                            <span class="input-label-content">Number of Players</span>
+                            <select name="numberOfPlayers" class="select-box" formControlName="numberOfPlayers">
+                                <option *ngFor="let number of [2,3,4,5,6]" [value]="number">
+                                    {{number}}
+                                </option>
+                            </select>
+                        </label>
+                        <i class="fas fa-caret-down"></i>
+                    </div>
                 </div>
                 <div class="form-group">
                     <div class="checkbox-container">
@@ -24,9 +37,11 @@
                         </label>
                     </div>
                 </div>
+                <div class="form-group buttons-container">
+                    <button type="button" (click)="d('Cancel clicked')" class="btn btn-vermillion">Cancel</button>
+                    <button type="submit" class="btn btn-aqua">Create {{ gameCreationForm.get('private').value == true ? "Private" : "Public" }} Game</button>
+                </div>
             </form>
-            <p>Form value: {{ gameCreationForm.value | json }}</p>
-            <p>Form status: {{ gameCreationForm.status | json }}</p>
         </div>
     </ng-template>
     <button class="btn btn-yellow create-game" (click)="open(userGamesContent)"><i class="fas fa-plus"></i> Create Game</button>

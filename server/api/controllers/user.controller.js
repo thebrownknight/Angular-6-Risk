@@ -11,6 +11,10 @@ module.exports.getProfile = function(req, res) {
         User
             .findById(req.payload._id)
             .exec(function(err, user) {
+                if (err) {
+                    res.status(404).json(err);
+                    return;
+                }
                 res.status(200).json(user);
             });
     }

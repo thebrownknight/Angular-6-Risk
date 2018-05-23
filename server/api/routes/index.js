@@ -19,13 +19,15 @@ let gameController = require('../controllers/game.controller.js');
 router.post('/users/register', authController.register);
 router.post('/users/login', authController.login);
 
+// router.get('/users/settings', userController.getSettings);
+
 /*** GAME ROUTES ***/
-// Display list of all public games
-router.get('/games', gameController.getPublicGames);
 // Get all games created by a specific user
-router.get('/games/:userId', gameController.getGamesByUser);
+router.get('/games', auth, gameController.getGamesByUser);
+// Display list of all public games
+router.get('/games/public', gameController.getPublicGames);
 // Create a game with a specific user
-router.post('/games/:userId/create', gameController.createGame);
+router.post('/games/create', auth, gameController.createGame);
 
 
 module.exports = router;
