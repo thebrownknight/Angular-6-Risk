@@ -23,11 +23,10 @@ export interface TokenPayload {
  */
 export interface GamePayload {
     title: string;
-    numPlayers: number;
     creator?: object;
     players?: null;
     endDate?: Date;
-    private: boolean;
+    gameType: string;
     code?: string;
     status?: string;
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { RiskModal, ModalDismissReasons, RiskModalRef } from '../../modal/modal.module';
 import { DashboardService } from '../../../services/dashboard.service';
@@ -20,6 +20,7 @@ export class UserGamesComponent implements OnInit {
         private formBuilder: FormBuilder,
         private dashboardService: DashboardService) {
         this.createForm();
+        this.setEmailAddresses();
     }
 
     ngOnInit() {
@@ -36,15 +37,15 @@ export class UserGamesComponent implements OnInit {
     }
 
     getUserGames() {
-        this.dashboardService.getUserGames().subscribe((games) => {
-            console.log(games);
+        // this.dashboardService.getUserGames().subscribe((games) => {
+        //     console.log(games);
 
-            // TODO - Take incoming games and set the gamesList variable
-            // to display on the front-end
-        }, (err) => {
-            console.error(err);
-        });
-        console.log("Getting user games.");
+        //     // TODO - Take incoming games and set the gamesList variable
+        //     // to display on the front-end
+        // }, (err) => {
+        //     console.error(err);
+        // });
+        console.log('Getting user games.');
     }
 
     createGame() {
@@ -52,8 +53,7 @@ export class UserGamesComponent implements OnInit {
         // Create the gameDetails containing values from the form
         const gameDetails: GamePayload = {
             title: formModel.title as string,
-            numPlayers: formModel.numberOfPlayers as number,
-            private: formModel.private as boolean
+            gameType: formModel.gameType as string
         };
 
         this.dashboardService.createNewGame(gameDetails).subscribe((createdGame) => {
@@ -66,6 +66,30 @@ export class UserGamesComponent implements OnInit {
             console.error(err);
         });
     }
+
+    /**
+     * Methods for the dynamic email addresses to send invites to
+     */
+    get emailAddresses(): FormArray {
+        return this.gameCreationForm.get('emailAddresses') as FormArray;
+    }
+
+    createEmailAddress(): FormGroup {
+        return this.formBuilder.group({
+            'email': ''
+        });
+    }
+
+    setEmailAddresses() {
+        // First we check to see if there were already email Addresses
+        console.log(this.emailAddresses);
+
+        // for (let i = 0; i < (this.gameCreationForm.get('numberOfPlayers').value as number); i++) {
+        //     this.emailAddresses.push(this.createEmailAddress());
+        // }
+    }
+
+    /** End dynamic email methods **/
 
     private getDismissReason(reason: any): string {
         if (reason === ModalDismissReasons.ESC) {
@@ -81,8 +105,8 @@ export class UserGamesComponent implements OnInit {
     private createForm() {
         this.gameCreationForm = this.formBuilder.group({
             title: ['', Validators.required],
-            numberOfPlayers: ['2', Validators.required],
-            private: ''
+            gameType: 'private',
+            emailAddresses: this.formBuilder.array([])
         });
     }
 

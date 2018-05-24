@@ -195,6 +195,9 @@
         width: 90%;
         margin: 0 auto;
 
+        .email-address-block {
+            width: 100%;
+        }
         .form-group {
             width: 100%;
 
@@ -233,6 +236,84 @@
 
                 &:focus {
                     outline: 0;
+                }
+            }
+            .radio-button-container {
+                .button-container {
+                    position: relative;
+                    display: inline-block;
+
+                    label {
+                        display: block;
+                        position: relative;
+                        @include rem(font-size, 14px);
+                        @include rem(padding, 0 15px 0 25px);
+                        @include rem(margin, auto);
+                        height: auto;
+                        z-index: 9;
+                        cursor: pointer;
+                        @include transition(all 0.25s linear);
+                        @include opensans-regular();
+                        color: $light-gray;
+                    }
+
+                    .check {
+                        display: block;
+                        position: absolute;
+                        border: 2px solid $light-gray;
+                        @include border-radius(100%);
+                        height: 20px;
+                        width: 20px;
+                        top: 0;
+                        left: 0;
+                        z-index: 5;
+                        @include transition(border 0.25s linear);
+
+                        &::before {
+                            display: none;
+                            position: absolute;
+                            content: '';
+                            @include border-radius(100%);
+                            height: 9px;
+                            width: 9px;
+                            top: 3.4px;
+                            left: 3.4px;
+                            margin: auto;
+                            @include transition(background 0.25s linear);
+                        }
+                    }
+
+                    input[type="radio"]:checked {
+                        ~ label {
+                            color: $aqua;
+                        }
+                        ~ .check {
+                            border: 2px solid $aqua;
+
+                            &::before {
+                                display: block;
+                                background: $aqua;
+                            }
+                        }
+                    }
+
+                    &:hover {
+                        label {
+                            color: darken($powder, 10%);
+                        }
+                        .check {
+                            border: 2px solid $powder;
+
+                            &::before {
+                                display: block;
+                                background: $powder;
+                            }
+                        }
+                    }
+                }
+                input[type="radio"] {
+                    position: absolute;
+                    visibility: hidden;
                 }
             }
 

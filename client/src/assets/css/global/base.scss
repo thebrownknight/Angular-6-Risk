@@ -9,6 +9,10 @@ html, body {
 body {
     background: $off-white;
     position: relative;
+
+    &.modal-open {
+        overflow: hidden;
+    }
 }
 
 /* Typography */

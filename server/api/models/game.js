@@ -9,7 +9,14 @@ let gameSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'User'
     },
-    players: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
+    players: {
+        type: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
+        validate: {
+            validator: function() {
+                return this.players.length <= 10;
+            }
+        }
+    },
     endDate: {
         type: Date,
         default: null

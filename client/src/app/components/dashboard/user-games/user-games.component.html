@@ -16,30 +16,45 @@
                     </label>
                 </div>
                 <div class="form-group">
-                    <div class="select-container">
-                        <label class="input-label">
-                            <span class="input-label-content">Number of Players</span>
-                            <select name="numberOfPlayers" class="select-box" formControlName="numberOfPlayers">
-                                <option *ngFor="let number of [2,3,4,5,6]" [value]="number">
-                                    {{number}}
-                                </option>
-                            </select>
-                        </label>
-                        <i class="fas fa-caret-down"></i>
+                    <label class="input-label">
+                        <span class="input-label-content">Game Type</span>
+                    </label>
+                    <div class="radio-button-container">
+                        <div class="button-container">
+                            <input id="private_game_type" type="radio" class="radio-field" formControlName="gameType" value="private" [checked]="true">
+                            <label for="private_game_type">Private</label>
+                            <div class="check"></div>
+                        </div>
+                        <div class="button-container">
+                            <input id="public_game_type" type="radio" class="radio-field" value="public" formControlName="gameType">
+                            <label for="public_game_type">Public</label>
+                            <div class="check"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <div class="checkbox-container">
-                        <input type="checkbox" id="private_game" class="checkbox-field" formControlName="private"/>
+                        <input type="checkbox" id="private_game"
+                            class="checkbox-field" formControlName="private"
+                            (change)="setEmailAddresses()"
+                            [checked]=true/>
                         <label for="private_game" class="checkbox-label"></label>
                         <label class="input-label">
                             <span class="input-label-content">Private game?</span>
                         </label>
                     </div>
+                </div> -->
+                <div class="email-address-block" formArrayName="emailAddresses">
+                    <div class="form-group" *ngFor="let email of emailAddresses.controls; let i=index" [formGroupName]="i">
+                        <label class="input-label">
+                            <span class="input-label-content">Player #{{i + 1}} Email Address</span>
+                            <input type="text" class="input-field" formControlName="email">
+                        </label>
+                    </div>
                 </div>
                 <div class="form-group buttons-container">
                     <button type="button" (click)="d('Cancel clicked')" class="btn btn-vermillion">Cancel</button>
-                    <button type="submit" class="btn btn-aqua">Create {{ gameCreationForm.get('private').value == true ? "Private" : "Public" }} Game</button>
+                    <button type="submit" class="btn btn-aqua">Create Game</button>
                 </div>
             </form>
         </div>
