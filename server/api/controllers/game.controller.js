@@ -22,13 +22,13 @@ module.exports.getGamesByUser = function(req, res) {
             })
             .populate('creator')
             .populate('players')
-            .exec((err, game) => {
+            .exec((err, games) => {
                 if (err) {
                     res.status(404).json(err);
                     return;
                 }
-                console.log("Populated Game " + game);
-                res.status(200).json(game);
+                console.log("Populated Game " + games);
+                res.status(200).json(games);
             });
     }
 };
@@ -53,8 +53,6 @@ module.exports.createGame = function(req, res) {
         game.private = req.body.private;
 
         game.generateCode();
-
-        console.log(game);
 
         game.save(function(err, game) {
             if (err) {

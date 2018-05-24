@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { RiskModal, ModalDismissReasons } from '../../modal/modal.module';
+import { RiskModal, ModalDismissReasons, RiskModalRef } from '../../modal/modal.module';
 import { DashboardService } from '../../../services/dashboard.service';
 
 import { GamePayload } from '../../../helpers/data-models';
@@ -12,6 +12,7 @@ import { GamePayload } from '../../../helpers/data-models';
   styleUrls: ['./user-games.component.scss']
 })
 export class UserGamesComponent implements OnInit {
+    riskModalRef: any;
     gameCreationForm: FormGroup;
     gamesList: GamePayload[] = [];
 
@@ -22,10 +23,12 @@ export class UserGamesComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.getUserGames();
     }
 
     open(content) {
-        this.modalService.open(content).result.then((result) => {
+        this.riskModalRef = this.modalService.open(content);
+        this.riskModalRef.result.then((result) => {
             console.log(`Closed with: ${result}`);
         }, (reason) => {
             console.log(`Dismissed ${this.getDismissReason(reason)}`);
@@ -33,7 +36,15 @@ export class UserGamesComponent implements OnInit {
     }
 
     getUserGames() {
+        this.dashboardService.getUserGames().subscribe((games) => {
+            console.log(games);
 
+            // TODO - Take incoming games and set the gamesList variable
+            // to display on the front-end
+        }, (err) => {
+            console.error(err);
+        });
+        console.log("Getting user games.");
     }
 
     createGame() {
@@ -45,8 +56,12 @@ export class UserGamesComponent implements OnInit {
             private: formModel.private as boolean
         };
 
-        this.dashboardService.createNewGame(gameDetails).subscribe(() => {
-
+        this.dashboardService.createNewGame(gameDetails).subscribe((createdGame) => {
+            // We've successfully created a game,
+            // Now we dismiss the modal and display the user's game list
+            this.riskModalRef.close(() => {
+                this.getUserGames();
+            });
         }, (err) => {
             console.error(err);
         });

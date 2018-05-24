@@ -27,7 +27,7 @@ let gameSchema = new mongoose.Schema({
 
 // Method to generate a code for the game
 gameSchema.methods.generateCode = function() {
-    this.code = crypto.randomBytes(16).toString('hex').slice(0, 4).toUpperCase();
+    this.code = crypto.randomBytes(16).toString('hex').slice(0, 6).toUpperCase();
 };
 
 // Virtual for game URL with code (used to send to other players)

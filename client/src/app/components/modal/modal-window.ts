@@ -49,8 +49,6 @@ export class ModalWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     backdropClick(target): void {
-        console.log(target);
-        console.log(this._elRef.nativeElement);
         if (this.backdrop === true && this._elRef.nativeElement === target) {
             this.dismiss(ModalDismissReasons.BACKDROP_CLICK);
         }
