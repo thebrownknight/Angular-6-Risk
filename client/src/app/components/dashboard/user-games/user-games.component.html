@@ -48,6 +48,11 @@
                             <button [hidden]="i === 0" type="button" class="remove-username" (click)="removeUsername(i)">
                                 <i class="fas fa-minus"></i>
                             </button>
+                            <div *ngIf="username.dirty && username.errors" class="username-error">
+                                <p *ngIf="username.errors.usernameDoesNotExist">
+                                    Username does not exist! Make sure you are spelling the username correctly or the user you are entering has registered on the site.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>

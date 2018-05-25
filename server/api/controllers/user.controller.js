@@ -19,3 +19,21 @@ module.exports.getProfile = function(req, res) {
             });
     }
 };
+
+module.exports.validateUsername = function(req, res) {
+    User
+        .findOne({
+            'username': req.query.username
+        }, function(err, user) {
+            if (err) {
+                res.status(404).json(err);
+                return;
+            }
+
+            if (user) {
+                res.status(200).json({ 'usernameExists': true, 'user': user });
+            } else {
+                res.status(200).json({ 'usernameExists': false });
+            }
+        });
+}

@@ -18,6 +18,7 @@ let gameController = require('../controllers/game.controller.js');
 /*** USER ROUTES ***/
 router.post('/users/register', authController.register);
 router.post('/users/login', authController.login);
+router.get('/users/validateusername', userController.validateUsername);
 
 // router.get('/users/settings', userController.getSettings);
 

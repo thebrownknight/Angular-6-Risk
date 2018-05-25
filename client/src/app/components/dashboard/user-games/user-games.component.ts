@@ -3,7 +3,9 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { RiskModal, ModalDismissReasons, RiskModalRef } from '../../modal/modal.module';
 import { DashboardService } from '../../../services/dashboard.service';
+import { AuthenticationService } from '../../../services/authentication.service';
 
+import { existingUsernameValidator } from '../../../helpers/custom-validators/existing-username-validator';
 import { GamePayload } from '../../../helpers/data-models';
 
 @Component({
@@ -18,7 +20,8 @@ export class UserGamesComponent implements OnInit {
 
     constructor(private modalService: RiskModal,
         private formBuilder: FormBuilder,
-        private dashboardService: DashboardService) {
+        private dashboardService: DashboardService,
+        private authService: AuthenticationService) {
         this.createForm();
     }
 
@@ -75,7 +78,10 @@ export class UserGamesComponent implements OnInit {
 
     createUsername(): FormGroup {
         return this.formBuilder.group({
-            'username': ''
+            'username': ['',
+                [ Validators.minLength(3) ], // sync validators
+                [ existingUsernameValidator(this.authService) ] // async validators
+            ]
         });
     }
 

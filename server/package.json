@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "Server for Angular 6 Risk game",
     "scripts": {
-        "start": "node bin/www"
+        "start": "nodemon bin/www"
     },
     "dependencies": {
         "bcryptjs": "^2.4.3",

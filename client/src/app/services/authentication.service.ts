@@ -38,7 +38,7 @@ export class AuthenticationService {
       return this.token;
     }
 
-    private request(method: 'post'|'get', type: 'login'|'register'|'profile', user?: TokenPayload): Observable<any> {
+    private request(method: 'post'|'get', type: string, user?: TokenPayload | string): Observable<any> {
       let baseUrl;
 
       if (method === 'post') {
@@ -104,9 +104,17 @@ export class AuthenticationService {
       return this.request('get', 'profile');
     }
 
+    /**
+     * Async validation endpoint for username.
+     */
+    public validateUsername(username: string): Observable<any> {
+        return this.request('get', 'validateusername', username);
+    }
+
     public logout(): void {
       this.token = '';
       window.localStorage.removeItem('risk-token');
       this.router.navigateByUrl('/login');
     }
+
 }
