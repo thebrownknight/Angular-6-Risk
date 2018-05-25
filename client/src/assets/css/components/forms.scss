@@ -202,21 +202,26 @@
             width: 100%;
 
             &:not(:last-child) {
-                @include rem(margin-bottom, 15px);
+                @include rem(margin-bottom, 20px);
             }
 
             .input-label {
                 width: 100%;
                 text-align: left;
+                position: relative;
 
                 .input-label-content {
                     width: 100%;
                     display: inline-block;
                     position: relative;
-                    @include rem(margin-bottom, 8px);
                     color: $aqua;
-                    @include rem(font-size, 14px);
+                    @include rem(font-size, 15px);
                     @include opensans-bold();
+                }
+
+                .help-text {
+                    @include rem(font-size, 12px);
+                    color: $dark-gray;
                 }
             }
 
@@ -237,7 +242,78 @@
                 &:focus {
                     outline: 0;
                 }
+
+                @include placeholder($light-gray, 400);
+
+                &:-webkit-autofill, &:-webkit-autofill:hover, &:-webkit-autofill:focus {
+                    background-color: transparent !important;
+                    -webkit-box-shadow: inset 0 0 0px 9999px $white;
+                    box-shadow: inset 0 0 0px 9999px $white;
+                    color: $dark-gray !important;
+                }
             }
+
+            .usernames-block {
+                .input-label {
+                    width: auto;
+
+                    .input-label-content {
+                        width: auto;
+                    }
+                }
+                button {
+                    display: inline-block;
+                    width: 25px;
+                    height: 25px;
+                    border: none;
+                    @include appearance(none);
+                    @include border-radius(100%);
+                    @include transition(all 0.2s linear);
+                    outline: 0;
+                    text-align: center;
+                    vertical-align: middle;
+                    cursor: pointer;
+                    margin-top: -5px;
+                    margin-left: 10px;
+
+                    &.add-username {
+                        background-color: $sunshine;
+
+                        &:hover {
+                            background-color: darken($sunshine, 10%);
+                        }
+                    }
+                    &.remove-username {
+                        background-color: $vermillion;
+
+                        &:hover {
+                            background-color: darken($vermillion, 10%);
+                        }
+                    }
+
+                    > i {
+                        color: $white;
+                        @include rem(font-size, 12px);
+                        position: relative;
+                        top: 1px;
+                    }
+                }
+
+                .dynamic-username-container {
+                    .input-field {
+                        display: inline-block;
+                        @include rem(padding, 7px 15px);
+                        @include rem(margin-bottom, 10px);
+                    }
+
+                    &:not(:nth-child(2)) {
+                        .input-field {
+                            width: 90%;
+                        }
+                    }
+                }
+            }
+
             .radio-button-container {
                 .button-container {
                     position: relative;
@@ -254,32 +330,32 @@
                         cursor: pointer;
                         @include transition(all 0.25s linear);
                         @include opensans-regular();
-                        color: $light-gray;
+                        color: $dark-gray;
                     }
 
                     .check {
                         display: block;
                         position: absolute;
-                        border: 2px solid $light-gray;
+                        border: 2px solid $dark-gray;
                         @include border-radius(100%);
                         height: 20px;
                         width: 20px;
                         top: 0;
                         left: 0;
                         z-index: 5;
-                        @include transition(border 0.25s linear);
+                        @include transition(border 0.2s linear);
 
                         &::before {
                             display: none;
                             position: absolute;
                             content: '';
                             @include border-radius(100%);
-                            height: 9px;
-                            width: 9px;
-                            top: 3.4px;
-                            left: 3.4px;
+                            height: 8px;
+                            width: 8px;
+                            top: 4px;
+                            left: 4px;
                             margin: auto;
-                            @include transition(background 0.25s linear);
+                            @include transition(background 0.2s linear);
                         }
                     }
 
@@ -382,6 +458,8 @@
                     @include rem(padding, 10px 15px);
                     color: $dark-gray;
                     @include appearance(none);
+                    @include border-radius(0);
+                    outline: 0;
                 }
 
                 i {
@@ -390,6 +468,15 @@
                     bottom: 20px;
                     color: $aqua;
                     @include rem(font-size, 20px);
+                }
+            }
+
+            &.buttons-container {
+                text-align: right;
+                @include rem(padding-top, 30px);
+
+                .btn:first-child {
+                    @include rem(margin-right, 10px);
                 }
             }
         }

@@ -36,12 +36,12 @@
         @include rem(margin, 1.75rem auto);
 
         .modal-content {
-            background-color: $off-white;
+            background-color: $white;
             background-clip: padding-box;
             border: 1px solid rgba(0, 0, 0, 0.2);
             outline: 0;
             position: relative;
-            
+
             .modal-header {
                 position: relative;
 

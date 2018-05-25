@@ -20,7 +20,6 @@ export class UserGamesComponent implements OnInit {
         private formBuilder: FormBuilder,
         private dashboardService: DashboardService) {
         this.createForm();
-        this.setEmailAddresses();
     }
 
     ngOnInit() {
@@ -70,23 +69,22 @@ export class UserGamesComponent implements OnInit {
     /**
      * Methods for the dynamic email addresses to send invites to
      */
-    get emailAddresses(): FormArray {
-        return this.gameCreationForm.get('emailAddresses') as FormArray;
+    get usernames(): FormArray {
+        return this.gameCreationForm.get('usernames') as FormArray;
     }
 
-    createEmailAddress(): FormGroup {
+    createUsername(): FormGroup {
         return this.formBuilder.group({
-            'email': ''
+            'username': ''
         });
     }
 
-    setEmailAddresses() {
-        // First we check to see if there were already email Addresses
-        console.log(this.emailAddresses);
+    addUsername() {
+        this.usernames.push(this.createUsername());
+    }
 
-        // for (let i = 0; i < (this.gameCreationForm.get('numberOfPlayers').value as number); i++) {
-        //     this.emailAddresses.push(this.createEmailAddress());
-        // }
+    removeUsername(index: number) {
+        this.usernames.removeAt(index);
     }
 
     /** End dynamic email methods **/
@@ -106,7 +104,8 @@ export class UserGamesComponent implements OnInit {
         this.gameCreationForm = this.formBuilder.group({
             title: ['', Validators.required],
             gameType: 'private',
-            emailAddresses: this.formBuilder.array([])
+            usernames: this.formBuilder.array([this.createUsername()]),
+            numberOfPlayers: 2
         });
     }
 

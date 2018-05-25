@@ -12,12 +12,14 @@
                 <div class="form-group">
                     <label class="input-label">
                         <span class="input-label-content">Game Title</span>
-                        <input type="text" class="input-field" formControlName="title">
+                        <p class="help-text">Enter the title of the game.</p>
+                        <input placeholder="My Awesome Risk Game" type="text" class="input-field" formControlName="title">
                     </label>
                 </div>
                 <div class="form-group">
                     <label class="input-label">
                         <span class="input-label-content">Game Type</span>
+                        <p class="help-text">Choose which type of game you want to create. Private games are restricted to you and the people you invite below. Public games are open to anyone but will be closed once the game timer is up, if the maximum number of players is reached, or if you manually start the game.</p>
                     </label>
                     <div class="radio-button-container">
                         <div class="button-container">
@@ -32,24 +34,35 @@
                         </div>
                     </div>
                 </div>
-                <!-- <div class="form-group">
-                    <div class="checkbox-container">
-                        <input type="checkbox" id="private_game"
-                            class="checkbox-field" formControlName="private"
-                            (change)="setEmailAddresses()"
-                            [checked]=true/>
-                        <label for="private_game" class="checkbox-label"></label>
+                <div [hidden]="this.gameCreationForm.get('gameType').value === 'public'" class="form-group" formArrayName="usernames">
+                    <div class="usernames-block">
                         <label class="input-label">
-                            <span class="input-label-content">Private game?</span>
+                            <span class="input-label-content">Invite Players</span>
+                            <button [disabled]="usernames.controls.length === 5" type="button" class="add-username" (click)="addUsername()">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <p class="help-text">Enter the usernames of the players you want to invite. The users need to already have registered and created a username. You must have at least one other user playing with you and you can only add up to a MAXIMUM OF 5 OTHER PLAYERS.</p>
                         </label>
+                        <div class="dynamic-username-container" *ngFor="let username of usernames.controls; let i=index" [formGroupName]="i">
+                            <input placeholder="Enter player {{i + 1}}'s username" type="text" class="input-field" formControlName="username">
+                            <button [hidden]="i === 0" type="button" class="remove-username" (click)="removeUsername(i)">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
                     </div>
-                </div> -->
-                <div class="email-address-block" formArrayName="emailAddresses">
-                    <div class="form-group" *ngFor="let email of emailAddresses.controls; let i=index" [formGroupName]="i">
+                </div>
+                <div [hidden]="this.gameCreationForm.get('gameType').value === 'private'" class="form-group">
+                    <div class="select-container">
                         <label class="input-label">
-                            <span class="input-label-content">Player #{{i + 1}} Email Address</span>
-                            <input type="text" class="input-field" formControlName="email">
+                            <span class="input-label-content">Maximum Number of Players</span>
+                            <p class="help-text">Choose the number of players you want in the game. Once this number is reached, the game will automatically start. You can also choose to manually start the game if at least one other user has joined your game.</p>
+                            <select name="numberOfPlayers" class="select-box" formControlName="numberOfPlayers">
+                                <option *ngFor="let number of [2,3,4,5,6]" [value]="number">
+                                    {{number}}
+                                </option>
+                            </select>
                         </label>
+                        <i class="fas fa-caret-down"></i>
                     </div>
                 </div>
                 <div class="form-group buttons-container">
