@@ -11,6 +11,9 @@ import { AuthGuardService } from './services/auth-guard.service';
 import { JwtInterceptorProvider } from './helpers/jwt.interceptor';
 import { ErrorInterceptorProvider } from './helpers/error.interceptor';
 import { AuthenticationService } from './services/authentication.service';
+
+import { UsernameValidator } from './helpers/custom-validators/existing-username-validator';
+
 import { MapComponent } from './components/map/map.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
@@ -51,6 +54,7 @@ import { RiskModalModule } from './components/modal/modal.module';
   providers: [
     AuthGuardService,
     AuthenticationService,
+    UsernameValidator,
     JwtInterceptorProvider,
     ErrorInterceptorProvider
   ],

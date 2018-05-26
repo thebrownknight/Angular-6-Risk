@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 import { appConfig } from '../app.config';
@@ -38,19 +38,29 @@ export class AuthenticationService {
       return this.token;
     }
 
-    private request(method: 'post'|'get', type: string, user?: TokenPayload | string): Observable<any> {
+    private request(method: 'post'|'get', type: string, params?: any): Observable<any> {
       let baseUrl;
 
       if (method === 'post') {
-        baseUrl = this.http.post(`/api/users/${type}`, user);
+        baseUrl = this.http.post(`/api/users/${type}`, params);
       } else {
-        baseUrl = this.http.get(`/api/users/${type}`, {
+          let urlString = `/api/users/${type}`;
+          if (params != null) {
+              urlString += '/?'
+              for (const key in params) {
+                  if (params.hasOwnProperty(key)) {
+                      urlString += key + "=" + params[key] + "&";
+                  }
+              }
+              urlString = urlString.slice(0, -1);
+          }
+        baseUrl = this.http.get(urlString, {
           headers: { Authorization: `Bearer ${this.getToken()}` }
         });
       }
 
       const request = baseUrl.pipe(
-        map((data: TokenResponse) => {
+        map((data: any) => {
           if (data.token) {
             this.saveToken(data.token);
           }
@@ -107,8 +117,11 @@ export class AuthenticationService {
     /**
      * Async validation endpoint for username.
      */
-    public validateUsername(username: string): Observable<any> {
-        return this.request('get', 'validateusername', username);
+    public validateUsername(username): Observable<any> {
+        let baseUrl = '/api/users/validateusername';
+        let queryUrl = `?username=${username}`;
+
+        return this.http.get(baseUrl + queryUrl);   
     }
 
     public logout(): void {

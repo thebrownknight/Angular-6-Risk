@@ -48,8 +48,10 @@
                             <button [hidden]="i === 0" type="button" class="remove-username" (click)="removeUsername(i)">
                                 <i class="fas fa-minus"></i>
                             </button>
+                            <div>{{ username.value | json }}</div>
+                            <div>{{ username.status | json }}</div>
                             <div *ngIf="username.dirty && username.errors" class="username-error">
-                                <p *ngIf="username.errors.usernameDoesNotExist">
+                                <p *ngIf="!username.errors.usernameExists">
                                     Username does not exist! Make sure you are spelling the username correctly or the user you are entering has registered on the site.
                                 </p>
                             </div>
@@ -74,6 +76,8 @@
                     <button type="button" (click)="d('Cancel clicked')" class="btn btn-vermillion">Cancel</button>
                     <button type="submit" class="btn btn-aqua">Create Game</button>
                 </div>
+                <p>Form value: {{ gameCreationForm.value | json }}</p>
+                <p>Status: {{ gameCreationForm.status | json }}</p>
             </form>
         </div>
     </ng-template>
