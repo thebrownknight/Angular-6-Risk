@@ -46,10 +46,10 @@ export class AuthenticationService {
       } else {
           let urlString = `/api/users/${type}`;
           if (params != null) {
-              urlString += '/?'
+              urlString += '/?';
               for (const key in params) {
                   if (params.hasOwnProperty(key)) {
-                      urlString += key + "=" + params[key] + "&";
+                      urlString += key + '=' + params[key] + '&';
                   }
               }
               urlString = urlString.slice(0, -1);
@@ -118,10 +118,10 @@ export class AuthenticationService {
      * Async validation endpoint for username.
      */
     public validateUsername(username): Observable<any> {
-        let baseUrl = '/api/users/validateusername';
-        let queryUrl = `?username=${username}`;
+        const baseUrl = '/api/users/validateusername';
+        const queryUrl = `?username=${username}`;
 
-        return this.http.get(baseUrl + queryUrl);   
+        return this.http.get(baseUrl + queryUrl);
     }
 
     public logout(): void {

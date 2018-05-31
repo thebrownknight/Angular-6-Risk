@@ -9,19 +9,14 @@ let gameSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'User'
     },
-    players: {
-        type: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
-        validate: {
-            validator: function() {
-                return this.players.length <= 10;
-            }
+    players: [{
+        status: String,
+        player: {
+            type: mongoose.Schema.ObjectId,
+            ref: 'User'
         }
-    },
-    endDate: {
-        type: Date,
-        default: null
-    },
-    private: Boolean,
+    }],
+    gameType: String,
     code: {
         type: String,
         unique: true
@@ -29,8 +24,17 @@ let gameSchema = new mongoose.Schema({
     status: {
         type: String,
         default: 'CREATED'
+    },
+    endDate: {
+        type: Date,
+        default: null
     }
 }, { timestamps: true });
+
+// Before we save, make sure we convert the player usernames to IDs
+gameSchema.pre('save', function(next) {
+    
+});
 
 // Method to generate a code for the game
 gameSchema.methods.generateCode = function() {

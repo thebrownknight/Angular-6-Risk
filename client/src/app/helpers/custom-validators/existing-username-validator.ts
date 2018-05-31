@@ -24,7 +24,7 @@ export class UsernameValidator {
                     switchMap(() => {
                         return this.authService.validateUsername(username).pipe(
                             map((users: any) => {
-                                return (!users.usernameExists) ? { 'usernameExists': false } : null;
+                                return (!users.usernameExists) ? { 'usernameDoesNotExist': true } : null;
                             })
                         );
                     })

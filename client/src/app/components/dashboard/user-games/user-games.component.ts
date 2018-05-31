@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 
 import { RiskModal, ModalDismissReasons, RiskModalRef } from '../../modal/modal.module';
 import { DashboardService } from '../../../services/dashboard.service';
@@ -17,6 +17,7 @@ export class UserGamesComponent implements OnInit {
     gameCreationForm: FormGroup;
     gamesList: GamePayload[] = [];
 
+
     constructor(private modalService: RiskModal,
         private formBuilder: FormBuilder,
         private dashboardService: DashboardService,
@@ -26,6 +27,22 @@ export class UserGamesComponent implements OnInit {
 
     ngOnInit() {
         this.getUserGames();
+
+        // Set the required attributes for either the list of usernames or max number of players
+        // depending on whether it's a public or private game
+        this.gameCreationForm.get('gameType').valueChanges.subscribe((type: string) => {
+            if (type === 'Private') {
+                this.gameCreationForm.get('numberOfPlayers').clearValidators();
+                this.usernames.controls.forEach((value: AbstractControl, index: number, array: AbstractControl[]) => {
+                    value.setValidators([Validators.required, Validators.minLength(3)]);
+                });
+            } else if (type === 'Public') {
+                this.usernames.controls.forEach((value: AbstractControl, index: number, array: AbstractControl[]) => {
+                    value.clearValidators();
+                });
+                this.gameCreationForm.get('numberOfPlayers').setValidators(Validators.required);
+            }
+        });
     }
 
     open(content) {
@@ -77,9 +94,9 @@ export class UserGamesComponent implements OnInit {
 
     createUsername(): FormGroup {
         return this.formBuilder.group({
-            'username': ['',
+            'uname': ['',
                 {
-                    validators: Validators.minLength(3),
+                    validators: [ Validators.required, Validators.minLength(3) ],
                     asyncValidators: [ this.usernameValidator.existingUsernameValidator() ],
                     updateOn: 'blur'
                 }

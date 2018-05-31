@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 let User = mongoose.model('User');
 let Game = mongoose.model('Game');
 
+let userController = require('./user.controller');
+
 module.exports.getPublicGames = function(req, res) {
     Game.
         find({
@@ -48,9 +50,19 @@ module.exports.createGame = function(req, res) {
 
         game.title = req.body.title;
         game.creator = req.payload._id;
-        game.numberOfPlayers = req.body.numPlayers;
-        game.players.push(req.payload._id);
-        game.private = req.body.private;
+        game.gameType = req.body.gameType;
+
+        if (req.body.gameType === 'private') {
+            // Add the creator as a player by default
+            game.players.push(req.payload._id);
+            const playersArray = JSON.parse(req.body.players);
+
+            for(let i = 0; i < playersArray.length; i++) {
+                game.players.push(userController.validateUsername(playersArray[i]).user._id);
+            }
+        } else {
+            game.numberOfPlayers = req.body.numPlayers;
+        }
 
         game.generateCode();
 

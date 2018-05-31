@@ -300,15 +300,39 @@
                 }
 
                 .dynamic-username-container {
+                    position: relative;
+
                     .input-field {
                         display: inline-block;
                         @include rem(padding, 7px 15px);
                         @include rem(margin-bottom, 10px);
                     }
 
+                    .status-icon {
+                        position: absolute;
+                        right: 10px;
+                        @include rem(font-size, 18px);
+                        color: $dark-gray;
+                        top: 12px;
+
+                        &.fa-check {
+                            color: $powder;
+                        }
+                    }
+
                     &:not(:nth-child(2)) {
                         .input-field {
                             width: 90%;
+                        }
+
+                        .status-icon {
+                            right: 50px;
+                        }
+                    }
+
+                    .username-error {
+                        > p {
+                            color: $vermillion;
                         }
                     }
                 }
