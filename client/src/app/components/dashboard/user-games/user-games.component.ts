@@ -55,14 +55,14 @@ export class UserGamesComponent implements OnInit {
     }
 
     getUserGames() {
-        // this.dashboardService.getUserGames().subscribe((games) => {
-        //     console.log(games);
+        this.dashboardService.getUserGames().subscribe((games) => {
+            console.log(games);
 
-        //     // TODO - Take incoming games and set the gamesList variable
-        //     // to display on the front-end
-        // }, (err) => {
-        //     console.error(err);
-        // });
+            // TODO - Take incoming games and set the gamesList variable
+            // to display on the front-end
+        }, (err) => {
+            console.error(err);
+        });
         console.log('Getting user games.');
     }
 
@@ -71,7 +71,8 @@ export class UserGamesComponent implements OnInit {
         // Create the gameDetails containing values from the form
         const gameDetails: GamePayload = {
             title: formModel.title as string,
-            gameType: formModel.gameType as string
+            gameType: formModel.gameType as string,
+            players: formModel.players as Array<string>
         };
 
         this.dashboardService.createNewGame(gameDetails).subscribe((createdGame) => {

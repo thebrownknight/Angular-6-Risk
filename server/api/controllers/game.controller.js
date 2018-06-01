@@ -2,8 +2,6 @@ const mongoose = require('mongoose');
 let User = mongoose.model('User');
 let Game = mongoose.model('Game');
 
-let userController = require('./user.controller');
-
 module.exports.getPublicGames = function(req, res) {
     Game.
         find({
@@ -23,13 +21,13 @@ module.exports.getGamesByUser = function(req, res) {
                 creator: req.payload._id
             })
             .populate('creator')
-            .populate('players')
+            .populate('players.player')
             .exec((err, games) => {
                 if (err) {
                     res.status(404).json(err);
                     return;
                 }
-                console.log("Populated Game " + games);
+                console.log("Populated Game:\n " + games);
                 res.status(200).json(games);
             });
     }
@@ -48,31 +46,83 @@ module.exports.createGame = function(req, res) {
     } else {
         let game = new Game();
 
+        // Common fields between public and private games
+        // 1. Title
+        // 2. Creator
+        // 3. Game Type
+        // 4. Code
         game.title = req.body.title;
         game.creator = req.payload._id;
         game.gameType = req.body.gameType;
-
-        if (req.body.gameType === 'private') {
-            // Add the creator as a player by default
-            game.players.push(req.payload._id);
-            const playersArray = JSON.parse(req.body.players);
-
-            for(let i = 0; i < playersArray.length; i++) {
-                game.players.push(userController.validateUsername(playersArray[i]).user._id);
-            }
-        } else {
-            game.numberOfPlayers = req.body.numPlayers;
-        }
-
         game.generateCode();
 
-        game.save(function(err, game) {
+        // Conditional fields for public and private games
+        if (req.body.gameType === 'private') {
+            // Add the creator as a player by default
+            game.players.push({
+                status: 'PENDING',
+                player: req.payload._id
+            });
+            var playersArray = req.body.players;
+
+            getUserIds(playersArray, function(nPlayersArr) {
+                game.players = game.players.concat(nPlayersArr);
+                game.numberOfPlayers = game.players.length;
+
+                console.log(game);
+
+                game.save(function(err, game) {
+                    if (err) {
+                        res.status(404).json(err);
+                        return;
+                    }
+
+                    res.status(200).json(game);
+                });
+            });
+        } else {
+            // It's a public game, we don't have specific players yet
+            game.numberOfPlayers = req.body.numPlayers;
+
+            game.save(function(err, game) {
+                if (err) {
+                    res.status(404).json(err);
+                    return;
+                }
+
+                res.status(200).json(game);
+            });
+        }
+    }
+};
+
+////////////////////////////////////////////
+// Private method to get user ID by username
+////////////////////////////////////////////
+getUserIds = function(usernames, callback) {
+    User
+        .find({
+            'username': {
+                $in: usernames
+            }
+        }, '_id', function(err, userIds) {
             if (err) {
-                res.status(404).json(err);
+                console.log(err);
                 return;
             }
 
-            res.status(200).json(game);
+            if (userIds) {
+                var nUserIds = userIds.map(function(curValue, index) {
+                    var rObj = {
+                        'status': 'PENDING',
+                        'player': curValue._id
+                    };
+                    return rObj;
+                });
+
+                callback(nUserIds);
+            } else {
+                return;
+            }
         });
-    }
-};
+}

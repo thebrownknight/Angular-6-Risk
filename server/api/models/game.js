@@ -31,11 +31,6 @@ let gameSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-// Before we save, make sure we convert the player usernames to IDs
-gameSchema.pre('save', function(next) {
-    
-});
-
 // Method to generate a code for the game
 gameSchema.methods.generateCode = function() {
     this.code = crypto.randomBytes(16).toString('hex').slice(0, 6).toUpperCase();
