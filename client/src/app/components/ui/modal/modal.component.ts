@@ -3,7 +3,7 @@ import { Injectable, Injector, ComponentFactoryResolver } from '@angular/core';
 import { RiskModalStack } from './modal-stack';
 import { RiskModalRef } from './modal-ref';
 
-import { Utils } from '../../services/utils';
+import { Utils } from '../../../services/utils';
 
 /**
  * Represent options available when opening new modal windows.

@@ -1,5 +1,5 @@
-@import '../../../../assets/css/global/variables';
-@import '../../../../assets/css/global/mixins';
+@import '../../../../../assets/css/global/variables';
+@import '../../../../../assets/css/global/mixins';
 
 .tab-content {
     @include rem(padding, 20px);

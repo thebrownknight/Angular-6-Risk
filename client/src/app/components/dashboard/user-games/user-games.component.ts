@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 
-import { RiskModal, ModalDismissReasons, RiskModalRef } from '../../modal/modal.module';
+import { RiskModal, ModalDismissReasons, RiskModalRef } from '../../ui/modal/modal.module';
 import { DashboardService } from '../../../services/dashboard.service';
 
 import { UsernameValidator } from '../../../helpers/custom-validators/existing-username-validator';
-import { GamePayload } from '../../../helpers/data-models';
+import { GamePayload, GameDetails } from '../../../helpers/data-models';
 
 @Component({
   selector: 'risk-user-games',
@@ -15,7 +15,7 @@ import { GamePayload } from '../../../helpers/data-models';
 export class UserGamesComponent implements OnInit {
     riskModalRef: any;
     gameCreationForm: FormGroup;
-    gamesList: GamePayload[] = [];
+    pendingGamesList: GameDetails[] = [];
 
 
     constructor(private modalService: RiskModal,
@@ -58,8 +58,32 @@ export class UserGamesComponent implements OnInit {
         this.dashboardService.getUserGames().subscribe((games) => {
             console.log(games);
 
-            // TODO - Take incoming games and set the gamesList variable
+            // Take incoming games and set the gamesList variable
             // to display on the front-end
+            games.forEach((game) => {
+                const gameDetails: GameDetails = {
+                    _id: game._id,
+                    createdAt: game.createdAt,
+                    title: game.title,
+                    creator: game.creator,
+                    players: game.players,
+                    numberOfPlayers: game.numberOfPlayers,
+                    endDate: game.endDate,
+                    gameType: game.gameType,
+                    code: game.code,
+                    status: game.status
+                };
+                switch(game.status) {
+                    case 'CREATED':
+                        this.pendingGamesList.push(gameDetails);
+                        break;
+                    case 'IN PROGRESS':
+                        break;
+                    case 'COMPLETED':
+                        break;
+                }
+            });
+
         }, (err) => {
             console.error(err);
         });

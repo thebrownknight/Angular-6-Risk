@@ -50,13 +50,13 @@
                             <button [hidden]="i === 0" type="button" class="remove-username" (click)="removeUsername(i)">
                                 <i class="fas fa-minus"></i>
                             </button>
-                            
+
                             <div *ngIf="usernames.at(i).get('uname').touched && usernames.at(i).get('uname').errors !== null" class="username-error">
                                 <p *ngIf="usernames.at(i).get('uname').errors.usernameDoesNotExist">
                                     Username does not exist! Make sure you are spelling the username correctly or the user you are entering has registered on the site.
                                 </p>
                                 <p *ngIf="usernames.at(i).get('uname').errors.minlength">
-                                    Please enter a username that is 3 characters or more.                                    
+                                    Please enter a username that is 3 characters or more.
                                 </p>
                             </div>
                         </div>
@@ -85,3 +85,64 @@
     </ng-template>
     <button class="btn btn-yellow create-game" (click)="open(userGamesContent)"><i class="fas fa-plus"></i> Create Game</button>
 </div>
+<div class="games-info-list">
+    <risk-accordion>
+        <ng-template #pendingGames>
+            <h3>Pending Games <span class="counter-badge">{{ pendingGamesList.length }}</span></h3>
+        </ng-template>
+        <risk-accordion-panel [panelHeading]="pendingGames">
+            <div class="game-block" *ngFor="let game of pendingGamesList">
+                <risk-slide-panel [activePane]="left">
+                    <div leftPane>
+                        <div class="title-block clearfix">
+                            <h4>{{game.title}} <i class="fas fa-angle-right"></i></h4>
+                            <div class="buttons-container">
+                                <button [disabled]="game.players.length < 2" type="button" class="btn btn-yellow">Start Game</button>
+                                <button type="button" class="btn btn-vermillion">Cancel Game</button>
+                            </div>
+                        </div>
+                    </div>
+                </risk-slide-panel>
+            </div>
+        </risk-accordion-panel>
+
+        <ng-template #inProgressGames>
+            <h3>In Progress Games</h3>
+        </ng-template>
+        <risk-accordion-panel [panelHeading]="inProgressGames">
+            <p>In progress games!</p>
+        </risk-accordion-panel>
+
+        <ng-template #completedGames>
+            <h3>Completed Games</h3>
+        </ng-template>
+        <risk-accordion-panel [panelHeading]="completedGames">
+            <p>Completed games!</p>
+        </risk-accordion-panel>
+    </risk-accordion>
+</div>
+<!--
+1. Pending games
+    - Things to show:
+        - manually allow creator to start game if one other player has joined
+        - title
+        - date created
+        - game code
+        - players invited and their statuses
+        - indication of private or public (icon)
+2. In Progress games
+    - Things to show:
+        - title
+        - current leader
+        - territories held by each player
+        - any players that are knocked out
+        - current person's turn
+        - allow creator to "nudge" person to take turn if more than 24 hours
+3. Completed games
+    - Things to show:
+        - winner
+        - replay option
+        - end date
+        - time it took to complete
+        - stats for each user during the game (e.g. held a certain continent longest or lost the most battles etc.)
+-->

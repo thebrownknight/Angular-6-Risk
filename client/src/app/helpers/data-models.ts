@@ -23,10 +23,23 @@ export interface TokenPayload {
  */
 export interface GamePayload {
     title: string;
-    creator?: null;
-    players?: Array<string>;
-    endDate?: Date;
     gameType: string;
-    code?: string;
-    status?: string;
+    players?: Array<string>;
+    numberOfPlayers?: number;
+}
+
+/**
+ * Model for returned game.
+ */
+export interface GameDetails {
+    _id: string;
+    createdAt: string;
+    title: string;
+    creator: any;
+    players: Array<any>;
+    numberOfPlayers: number;
+    endDate: string;
+    gameType: string;
+    code: string;
+    status: string;
 }

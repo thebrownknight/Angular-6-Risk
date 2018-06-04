@@ -1,0 +1,80 @@
+.risk-accordion {
+    .panel {
+        @include rem(margin-top, 20px);
+
+        .panel-heading {
+            position: relative;
+            background-color: $aqua;
+            cursor: pointer;
+
+            @include rem(padding, 10px);
+
+            > * {
+                display: inline-block;
+            }
+
+            h3 {
+                @include opensans-regular();
+                @include rem(font-size, 18px);
+                color: $white;
+
+                .counter-badge {
+                    @include border-radius(100%);
+                    text-align: center;
+                    display: inline-block;
+                    @include raleway-regular();
+                    width: 30px;
+                    height: 30px;
+                    background-color: $sunshine;
+                    color: $white;
+                    @include rem(margin-left, 8px);
+                }
+            }
+
+            > i {
+                position: absolute;
+                right: 15px;
+                top: 12px;
+                color: $white;
+                @include rem(font-size, 22px);
+            }
+        }
+
+        .panel-body {
+            @include rem(padding, 12px);
+            border-left: 2px solid $light-gray;
+            border-bottom: 2px solid $light-gray;
+            border-right: 2px solid $light-gray;
+
+            > .game-block {
+                .title-block {
+                    h4 {
+                        cursor: pointer;
+                        display: inline-block;
+                        @include opensans-regular();
+                        color: $dark-gray;
+                        @include rem(font-size, 16px);
+                        vertical-align: middle;
+                        @include transition(color 0.25s ease-in);
+
+                        &:hover {
+                            color: $powder;
+                        }
+                    }
+                    .buttons-container {
+                        display: inline-block;
+
+                        .btn {
+                            @include rem(padding, 8px 10px);
+                            @include rem(font-size, 14px);
+
+                            &:first-child {
+                                @include rem(margin-right, 5px);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,5 +1,5 @@
-@import '../../../assets/css/global/variables';
-@import '../../../assets/css/global/mixins';
+@import '../../../../assets/css/global/variables';
+@import '../../../../assets/css/global/mixins';
 
 .tabs {
     position: relative;
@@ -29,19 +29,19 @@
                 margin: 0;
                 text-align: center;
                 @include flex(1);
-            
+
                 &:last-child {
                     a {
                         border-right: 2px solid lighten($light-gray, 10%);
                     }
                 }
-            
+
                 &.active {
                     background: $powder;
-            
+
                     > a {
                         color: $white;
-            
+
                         &:hover {
                             color: $white;
                         }
@@ -50,7 +50,7 @@
                         }
                     }
                 }
-            
+
                 > a {
                     position: relative;
                     display: block;
@@ -64,12 +64,12 @@
                     color: $dark-gray;
                     line-height: 1;
                     @include transition(color 0.3s);
-            
+
                     &:hover {
                         text-decoration: none;
                         color: $powder;
                     }
-            
+
                     &:after {
                         position: absolute;
                         bottom: 0;
@@ -81,7 +81,7 @@
                         @include transition(transform 0.3s);
                         @include transform(translate3d(0, 150%, 0));
                     }
-            
+
                     .icon {
                         -webkit-font-smoothing: antialiased;
                         -moz-osx-font-smoothing: grayscale;
@@ -93,7 +93,7 @@
                         vertical-align: -.125em;
                         font-family: 'Font Awesome 5 Free';
                         font-weight: 900;
-            
+
                         z-index: 10;
                         display: inline-block;
                         @include rem(margin, 0 10px 0 0);
@@ -101,7 +101,7 @@
                         text-transform: none;
                         @include rem(font-size, 25px);
                     }
-            
+
                     span {
                         vertical-align: middle;
                         @include raleway-regular();

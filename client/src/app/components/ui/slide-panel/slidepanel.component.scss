@@ -1,0 +1,23 @@
+:host {
+    display: block;
+    overflow: hidden;
+}
+
+.panes {
+    height: 100%;
+    width: 200%;
+
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+
+    > div {
+        -webkit-box-flex: 1;
+           -moz-box-flex: 1;
+            -webkit-flex: 1;
+                -ms-flex: 1;
+                    flex: 1;
+    }
+}

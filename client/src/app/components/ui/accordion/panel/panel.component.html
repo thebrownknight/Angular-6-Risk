@@ -1,0 +1,9 @@
+<div class="panel">
+    <div class="panel-heading" (click)="toggle.emit()">
+        <ng-container *ngTemplateOutlet="panelHeading"></ng-container>
+        <i class="fas fa-angle-down"></i>
+    </div>
+    <div class="panel-body" *ngIf="opened">
+        <ng-content></ng-content>
+    </div>
+</div>

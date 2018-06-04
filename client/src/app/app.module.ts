@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // <-- NgModel lives here
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -23,10 +24,12 @@ import { PublicGamesComponent } from './components/dashboard/public-games/public
 import { UserSettingsComponent } from './components/dashboard/user-settings/user-settings.component';
 import { UserStatsComponent } from './components/dashboard/user-stats/user-stats.component';
 import { UserGamesComponent } from './components/dashboard/user-games/user-games.component';
-import { TabsComponent } from './components/tabs/tabs.component';
-import { TabComponent } from './components/tabs/tab/tab.component';
+import { TabsComponent } from './components/ui/tabs/tabs.component';
+import { TabComponent } from './components/ui/tabs/tab/tab.component';
 
-import { RiskModalModule } from './components/modal/modal.module';
+import { RiskModalModule } from './components/ui/modal/modal.module';
+import { RiskAccordionModule } from './components/ui/accordion/accordion.module';
+import { RiskSlidePanelModule } from './components/ui/slide-panel/slidepanel.module';
 
 @NgModule({
   declarations: [
@@ -45,11 +48,14 @@ import { RiskModalModule } from './components/modal/modal.module';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
     routing,
-    RiskModalModule.forRoot()
+    RiskModalModule.forRoot(),
+    RiskAccordionModule,
+    RiskSlidePanelModule
   ],
   providers: [
     AuthGuardService,
