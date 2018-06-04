@@ -91,17 +91,22 @@
             <h3>Pending Games <span class="counter-badge">{{ pendingGamesList.length }}</span></h3>
         </ng-template>
         <risk-accordion-panel [panelHeading]="pendingGames">
-            <div class="game-block" *ngFor="let game of pendingGamesList">
-                <risk-slide-panel [activePane]="left">
-                    <div leftPane>
+            <div class="game-block" *ngFor="let game of pendingGamesList; let i = index">
+                <risk-slide-panel>
+                    <ng-template #leftPane let-pane="activePane" let-slide="setPanelState">
                         <div class="title-block clearfix">
-                            <h4>{{game.title}} <i class="fas fa-angle-right"></i></h4>
+                            <p>{{pane}}</p>
+                            <h4 (click)="slide('right')">{{game.title}} <i class="fas fa-angle-right"></i></h4>
                             <div class="buttons-container">
                                 <button [disabled]="game.players.length < 2" type="button" class="btn btn-yellow">Start Game</button>
                                 <button type="button" class="btn btn-vermillion">Cancel Game</button>
                             </div>
                         </div>
-                    </div>
+                    </ng-template>
+                    <ng-template #rightPane let-slide="setPanelState">
+                        <p>Right side of the panel.</p>
+                        <button (click)="slide('left')" type="button" class="btn btn-yellow">Test</button>
+                    </ng-template>
                 </risk-slide-panel>
             </div>
         </risk-accordion-panel>

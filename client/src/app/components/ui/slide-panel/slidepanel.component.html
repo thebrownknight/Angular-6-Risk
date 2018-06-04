@@ -1,8 +1,9 @@
 <div class="panes" [@slide]="activePane">
     <div>
-        <ng-content select="[leftPane]"></ng-content>
+        <ng-container *ngTemplateOutlet="leftPane; context: ctx"></ng-container>
     </div>
     <div>
-        <ng-content select="[rightPane]"></ng-content>
+        <ng-container *ngTemplateOutlet="rightPane; context: ctx"></ng-container>
     </div>
+    
 </div>

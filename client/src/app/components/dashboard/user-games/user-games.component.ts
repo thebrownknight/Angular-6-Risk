@@ -73,7 +73,7 @@ export class UserGamesComponent implements OnInit {
                     code: game.code,
                     status: game.status
                 };
-                switch(game.status) {
+                switch (game.status) {
                     case 'CREATED':
                         this.pendingGamesList.push(gameDetails);
                         break;
