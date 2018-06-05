@@ -2,9 +2,20 @@
 @import '../../../../../assets/css/global/mixins';
 
 .tab-content {
-    @include rem(padding, 20px);
+    @include rem(padding, 15px 30px);
     background: $white;
     border-left: 2px solid lighten($light-gray, 10%);
     border-bottom: 2px solid lighten($light-gray, 10%);
     border-right: 2px solid lighten($light-gray, 10%);
+}
+
+:host-context(.vertical-tabs) {
+    .tab-content {
+        display: inline-block;
+        vertical-align: top;
+        width: 80%;
+        border-top: 2px solid lighten($light-gray, 10%);
+        min-height: 185px;
+        margin-left: -2px;
+    }
 }

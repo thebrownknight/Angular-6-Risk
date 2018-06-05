@@ -154,6 +154,10 @@
     @include opensans();
     font-weight: 400;
 }
+@mixin opensans-regular-italic() {
+    @include opensans-regular();
+    font-style: italic;
+}
 @mixin opensans-semibold() {
     @include opensans();
     font-weight: 600;

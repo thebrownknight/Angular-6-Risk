@@ -57,3 +57,18 @@ a {
         max-width: 1140px;
     }
 }
+
+.counter-badge {
+    @include border-radius(100%);
+    text-align: center;
+    display: inline-block;
+    vertical-align: middle;
+    @include raleway-regular();
+    width: 25px;
+    height: 25px;
+    background-color: $sunshine;
+    color: $white;
+    @include rem(margin-left, 8px);
+    @include rem(padding-top, 4px);
+    @include rem(font-size, 15px);
+}

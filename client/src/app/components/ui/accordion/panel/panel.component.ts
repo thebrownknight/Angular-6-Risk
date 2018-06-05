@@ -8,7 +8,7 @@ import { Output, TemplateRef, EventEmitter } from '@angular/core';
 })
 export class PanelComponent implements OnInit {
     @Input() opened = false;
-    @Input() panelHeading: TemplateRef<any>;
+    // @Input() panelHeading: TemplateRef<any>;
     @Output() toggle: EventEmitter<any> = new EventEmitter<any>();
 
     constructor() { }

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, TemplateRef } from '@angular/core';
 
 @Component({
   selector: 'risk-tab',
@@ -6,8 +6,7 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./tab.component.scss']
 })
 export class TabComponent {
-    @Input('title') title: String;
-    @Input('iconClass') iconClass: String;
+    @Input() heading: TemplateRef<any>;
     @Input() active = false;
 
     constructor() { }

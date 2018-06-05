@@ -8,25 +8,30 @@ import { PanelComponent } from './panel/panel.component';
 export class AccordionComponent implements AfterContentInit {
     @ContentChildren(PanelComponent) panels: QueryList<PanelComponent>;
 
-    ngAfterContentInit() {
-        // Open the first panel
-        this.panels.toArray()[0].opened = true;
+    constructor() { }
 
-        // Loop through all the panels
-        this.panels.toArray().forEach((panel: PanelComponent) => {
-            // Subscribe panel toggle event
-            panel.toggle.subscribe(() => {
-                // Open the panel
-                this.openPanel(panel);
-            })
+    ngAfterContentInit() {
+        this.panels.changes.subscribe((pls) => {
+            // Loop through all the panels
+            pls.toArray().forEach((panel: PanelComponent, index) => {
+                // Subscribe panel toggle event
+                panel.toggle.subscribe(() => {
+                    // Close all panel initially
+                    pls.toArray().forEach(p => {
+                        if (p !== panel) {
+                            p.opened = false;
+                        }
+                    });
+
+                    // Open the panel
+                    this.togglePanel(panel);
+                });
+            });
         });
     }
 
-    openPanel(panel: PanelComponent) {
-        // Close all panel initially
-        this.panels.toArray().forEach(p => p.opened = false);
-
+    togglePanel(panel: PanelComponent) {
         // Open the selected panel
-        panel.opened = true;
+        panel.opened = panel.opened === true ? false : true;
     }
 }

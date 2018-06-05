@@ -1,16 +1,35 @@
 <risk-header></risk-header>
 <div class="container dashboard">
     <risk-tabs>
-        <risk-tab title="Games" iconClass="fa-user-astronaut">
+        <ng-template #gamesHeading>
+            <i class="fas icon fa-user-astronaut"></i>
+            <span>Games</span>
+        </ng-template>
+        <risk-tab [heading]="gamesHeading">
             <risk-user-games></risk-user-games>
         </risk-tab>
-        <risk-tab title="Statistics" iconClass="fa-chart-line">
+
+        <ng-template #statisticsHeading>
+            <i class="fas icon fa-chart-line"></i>
+            <span>Statistics</span>
+        </ng-template>
+        <risk-tab [heading]="statisticsHeading">
             <risk-user-stats></risk-user-stats>
         </risk-tab>
-        <risk-tab title="Settings" iconClass="fa-cogs">
+
+        <ng-template #settingsHeading>
+            <i class="fas icon fa-cogs"></i>
+            <span>Settings</span>
+        </ng-template>
+        <risk-tab [heading]="settingsHeading">
             <risk-user-settings></risk-user-settings>
         </risk-tab>
-        <risk-tab title="Public Games" iconClass="fa-globe">
+
+        <ng-template #publicGamesHeading>
+            <i class="fas icon fa-globe"></i>
+            <span>Public Games</span>
+        </ng-template>
+        <risk-tab [heading]="publicGamesHeading">
             <risk-public-games></risk-public-games>
         </risk-tab>
     </risk-tabs>

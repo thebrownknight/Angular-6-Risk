@@ -86,61 +86,48 @@
     <button class="btn btn-yellow create-game" (click)="open(userGamesContent)"><i class="fas fa-plus"></i> Create Game</button>
 </div>
 <div class="games-info-list">
-    <risk-accordion>
-        <ng-template #pendingGames>
-            <h3>Pending Games <span class="counter-badge">{{ pendingGamesList.length }}</span></h3>
+    <risk-tabs orientation="vertical">
+        <ng-template #pendingGamesHeading>
+            <span>Pending Games <span class="counter-badge">{{ pendingGamesList.length }}</span></span>
         </ng-template>
-        <risk-accordion-panel [panelHeading]="pendingGames">
-            <div class="game-block" *ngFor="let game of pendingGamesList; let i = index">
-                <risk-slide-panel #rsp>
-                    <ng-template #leftPane>
-                        <div class="title-block clearfix">
-                            <h4 (click)="rsp.setPanelState('right')">{{game.title}} <i class="fas fa-angle-right"></i></h4>
-                            <div class="buttons-container">
-                                <button [disabled]="game.players.length < 2" type="button" class="btn btn-yellow">Start Game</button>
-                                <button type="button" class="btn btn-vermillion">Cancel Game</button>
-                            </div>
+        <risk-tab [heading]="pendingGamesHeading">
+            <div class="games-accordion-list">
+                <risk-accordion>
+                    <risk-accordion-panel *ngFor="let game of pendingGamesList">
+                        <div class="accordion-header">
+                            <h3>{{game.title}}</h3>
+                            <span class="pending-players">Waiting on {{game.pendingPlayers.length}} players</span>
+                            <span class="created-date">Created on: {{game.createdAt}}</span>
                         </div>
-                        <div class="quick-info-block">
-                            <p>Waiting on:</p>
-                            <ul>
-                                <li *ngFor="let p of game.pendingPlayers">
-                                    {{p.player.username}}
-                                    <button type="button" class="btn btn-vermillion">Nudge {{p.player.username}}</button>
-                                </li>
-                            </ul>
+                        <p>Players in game:</p>
+                        <ul>
+                            <li *ngFor="let p of game.players">
+                                {{(p.player.username === game.creator.username) ? p.player.username + ' (You)' : p.player.username}}
+                            </li>
+                        </ul>
+                        <div class="buttons-container">
+                            <button [disabled]="game.players.length < 2" type="button" class="btn btn-aqua">Start Game</button>
+                            <button type="button" class="btn btn-vermillion">Cancel Game</button>
                         </div>
-                    </ng-template>
-                    <ng-template #rightPane>
-                        <a [routerLink]="" (click)="rsp.setPanelState('left')">Back to pending games list</a>
-                        <div class="game-info">
-                            <p><span>Created at: {{game.createdAt}}</span></p>
-                            <p>Players invited:</p>
-                            <ul>
-                                <li *ngFor="let p of game.players">
-                                    {{p.player.username}}
-                                </li>
-                            </ul>
-                        </div>
-                    </ng-template>
-                </risk-slide-panel>
+                    </risk-accordion-panel>
+                </risk-accordion>
             </div>
-        </risk-accordion-panel>
+        </risk-tab>
 
-        <ng-template #inProgressGames>
-            <h3>In Progress Games</h3>
+        <ng-template #inProgressHeading>
+            <span>In Progress Games</span>
         </ng-template>
-        <risk-accordion-panel [panelHeading]="inProgressGames">
-            <p>In progress games!</p>
-        </risk-accordion-panel>
+        <risk-tab [heading]="inProgressHeading">
+            <p>In Progress Games!</p>
+        </risk-tab>
 
-        <ng-template #completedGames>
-            <h3>Completed Games</h3>
+        <ng-template #completedHeading>
+            <span>Completed Games</span>
         </ng-template>
-        <risk-accordion-panel [panelHeading]="completedGames">
+        <risk-tab [heading]="completedHeading">
             <p>Completed games!</p>
-        </risk-accordion-panel>
-    </risk-accordion>
+        </risk-tab>
+    </risk-tabs>
 </div>
 <!--
 1. Pending games

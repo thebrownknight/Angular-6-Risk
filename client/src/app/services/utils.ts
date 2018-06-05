@@ -29,8 +29,8 @@ export module Utils {
         if (inputDate === null || inputDate === undefined || inputDate === '') {
             return;
         }
-        
-        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             year = inputDate.getFullYear(),
             month = months[inputDate.getMonth()],
             date = inputDate.getDate(),
@@ -38,6 +38,6 @@ export module Utils {
             min = inputDate.getMinutes(),
             sec = inputDate.getSeconds();
 
-        return date + ',' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
+        return month + ', ' + date + ' ' + year + ' ' + hour + ':' + min;
     }
 }

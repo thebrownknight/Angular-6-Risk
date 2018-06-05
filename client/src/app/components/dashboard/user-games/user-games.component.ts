@@ -77,7 +77,7 @@ export class UserGamesComponent implements OnInit {
                 };
                 switch (game.status) {
                     case 'CREATED':
-                        let pendingGameDetails = gameDetails as PendingGameDetails;
+                        const pendingGameDetails = gameDetails as PendingGameDetails;
                         pendingGameDetails.pendingPlayers = game.players.filter((player) => {
                             return player.status === 'PENDING';
                         });

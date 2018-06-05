@@ -1,3 +1,48 @@
 .dashboard {
     @include rem(padding-top, 30px);
+
+    // User Games section styles
+    .games-info-list {
+        @include rem(margin-top, 20px);
+        
+        .games-accordion-list {
+            .panel {
+                .panel-heading {
+                    .accordion-header {
+                        .pending-players {
+                            @include opensans-regular-italic();
+                            @include rem(font-size, 14px);
+                            display: inline-block;
+                            vertical-align: top;
+                            color: $sunshine;
+                            @include rem(margin-left, 20px);
+                        }
+                        .created-date {
+                            color: $white;
+                            @include rem(font-size, 12px);
+                            position: absolute;
+                            right: 45px;
+                            top: 12px;
+                        }
+                    }
+                }
+                .panel-body {
+                    background: $off-white;
+
+                    .buttons-container {
+                        text-align: right;
+
+                        .btn {
+                            @include rem(padding, 8px 10px);
+                            @include rem(font-size, 14px);
+        
+                            &:first-child {
+                                @include rem(margin-right, 15px);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

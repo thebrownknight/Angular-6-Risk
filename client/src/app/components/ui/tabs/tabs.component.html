@@ -3,8 +3,7 @@
         <ul>
             <li *ngFor="let tab of tabs" [ngClass]="tab.active ? 'active tab' : 'tab'">
                 <a [routerLink]="" (click)="selectTab(tab)">
-                    <i [ngClass]="tab.iconClass !== '' ? tab.iconClass + ' fas icon' : 'fas icon'"></i>
-                    <span>{{tab.title}}</span>
+                    <ng-container *ngTemplateOutlet="tab.heading"></ng-container>
                 </a>
             </li>
         </ul>

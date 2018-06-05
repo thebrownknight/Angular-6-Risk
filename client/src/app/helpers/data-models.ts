@@ -48,5 +48,5 @@ export interface GameDetails {
  * Model for pending game.
  */
 export interface PendingGameDetails extends GameDetails {
-    pendingPlayers: Array<any>
+    pendingPlayers: Array<any>;
 }

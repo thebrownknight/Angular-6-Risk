@@ -1,7 +1,8 @@
 <div class="panel">
     <div class="panel-heading" (click)="toggle.emit()">
-        <ng-container *ngTemplateOutlet="panelHeading"></ng-container>
-        <i class="fas fa-angle-down"></i>
+        <!-- <ng-container *ngTemplateOutlet="panelHeading"></ng-container> -->
+        <ng-content select=".accordion-header"></ng-content>
+        <i [ngClass] = "{'fas': true, 'fa-angle-down': !opened, 'fa-angle-up': opened}"></i>
     </div>
     <div class="panel-body" *ngIf="opened">
         <ng-content></ng-content>

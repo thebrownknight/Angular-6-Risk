@@ -1,4 +1,5 @@
-import { Component, ContentChildren, QueryList, AfterContentInit } from '@angular/core';
+import { Component, Input, ContentChildren } from '@angular/core';
+import { QueryList, AfterContentInit, HostBinding } from '@angular/core';
 import { TabComponent } from './tab/tab.component';
 
 @Component({
@@ -7,6 +8,17 @@ import { TabComponent } from './tab/tab.component';
   styleUrls: ['./tabs.component.scss']
 })
 export class TabsComponent implements AfterContentInit {
+    @Input() orientation = 'horizontal';
+
+    @HostBinding('class.horizontal-tabs')
+    public get isHorizontal(): Boolean {
+        return this.orientation === 'horizontal';
+    }
+
+    @HostBinding('class.vertical-tabs')
+    public get isVertical(): Boolean {
+        return this.orientation === 'vertical';
+    }
 
     @ContentChildren(TabComponent) tabs: QueryList<TabComponent>;
     constructor() { }
