@@ -1,0 +1,38 @@
+@import '../../../../assets/css/global/variables';
+@import '../../../../assets/css/global/mixins';
+
+.games-info-list {
+    .game-block {
+        background: $off-white;
+        border: 1px solid $sunshine;
+        @include rem(padding, 10px);
+
+        .title-block {
+            h4 {
+                cursor: pointer;
+                display: inline-block;
+                @include opensans-bold();
+                color: $dark-gray;
+                @include rem(font-size, 16px);
+                vertical-align: middle;
+                @include transition(color 0.25s ease-in);
+                @include rem(margin-bottom, 10px);
+                text-decoration: underline;
+
+                &:hover {
+                    color: $powder;
+                }
+            }
+            .buttons-container {
+                .btn {
+                    @include rem(padding, 8px 10px);
+                    @include rem(font-size, 14px);
+
+                    &:first-child {
+                        @include rem(margin-right, 15px);
+                    }
+                }
+            }
+        }
+    }
+}

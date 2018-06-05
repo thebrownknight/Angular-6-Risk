@@ -24,4 +24,20 @@ export module Utils {
 
         return mergedObj;
     }
+
+    export function formatDate(inputDate) {
+        if (inputDate === null || inputDate === undefined || inputDate === '') {
+            return;
+        }
+        
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+            year = inputDate.getFullYear(),
+            month = months[inputDate.getMonth()],
+            date = inputDate.getDate(),
+            hour = inputDate.getHours(),
+            min = inputDate.getMinutes(),
+            sec = inputDate.getSeconds();
+
+        return date + ',' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
+    }
 }

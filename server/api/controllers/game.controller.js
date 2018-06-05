@@ -60,7 +60,7 @@ module.exports.createGame = function(req, res) {
         if (req.body.gameType === 'private') {
             // Add the creator as a player by default
             game.players.push({
-                status: 'PENDING',
+                status: 'JOINED',
                 player: req.payload._id
             });
             var playersArray = req.body.players;

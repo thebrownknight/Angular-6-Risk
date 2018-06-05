@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { SlidePanelComponent } from './slidepanel.component';
-import { SlidePanelService } from './slidepanel.service';
 
 @NgModule({
     imports: [
@@ -13,9 +12,6 @@ import { SlidePanelService } from './slidepanel.service';
     ],
     exports: [
         SlidePanelComponent
-    ],
-    providers: [
-        SlidePanelService
     ]
 })
 export class RiskSlidePanelModule { }

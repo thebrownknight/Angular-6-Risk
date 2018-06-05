@@ -92,20 +92,36 @@
         </ng-template>
         <risk-accordion-panel [panelHeading]="pendingGames">
             <div class="game-block" *ngFor="let game of pendingGamesList; let i = index">
-                <risk-slide-panel>
-                    <ng-template #leftPane let-pane="activePane" let-slide="setPanelState">
+                <risk-slide-panel #rsp>
+                    <ng-template #leftPane>
                         <div class="title-block clearfix">
-                            <p>{{pane}}</p>
-                            <h4 (click)="slide('right')">{{game.title}} <i class="fas fa-angle-right"></i></h4>
+                            <h4 (click)="rsp.setPanelState('right')">{{game.title}} <i class="fas fa-angle-right"></i></h4>
                             <div class="buttons-container">
                                 <button [disabled]="game.players.length < 2" type="button" class="btn btn-yellow">Start Game</button>
                                 <button type="button" class="btn btn-vermillion">Cancel Game</button>
                             </div>
                         </div>
+                        <div class="quick-info-block">
+                            <p>Waiting on:</p>
+                            <ul>
+                                <li *ngFor="let p of game.pendingPlayers">
+                                    {{p.player.username}}
+                                    <button type="button" class="btn btn-vermillion">Nudge {{p.player.username}}</button>
+                                </li>
+                            </ul>
+                        </div>
                     </ng-template>
-                    <ng-template #rightPane let-slide="setPanelState">
-                        <p>Right side of the panel.</p>
-                        <button (click)="slide('left')" type="button" class="btn btn-yellow">Test</button>
+                    <ng-template #rightPane>
+                        <a [routerLink]="" (click)="rsp.setPanelState('left')">Back to pending games list</a>
+                        <div class="game-info">
+                            <p><span>Created at: {{game.createdAt}}</span></p>
+                            <p>Players invited:</p>
+                            <ul>
+                                <li *ngFor="let p of game.players">
+                                    {{p.player.username}}
+                                </li>
+                            </ul>
+                        </div>
                     </ng-template>
                 </risk-slide-panel>
             </div>

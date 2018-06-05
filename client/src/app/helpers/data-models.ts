@@ -29,7 +29,7 @@ export interface GamePayload {
 }
 
 /**
- * Model for returned game.
+ * Model for shared details of returned game.
  */
 export interface GameDetails {
     _id: string;
@@ -42,4 +42,11 @@ export interface GameDetails {
     gameType: string;
     code: string;
     status: string;
+}
+
+/**
+ * Model for pending game.
+ */
+export interface PendingGameDetails extends GameDetails {
+    pendingPlayers: Array<any>
 }

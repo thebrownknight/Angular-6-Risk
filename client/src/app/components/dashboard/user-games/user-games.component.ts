@@ -5,7 +5,9 @@ import { RiskModal, ModalDismissReasons, RiskModalRef } from '../../ui/modal/mod
 import { DashboardService } from '../../../services/dashboard.service';
 
 import { UsernameValidator } from '../../../helpers/custom-validators/existing-username-validator';
-import { GamePayload, GameDetails } from '../../../helpers/data-models';
+import { GamePayload, GameDetails, PendingGameDetails } from '../../../helpers/data-models';
+
+import { Utils } from '../../../services/utils';
 
 @Component({
   selector: 'risk-user-games',
@@ -56,14 +58,14 @@ export class UserGamesComponent implements OnInit {
 
     getUserGames() {
         this.dashboardService.getUserGames().subscribe((games) => {
-            console.log(games);
+            // console.log(games);
 
             // Take incoming games and set the gamesList variable
             // to display on the front-end
             games.forEach((game) => {
-                const gameDetails: GameDetails = {
+                const gameDetails  = {
                     _id: game._id,
-                    createdAt: game.createdAt,
+                    createdAt: Utils.formatDate(new Date(game.createdAt)),
                     title: game.title,
                     creator: game.creator,
                     players: game.players,
@@ -75,7 +77,12 @@ export class UserGamesComponent implements OnInit {
                 };
                 switch (game.status) {
                     case 'CREATED':
-                        this.pendingGamesList.push(gameDetails);
+                        let pendingGameDetails = gameDetails as PendingGameDetails;
+                        pendingGameDetails.pendingPlayers = game.players.filter((player) => {
+                            return player.status === 'PENDING';
+                        });
+                        // console.log(pendingGameDetails);
+                        this.pendingGamesList.push(pendingGameDetails);
                         break;
                     case 'IN PROGRESS':
                         break;

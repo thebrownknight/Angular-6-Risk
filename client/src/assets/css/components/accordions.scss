@@ -45,36 +45,6 @@
             border-left: 2px solid $light-gray;
             border-bottom: 2px solid $light-gray;
             border-right: 2px solid $light-gray;
-
-            > .game-block {
-                .title-block {
-                    h4 {
-                        cursor: pointer;
-                        display: inline-block;
-                        @include opensans-regular();
-                        color: $dark-gray;
-                        @include rem(font-size, 16px);
-                        vertical-align: middle;
-                        @include transition(color 0.25s ease-in);
-
-                        &:hover {
-                            color: $powder;
-                        }
-                    }
-                    .buttons-container {
-                        display: inline-block;
-
-                        .btn {
-                            @include rem(padding, 8px 10px);
-                            @include rem(font-size, 14px);
-
-                            &:first-child {
-                                @include rem(margin-right, 5px);
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 }
