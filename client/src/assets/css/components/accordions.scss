@@ -1,7 +1,7 @@
 .risk-accordion {
     .panel {
         @include rem(margin-bottom, 20px);
-        border: 1px solid $powder;
+        border: 1px solid $sunshine;
 
         .panel-heading {
             position: relative;
@@ -25,15 +25,32 @@
             > i {
                 position: absolute;
                 right: 15px;
-                top: 10px;
+                top: 50%;
+                margin-top: -11px;
                 color: $white;
                 @include rem(font-size, 22px);
             }
         }
 
         .panel-body {
-            @include rem(padding, 12px);
-            border-top: 1px solid $powder;
+            @include rem(padding, 15px);
+            border-top: 1px solid $sunshine;
+
+            p, ul li {
+                color: $dark-gray;
+                @include opensans-regular();
+                @include rem(font-size, 14px);
+            }
+
+            ul {
+                @include rem(padding-left, 15px);
+
+                li {
+                    &:not(:last-child) {
+                        @include rem(margin-bottom, 7px);
+                    }
+                }
+            }
         }
     }
 }

@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 
 import { RiskModal, ModalDismissReasons, RiskModalRef } from '../../ui/modal/modal.module';
+import { AuthenticationService } from '../../../services/authentication.service';
 import { DashboardService } from '../../../services/dashboard.service';
 
 import { UsernameValidator } from '../../../helpers/custom-validators/existing-username-validator';
-import { GamePayload, GameDetails, PendingGameDetails } from '../../../helpers/data-models';
+import { UserDetails, GamePayload, GameDetails, PendingGameDetails } from '../../../helpers/data-models';
 
 import { Utils } from '../../../services/utils';
 
@@ -15,16 +16,22 @@ import { Utils } from '../../../services/utils';
   styleUrls: ['./user-games.component.scss']
 })
 export class UserGamesComponent implements OnInit {
+    loggedInUser: UserDetails;
     riskModalRef: any;
     gameCreationForm: FormGroup;
-    pendingGamesList: GameDetails[] = [];
-
+    pendingGamesList: PendingGameDetails[] = [];
+    inProgressGamesList: GameDetails[] = [];
+    completedGamesList: GameDetails[] = [];
 
     constructor(private modalService: RiskModal,
         private formBuilder: FormBuilder,
+        private authService: AuthenticationService,
         private dashboardService: DashboardService,
         private usernameValidator: UsernameValidator) {
         this.createForm();
+
+        // Get and store user details for customized output on games lists
+        this.loggedInUser = this.authService.getUserDetails();
     }
 
     ngOnInit() {
@@ -63,7 +70,7 @@ export class UserGamesComponent implements OnInit {
             // Take incoming games and set the gamesList variable
             // to display on the front-end
             games.forEach((game) => {
-                const gameDetails  = {
+                let gameDetails  = {
                     _id: game._id,
                     createdAt: Utils.formatDate(new Date(game.createdAt)),
                     title: game.title,
@@ -81,10 +88,12 @@ export class UserGamesComponent implements OnInit {
                         pendingGameDetails.pendingPlayers = game.players.filter((player) => {
                             return player.status === 'PENDING';
                         });
-                        // console.log(pendingGameDetails);
+                        pendingGameDetails.loggedInUserPending = pendingGameDetails.pendingPlayers.some(e => e.player._id === this.loggedInUser._id);
+
                         this.pendingGamesList.push(pendingGameDetails);
                         break;
                     case 'IN PROGRESS':
+
                         break;
                     case 'COMPLETED':
                         break;

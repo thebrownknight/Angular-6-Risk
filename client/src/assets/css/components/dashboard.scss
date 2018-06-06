@@ -4,30 +4,63 @@
     // User Games section styles
     .games-info-list {
         @include rem(margin-top, 20px);
-        
+
         .games-accordion-list {
             .panel {
                 .panel-heading {
+                    @include rem(padding, 10px 45px 10px 10px);
+
                     .accordion-header {
+                        @include flexbox();
+                        @include justify-content(flex-start);
+                        @include align-items(center);
+
+                        > span {
+                            @include rem(margin-left, 20px);
+                        }
+
                         .pending-players {
                             @include opensans-regular-italic();
                             @include rem(font-size, 14px);
                             display: inline-block;
                             vertical-align: top;
                             color: $sunshine;
-                            @include rem(margin-left, 20px);
+                        }
+                        .pending-players, .join-game {
+                            @include flex-grow(1);
                         }
                         .created-date {
                             color: $white;
                             @include rem(font-size, 12px);
-                            position: absolute;
-                            right: 45px;
-                            top: 12px;
+                            @include opensans-regular();
                         }
                     }
                 }
                 .panel-body {
                     background: $off-white;
+
+                    .game-players {
+                        list-style-type: none;
+                        @include rem(padding-left, 0);
+
+                        > li {
+                            &:before {
+                                content: '\f007';
+                                font-family: 'Font Awesome 5 Free';
+                                color: $dark-gray;
+                                @include rem(margin-right, 5px);
+                            }
+
+                            .joined-status {
+                                @include raleway-regular();
+                                color: $powder;
+                            }
+                            .pending-status {
+                                @include raleway-regular();
+                                color: $vermillion;
+                            }
+                        }
+                    }
 
                     .buttons-container {
                         text-align: right;
@@ -35,7 +68,7 @@
                         .btn {
                             @include rem(padding, 8px 10px);
                             @include rem(font-size, 14px);
-        
+
                             &:first-child {
                                 @include rem(margin-right, 15px);
                             }

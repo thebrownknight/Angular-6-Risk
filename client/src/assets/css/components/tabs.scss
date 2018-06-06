@@ -60,6 +60,7 @@
                     color: $dark-gray;
                     line-height: 1;
                     @include transition(color 0.3s);
+                    outline: 0;
 
                     &:hover {
                         text-decoration: none;
@@ -111,8 +112,16 @@
 
 .vertical-tabs {
     .tabs {
-        nav ul li a > span {
-            @include rem(font-size, 16px);
+        nav ul li {
+            a > span {
+                @include rem(font-size, 16px);
+            }
+
+            &.active {
+                a > span {
+                    @include raleway-bold();
+                }
+            }
         }
     }
 }

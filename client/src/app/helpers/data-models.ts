@@ -49,4 +49,5 @@ export interface GameDetails {
  */
 export interface PendingGameDetails extends GameDetails {
     pendingPlayers: Array<any>;
+    [key: string]: any;
 }

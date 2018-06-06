@@ -5,8 +5,6 @@
     cursor: pointer;
     @include border-radius(3px);
     border: none;
-    //box-shadow: 0px 2px 4px $dark-gray;
-    @include rem(padding, 10px 20px);
     @include transition(0.3s all ease-in);
     color: $white;
     text-transform: uppercase;
@@ -51,4 +49,18 @@
         background: lighten($dark-gray, 20%);
         color: $dark-gray;
     }
+}
+
+// Sizes
+.btn-small {
+    @extend .btn;
+    @include rem(padding, 5px 10px);
+
+    @include mq("tablet") {
+        @include rem(font-size, 14px);
+    }
+}
+.btn-large {
+    @extend .btn;
+    @include rem(padding, 10px 20px);
 }

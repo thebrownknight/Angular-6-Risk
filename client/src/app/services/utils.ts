@@ -25,12 +25,12 @@ export module Utils {
         return mergedObj;
     }
 
-    export function formatDate(inputDate) {
+    export function formatDate(inputDate, withTime = false) {
         if (inputDate === null || inputDate === undefined || inputDate === '') {
             return;
         }
 
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
             year = inputDate.getFullYear(),
             month = months[inputDate.getMonth()],
             date = inputDate.getDate(),
@@ -38,6 +38,11 @@ export module Utils {
             min = inputDate.getMinutes(),
             sec = inputDate.getSeconds();
 
-        return month + ', ' + date + ' ' + year + ' ' + hour + ':' + min;
+        let formattedDate = month + ', ' + date + ' ' + year;
+        if (withTime) {
+            formattedDate += ' ' + hour + ':' + min;
+        }
+
+        return formattedDate;
     }
 }

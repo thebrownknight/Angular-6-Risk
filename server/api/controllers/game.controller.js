@@ -18,7 +18,7 @@ module.exports.getGamesByUser = function(req, res) {
     } else {
         Game.
             find({
-                creator: req.payload._id
+                'players.player': req.payload._id
             })
             .populate('creator')
             .populate('players.player')
