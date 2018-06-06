@@ -1,0 +1,8 @@
+<div *ngFor="let alert of alerts" class="{{ cssClass(alert) }} rs-box rs-bar rs-effect-slidetop">
+    <div class="alert-content" *ngIf="alertContent === 'template'">
+        <ng-container *ngTemplateOutlet="alert.message"></ng-container>
+    </div>
+    <div class="alert-content" *ngIf="alertContent === 'string'" [innerHTML]="alert.message"></div>
+    
+    <a class="rs-close" (click)="removeAlert(alert)"><i class="fas fa-times"></i></a>
+</div>

@@ -23,7 +23,7 @@ export class DashboardService {
         return this.request('get', '/api/games/public');
     }
     public createNewGame(gamePayload: GamePayload): Observable<any> {
-        return this.request('post', '/api/games/create', gamePayload);
+        return this.request('post', '/api/games/create', gamePayload, true);
     }
 
     private getToken(): string {
@@ -34,11 +34,17 @@ export class DashboardService {
     }
 
     // Private helper method to create requests
-    private request(method: 'post'|'get', route: string, payload?): Observable<any> {
+    private request(method: 'post'|'get', route: string, payload?: any, authenticate?: boolean): Observable<any> {
         let baseUrl;
 
         if (method === 'post') {
-            baseUrl = this.http.post(route, payload);
+            if (authenticate) {
+                baseUrl = this.http.post(route, payload, {
+                    headers: { Authorization: `Bearer ${this.getToken()}` }
+                });
+            } else {
+                baseUrl = this.http.post(route, payload);
+            }
         } else {
             baseUrl = this.http.get(route, {
                 headers: { Authorization: `Bearer ${this.getToken()}` }

@@ -1,0 +1,108 @@
+.rs-box {
+    position: fixed;
+    background: $powder;
+    @include rem(padding-right, 22px);
+    line-height: 1.4;
+    z-index: 1000;
+    pointer-events: auto;
+    box-shadow: 0px 1px 4px $dark-gray;
+    top: 0;
+    left: 0;
+    width: 100%;
+
+    .alert-content {
+        @include flexbox();
+        @include justify-content(flex-start);
+        @include align-items(center);
+    }
+
+    .rs-close {
+        cursor: pointer;
+        background: transparent;
+        top: 50%;
+        right: 20px;
+        width: 20px;
+        height: 20px;
+        @include transform(translateY(-50%));
+        position: absolute;
+        overflow: hidden;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+
+        &:hover, &:focus {
+            outline: none;
+
+            > i {
+                color: darken($vermillion, 10%);
+            }
+        }
+
+        > i {
+            @include transition(color 0.2s);
+            color: $vermillion;
+            @include rem(font-size, 20px);
+        }
+    }
+
+    &.rs-effect-slidetop {
+        @include animation(animSlideTop);
+        @include animation-duration(0.3s);
+
+        .icon-container {
+            text-align: center;
+            background: darken($aqua, 10%);
+            @include rem(padding, 15px 20px);
+
+            .icon {
+                @include rem(font-size, 24px);
+
+                color: $sunshine;
+            }
+        }
+
+        .icon, p {
+            @include animation-name(animScaleUp);
+            @include animation-duration(0.3s);
+            @include animation-delay(0.2s);
+            @include animation-fill-mode(both);
+        }
+        p {
+            margin-bottom: 0;
+            @include rem(padding, 0 18px);
+            color: $white;
+            @include rem(font-size, 20px);
+            @include raleway-regular();
+            @include animation-name(animFade);
+        }
+    }
+
+    &.rs-hide {
+        @include animation-direction(reverse);
+    }
+}
+
+@include keyframes(animFade) {
+    0% { opacity: 0; }
+	100% { opacity: 1; }
+}
+
+@include keyframes(animScaleUp) {
+    0% {
+        opacity: 0;
+        @include transform(scale3d(0, 0, 1));
+    }
+
+    100% {
+        opacity: 1;
+        @include transform(scale3d(1, 1, 1));
+    }
+}
+
+@include keyframes(animSlideTop) {
+    0% {
+        @include transform(translate3d(0, -100%, 0));
+    }
+    100% {
+        @include transform(translate3d(0, 0, 0));
+    }
+}

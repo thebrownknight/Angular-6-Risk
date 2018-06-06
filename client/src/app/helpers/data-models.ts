@@ -49,5 +49,27 @@ export interface GameDetails {
  */
 export interface PendingGameDetails extends GameDetails {
     pendingPlayers: Array<any>;
+    loggedInUserPending: Boolean;
     [key: string]: any;
+}
+
+/****************************************/
+// Alert data models.
+/****************************************/
+export class Alert {
+    type: AlertType;
+    message: any;
+    alertId: string;
+    keepAfterRouteChange: boolean;
+
+    constructor(init?: Partial<Alert>) {
+        Object.assign(this, init);
+    }
+}
+
+export enum AlertType {
+    Success,
+    Error,
+    Info,
+    Warning
 }

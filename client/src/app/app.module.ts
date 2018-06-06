@@ -12,6 +12,7 @@ import { AuthGuardService } from './services/auth-guard.service';
 import { JwtInterceptorProvider } from './helpers/jwt.interceptor';
 import { ErrorInterceptorProvider } from './helpers/error.interceptor';
 import { AuthenticationService } from './services/authentication.service';
+import { AlertService } from './services/alert.service';
 
 import { UsernameValidator } from './helpers/custom-validators/existing-username-validator';
 
@@ -30,6 +31,7 @@ import { TabComponent } from './components/ui/tabs/tab/tab.component';
 import { RiskModalModule } from './components/ui/modal/modal.module';
 import { RiskAccordionModule } from './components/ui/accordion/accordion.module';
 import { RiskSlidePanelModule } from './components/ui/slide-panel/slidepanel.module';
+import { RiskAlertModule } from './components/ui/alert/alert.module';
 
 @NgModule({
   declarations: [
@@ -55,11 +57,13 @@ import { RiskSlidePanelModule } from './components/ui/slide-panel/slidepanel.mod
     routing,
     RiskModalModule.forRoot(),
     RiskAccordionModule,
-    RiskSlidePanelModule
+    RiskSlidePanelModule,
+    RiskAlertModule
   ],
   providers: [
     AuthGuardService,
     AuthenticationService,
+    AlertService,
     UsernameValidator,
     JwtInterceptorProvider,
     ErrorInterceptorProvider

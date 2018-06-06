@@ -27,7 +27,7 @@ module.exports.getGamesByUser = function(req, res) {
                     res.status(404).json(err);
                     return;
                 }
-                console.log("Populated Game:\n " + games);
+                // console.log("Populated Game:\n " + games);
                 res.status(200).json(games);
             });
     }

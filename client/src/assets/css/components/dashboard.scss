@@ -6,14 +6,37 @@
         @include rem(margin-top, 20px);
 
         .games-accordion-list {
+            &.user-created-games {
+                @include rem(margin-bottom, 40px);
+            }
+
+            > h3 {
+                @include raleway-bold();
+                @include rem(font-size, 18px);
+                @include rem(margin-bottom, 5px);
+                color: $dark-gray;
+            }
             .panel {
+                border: 1px solid $dark-gray;
+
                 .panel-heading {
                     @include rem(padding, 10px 45px 10px 10px);
+                    background-color: $off-white;
 
                     .accordion-header {
                         @include flexbox();
                         @include justify-content(flex-start);
                         @include align-items(center);
+
+                        .game-type {
+                            color: $powder;
+                            @include rem(font-size, 18px);
+                            margin-right: 10px;
+                        }
+
+                        h3 {
+                            color: $dark-gray;
+                        }
 
                         > span {
                             @include rem(margin-left, 20px);
@@ -24,20 +47,26 @@
                             @include rem(font-size, 14px);
                             display: inline-block;
                             vertical-align: top;
-                            color: $sunshine;
+                            color: darken($sunshine, 10%);
                         }
                         .pending-players, .join-game {
                             @include flex-grow(1);
                         }
                         .created-date {
-                            color: $white;
+                            color: $dark-gray;
                             @include rem(font-size, 12px);
                             @include opensans-regular();
                         }
                     }
                 }
+
+                > i {
+                    color: $dark-gray;
+                }
+
                 .panel-body {
                     background: $off-white;
+                    border-top: 1px solid darken($off-white, 20%);
 
                     .game-players {
                         list-style-type: none;
@@ -52,11 +81,11 @@
                             }
 
                             .joined-status {
-                                @include raleway-regular();
+                                @include raleway-bold();
                                 color: $powder;
                             }
                             .pending-status {
-                                @include raleway-regular();
+                                @include raleway-bold();
                                 color: $vermillion;
                             }
                         }

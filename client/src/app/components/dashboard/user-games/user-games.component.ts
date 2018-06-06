@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 
 import { RiskModal, ModalDismissReasons, RiskModalRef } from '../../ui/modal/modal.module';
+import { AlertService } from '../../../services/alert.service';
 import { AuthenticationService } from '../../../services/authentication.service';
 import { DashboardService } from '../../../services/dashboard.service';
 
@@ -19,12 +20,18 @@ export class UserGamesComponent implements OnInit {
     loggedInUser: UserDetails;
     riskModalRef: any;
     gameCreationForm: FormGroup;
-    pendingGamesList: PendingGameDetails[] = [];
+    gameCreationFormSubmitted: Boolean;
+
+    pendingGamesList = {
+        userCreatedGames: [],
+        invitedGames: []
+    };
     inProgressGamesList: GameDetails[] = [];
     completedGamesList: GameDetails[] = [];
 
     constructor(private modalService: RiskModal,
         private formBuilder: FormBuilder,
+        private alertService: AlertService,
         private authService: AuthenticationService,
         private dashboardService: DashboardService,
         private usernameValidator: UsernameValidator) {
@@ -63,14 +70,20 @@ export class UserGamesComponent implements OnInit {
         });
     }
 
+    testNotification(content) {
+        this.alertService.showSuccessAlert(content);
+    }
+
     getUserGames() {
+        this.clearGameLists();
+
         this.dashboardService.getUserGames().subscribe((games) => {
             // console.log(games);
 
             // Take incoming games and set the gamesList variable
             // to display on the front-end
             games.forEach((game) => {
-                let gameDetails  = {
+                const gameDetails  = {
                     _id: game._id,
                     createdAt: Utils.formatDate(new Date(game.createdAt)),
                     title: game.title,
@@ -88,9 +101,16 @@ export class UserGamesComponent implements OnInit {
                         pendingGameDetails.pendingPlayers = game.players.filter((player) => {
                             return player.status === 'PENDING';
                         });
-                        pendingGameDetails.loggedInUserPending = pendingGameDetails.pendingPlayers.some(e => e.player._id === this.loggedInUser._id);
+                        pendingGameDetails.loggedInUserPending =
+                            pendingGameDetails.pendingPlayers.some(e => e.player._id === this.loggedInUser._id);
 
-                        this.pendingGamesList.push(pendingGameDetails);
+                        // Break out user created and invited games
+                        if (this.loggedInUser._id === pendingGameDetails.creator._id) {
+                            this.pendingGamesList.userCreatedGames.push(pendingGameDetails);
+                        } else {
+                            this.pendingGamesList.invitedGames.push(pendingGameDetails);
+                        }
+
                         break;
                     case 'IN PROGRESS':
 
@@ -103,31 +123,49 @@ export class UserGamesComponent implements OnInit {
         }, (err) => {
             console.error(err);
         });
-        console.log('Getting user games.');
     }
 
     createGame() {
-        const formModel = this.gameCreationForm.value;
-        // Create the gameDetails containing values from the form
-        const gameDetails: GamePayload = {
-            title: formModel.title as string,
-            gameType: formModel.gameType as string,
-            players: formModel.players as Array<string>
-        };
+        this.gameCreationFormSubmitted = true;
 
-        this.dashboardService.createNewGame(gameDetails).subscribe((createdGame) => {
-            // We've successfully created a game,
-            // Now we dismiss the modal and display the user's game list
-            this.riskModalRef.close(() => {
-                this.getUserGames();
+        if (this.gameCreationForm.valid) {
+            const formModel = this.gameCreationForm.value;
+            // Extract the usernames into a simple string array
+            const nPlayers = formModel.usernames.map((name) => {
+                return name.uname;
             });
-        }, (err) => {
-            console.error(err);
-        });
+
+            // Create the gameDetails containing values from the form
+            const gameDetails: GamePayload = {
+                title: formModel.title as string,
+                gameType: formModel.gameType as string,
+                players: nPlayers as Array<string>
+            };
+
+            this.dashboardService.createNewGame(gameDetails).subscribe((createdGame) => {
+                // We've successfully created a game,
+                // Now we dismiss the modal and display the user's game list
+                console.log(createdGame);
+
+                if (createdGame) {
+                    // Close the modal
+                    this.riskModalRef.close();
+
+                    // Show a notification
+                    this.alertService.showSuccessAlert(
+                    '<div class="icon-container"><i class="fas fa-check icon"></i></div><p>New game `' + createdGame.title + '` created!'
+                    );
+                    // Retrieve the new user's game list
+                    this.getUserGames();
+                }
+            }, (err) => {
+                console.error(err);
+            });
+        }
     }
 
     /**
-     * Methods for the dynamic email addresses to send invites to
+     * Methods for the dynamic usernames to send invites to
      */
     get usernames(): FormArray {
         return this.gameCreationForm.get('usernames') as FormArray;
@@ -153,7 +191,7 @@ export class UserGamesComponent implements OnInit {
         this.usernames.removeAt(index);
     }
 
-    /** End dynamic email methods **/
+    /** End dynamic usernames methods **/
 
     private getDismissReason(reason: any): string {
         if (reason === ModalDismissReasons.ESC) {
@@ -163,6 +201,11 @@ export class UserGamesComponent implements OnInit {
         } else {
             return `with ${reason}`;
         }
+    }
+
+    private clearGameLists(): void {
+        this.pendingGamesList.userCreatedGames = [];
+        this.pendingGamesList.invitedGames = [];
     }
 
     // Reactive form methods

@@ -74,6 +74,9 @@ export class AuthenticationService {
     /********************
      * Public methods
      ********************/
+    /*
+     * Get the user details.
+     */
     public getUserDetails(): UserDetails {
       const token = this.getToken();
       let payload;

@@ -13,8 +13,13 @@
                     <label class="input-label">
                         <span class="input-label-content">Game Title</span>
                         <p class="help-text">Enter the title of the game.</p>
-                        <input placeholder="My Awesome Risk Game" type="text" class="input-field" formControlName="title">
+                        <input placeholder="My Awesome Risk Game" type="text" [ngClass]="{'input-field': true, 'error': !this.gameCreationForm.get('title').valid && gameCreationFormSubmitted}" formControlName="title">
                     </label>
+                    <div *ngIf="!this.gameCreationForm.get('title').valid && gameCreationFormSubmitted && this.gameCreationForm.get('title').errors !== null" class="error-container">
+                        <p *ngIf="this.gameCreationForm.get('title').errors.required">
+                            Please enter the title of the game you are creating.
+                        </p>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="input-label">
@@ -44,16 +49,22 @@
                             <p class="help-text">Enter the usernames of the players you want to invite. The users need to already have registered and created a username. You must have at least one other user playing with you and you can only add up to a MAXIMUM OF 5 OTHER PLAYERS.</p>
                         </label>
                         <div class="dynamic-username-container" *ngFor="let username of usernames.controls; let i=index" [formGroupName]="i">
-                            <input placeholder="Enter player {{i + 1}}'s username" type="text" class="input-field" formControlName="uname">
+                            <input placeholder="Enter player {{i + 1}}'s username" type="text" [ngClass]="{'input-field': true, 'error': !usernames.at(i).get('uname').valid && gameCreationFormSubmitted}" formControlName="uname">
                             <span *ngIf="usernames.at(i).get('uname').status === 'PENDING'" class="fas fa-spinner fa-spin status-icon"></span>
                             <span *ngIf="usernames.at(i).get('uname').errors === null && usernames.at(i).get('uname').status === 'VALID'" class="fas fa-check status-icon"></span>
                             <button [hidden]="i === 0" type="button" class="remove-username" (click)="removeUsername(i)">
                                 <i class="fas fa-minus"></i>
                             </button>
 
-                            <div *ngIf="usernames.at(i).get('uname').touched && usernames.at(i).get('uname').errors !== null" class="username-error">
+                            <div *ngIf="!usernames.at(i).get('uname').valid && usernames.at(i).get('uname').errors !== null" class="error-container">
                                 <p *ngIf="usernames.at(i).get('uname').errors.usernameDoesNotExist">
                                     Username does not exist! Make sure you are spelling the username correctly or the user you are entering has registered on the site.
+                                </p>
+                                <p *ngIf="usernames.at(i).get('uname').errors.required && i === 0 && gameCreationFormSubmitted">
+                                    Please enter at least one valid username of a player you want to invite.
+                                </p>
+                                <p *ngIf="usernames.at(i).get('uname').errors.required && i > 0 && gameCreationFormSubmitted">
+                                    Please enter the username of the player you are inviting or remove this field with the button to the right.
                                 </p>
                                 <p *ngIf="usernames.at(i).get('uname').errors.minlength">
                                     Please enter a username that is 3 characters or more.
@@ -77,8 +88,8 @@
                     </div>
                 </div>
                 <div class="form-group buttons-container">
-                    <button type="button" (click)="d('Cancel clicked')" class="btn btn-vermillion">Cancel</button>
-                    <button type="submit" class="btn btn-aqua">Create Game</button>
+                    <button type="button" (click)="d('Cancel clicked')" class="btn btn-vermillion btn-small">Cancel</button>
+                    <button type="submit" class="btn btn-aqua btn-small">Create Game</button>
                 </div>
             </form>
         </div>
@@ -88,13 +99,15 @@
 <div class="games-info-list">
     <risk-tabs orientation="vertical">
         <ng-template #pendingGamesHeading>
-            <span>Pending Games <span class="counter-badge">{{ pendingGamesList.length }}</span></span>
+            <span>Pending Games <span class="counter-badge">{{ pendingGamesList.userCreatedGames.length + pendingGamesList.invitedGames.length }}</span></span>
         </ng-template>
         <risk-tab [heading]="pendingGamesHeading">
-            <div class="games-accordion-list">
+            <div class="games-accordion-list user-created-games">
+                <h3>Games created by you</h3>
                 <risk-accordion>
-                    <risk-accordion-panel *ngFor="let game of pendingGamesList">
+                    <risk-accordion-panel *ngFor="let game of pendingGamesList.userCreatedGames">
                         <div class="accordion-header">
+                            <i [ngClass]="{'game-type fas': true, 'fa-user-lock': game.gameType === 'private', 'fa-globe': game.gameType === 'public'}"></i>
                             <h3>{{game.title}}</h3>
                             <span *ngIf="!game.loggedInUserPending" class="pending-players">Waiting on {{game.pendingPlayers.length}} other player{{game.pendingPlayers.length > 1 ? 's' : ''}}</span>
                             <span *ngIf="game.loggedInUserPending" class="join-game"><button type="button" class="btn btn-aqua btn-small">Join Game</button></span>
@@ -108,9 +121,34 @@
                             </li>
                         </ul>
                         <div *ngIf="game.creator._id === loggedInUser._id" class="buttons-container">
-                            <button [disabled]="game.players.length < 2" type="button" class="btn btn-aqua">Start Game</button>
+                            <button [disabled]="(game.players.length - game.pendingPlayers.length) < 2" type="button" class="btn btn-aqua">Start Game</button>
                             <button type="button" class="btn btn-vermillion">Cancel Game</button>
                         </div>
+                    </risk-accordion-panel>
+                </risk-accordion>
+            </div>
+            <div class="games-accordion-list invited-games">
+                <h3>Games you are invited to</h3>
+                <risk-accordion>
+                    <risk-accordion-panel *ngFor="let game of pendingGamesList.invitedGames">
+                        <div class="accordion-header">
+                            <i [ngClass]="{'game-type fas': true, 'fa-user-lock': game.gameType === 'private', 'fa-globe': game.gameType === 'public'}"></i>
+                            <h3>{{game.title}}</h3>
+                            <!-- <span *ngIf="!game.loggedInUserPending" class="pending-players">Waiting on {{game.pendingPlayers.length}} other player{{game.pendingPlayers.length > 1 ? 's' : ''}}</span> -->
+                            <span *ngIf="game.loggedInUserPending" class="join-game"><button type="button" class="btn btn-aqua btn-small">Join Game</button></span>
+                            <span class="created-date">Created on: {{game.createdAt}}</span>
+                        </div>
+                        <p>Players in game:</p>
+                        <ul class="game-players">
+                            <li *ngFor="let p of game.players">
+                                {{(p.player.username === loggedInUser.username) ? p.player.username + ' (You)' : p.player.username}} -
+                                <span [ngClass]="{'joined-status': p.status === 'JOINED', 'pending-status': p.status === 'PENDING'}">{{p.status}}</span>
+                            </li>
+                        </ul>
+                        <!-- <div *ngIf="game.creator._id === loggedInUser._id" class="buttons-container">
+                            <button [disabled]="(game.players.length - game.pendingPlayers.length) < 2" type="button" class="btn btn-aqua">Start Game</button>
+                            <button type="button" class="btn btn-vermillion">Cancel Game</button>
+                        </div> -->
                     </risk-accordion-panel>
                 </risk-accordion>
             </div>
