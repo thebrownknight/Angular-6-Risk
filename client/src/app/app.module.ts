@@ -18,7 +18,7 @@ import { UsernameValidator } from './helpers/custom-validators/existing-username
 
 import { MapComponent } from './components/map/map.component';
 import { LoginComponent } from './components/login/login.component';
-import { RegisterComponent } from './components/register/register.component';
+import { PasswordStrengthComponent, RegisterComponent } from './components/register/index';
 import { HeaderComponent } from './components/header/header.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { PublicGamesComponent } from './components/dashboard/public-games/public-games.component';
@@ -38,6 +38,7 @@ import { RiskAlertModule } from './components/ui/alert/alert.module';
     AppComponent,
     TabsComponent,
     TabComponent,
+    PasswordStrengthComponent,
     MapComponent,
     LoginComponent,
     RegisterComponent,

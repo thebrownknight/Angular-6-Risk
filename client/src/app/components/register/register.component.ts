@@ -18,6 +18,7 @@ export class RegisterComponent implements OnInit {
         password: ''
     };
     registerForm: FormGroup;
+    passwordFormGroup: FormGroup;
     registerFormSubmitted = false;
 
     constructor(
@@ -27,18 +28,28 @@ export class RegisterComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.registerForm = this.formBuilder.group({
-            email: ['', [Validators.required, Validators.email]],
-            username: ['', [Validators.required, Validators.minLength(5), Validators.pattern('[A-Za-z0-9]')]],
-            password: ['', [Validators.required, Validators.minLength(5)]],
+        this.passwordFormGroup = this.formBuilder.group({
+            password: ['', [
+                Validators.required,
+                Validators.minLength(8),
+                Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*(_|[!@#$%^&*])).+$')]],
             confirmPassword: ['', [Validators.required]]
         }, {
-            validator: PasswordValidation.matchingPasswordsValidator
+            validator: PasswordValidation.matchingPasswordsValidator.bind(this)
+        });
+
+        this.registerForm = this.formBuilder.group({
+            email: ['', [Validators.required, Validators.email]],
+            username: ['', [Validators.required, Validators.minLength(5), Validators.pattern('[A-Za-z0-9]+')]],
+            passwordFormGroup: this.passwordFormGroup
         });
     }
 
     get rForm() {
         return this.registerForm.controls;
+    }
+    get pGroup() {
+        return this.passwordFormGroup.controls;
     }
 
     register() {
