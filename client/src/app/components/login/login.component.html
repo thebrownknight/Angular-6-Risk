@@ -3,31 +3,37 @@
     <div class="form-header">
         <h2>Login</h2>
     </div>
-    <form name="login-form" (ngSubmit)="login()" #loginForm="ngForm" novalidate>
+    <form name="login-form" (ngSubmit)="login()" [formGroup]="loginForm" novalidate>
         <div class="form-group">
-            <span [ngClass]="{'input': true}">
-                <input type="text" class="input-field" id="username"
-                        required
-                        [(ngModel)]="credentials.username" name="username"
-                        #username="ngModel" placeholder="Username">
+            <span [ngClass]="{'input': true, 'error': loginFormSubmitted && lForm.username.invalid && lForm.username.errors}">
+                <input type="text" formControlName="username" class="input-field"
+                        id="username"
+                        placeholder="Username"
+                        required>
 				<label class="input-label" for="username">
 					<i class="fas fa-user input-icon user-icon"></i>
 				</label>
 			</span>
+            <div *ngIf="loginFormSubmitted && lForm.username.errors" class="error-container">
+                <p *ngIf="lForm.username.errors.required">Username is required.</p>
+            </div>
         </div>
         <div class="form-group">
-            <span class="input">
-                <input type="password" class="input-field" id="password"
-                        required
-                        [(ngModel)]="credentials.password" name="password"
-                        #password="ngModel" placeholder="Password">
+            <span [ngClass]="{'input': true, 'error': loginFormSubmitted && lForm.password.invalid && lForm.password.errors}">
+                <input type="password" formControlName="password" class="input-field"
+                        id="password"
+                        placeholder="Password"
+                        required>
                 <label class="input-label" for="password">
                     <i class="fas fa-key input-icon password-icon"></i>
                 </label>
             </span>
+            <div *ngIf="loginFormSubmitted && lForm.password.errors" class="error-container">
+                <p *ngIf="lForm.password.errors.required">Password is required.</p>
+            </div>
         </div>
         <div class="form-group">
-            <button [disabled] = "!loginForm.form.valid" class="btn btn-aqua btn-large submit-button">Login</button>
+            <button class="btn btn-aqua btn-large submit-button">Login</button>
             <p class="forgot-password">
                 <a href="/forgot-password">Forgot Password?</a>
             </p>

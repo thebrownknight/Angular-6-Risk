@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { AuthenticationService } from '../../services/authentication.service';
 import { TokenPayload } from '../../helpers/data-models';
+
+import { PasswordValidation } from '../../helpers/custom-validators/matching-passwords-validator';
 
 @Component({
     templateUrl: './register.component.html',
@@ -14,21 +17,44 @@ export class RegisterComponent implements OnInit {
         username: '',
         password: ''
     };
+    registerForm: FormGroup;
+    registerFormSubmitted = false;
 
     constructor(
         private auth: AuthenticationService,
-        private router: Router
+        private router: Router,
+        private formBuilder: FormBuilder
     ) { }
 
+    ngOnInit() {
+        this.registerForm = this.formBuilder.group({
+            email: ['', [Validators.required, Validators.email]],
+            username: ['', [Validators.required, Validators.minLength(5), Validators.pattern('[A-Za-z0-9]')]],
+            password: ['', [Validators.required, Validators.minLength(5)]],
+            confirmPassword: ['', [Validators.required]]
+        }, {
+            validator: PasswordValidation.matchingPasswordsValidator
+        });
+    }
+
+    get rForm() {
+        return this.registerForm.controls;
+    }
+
     register() {
+        this.registerFormSubmitted = true;
+
+        // Check validity of form before continuing
+        if (this.registerForm.invalid) {
+            return;
+        }
+
+
         this.auth.register(this.credentials).subscribe(() => {
             this.router.navigateByUrl('/risk');
         }, (err) => {
             console.error(err);
         });
-    }
-
-    ngOnInit() {
     }
 
 }

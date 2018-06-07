@@ -3,40 +3,65 @@
     <div class="form-header">
         <h2>Register</h2>
     </div>
-    <form (ngSubmit)="register()" #registerForm="ngForm">
+    <form (ngSubmit)="register()" [formGroup]="registerForm">
         <div class="form-group">
-            <span class="input">
+            <span [ngClass]="{'input': true, 'error': registerFormSubmitted && rForm.email.invalid && rForm.email.errors}">
                 <input type="email" class="input-field" id="email"
-                        required email
-                        [(ngModel)]="credentials.email" name="email"
-                        #email="ngModel" placeholder="Email Address">
+                        email
+                        formControlName="email"
+                        placeholder="Email Address">
                 <label class="input-label" for="email">
                     <i class="fas fa-envelope input-icon email-icon"></i>
                 </label>
             </span>
+            <div *ngIf="registerFormSubmitted && rForm.email.errors" class="error-container">
+                <p *ngIf="rForm.email.errors.required">Email is required.</p>
+                <p *ngIf="rForm.email.errors.email">Please enter a valid email address.</p>
+            </div>
         </div>
         <div class="form-group">
-            <span class="input">
+            <span [ngClass]="{'input': true, 'error': registerFormSubmitted && rForm.username.invalid && rForm.username.errors}">
                 <input type="text" class="input-field" id="username"
-                        required
-                        [(ngModel)]="credentials.username" name="username"
-                        #username="ngModel" placeholder="Username">
+                        formControlName="username"
+                        placeholder="Username">
                 <label class="input-label" for="username">
                     <i class="fas fa-user-astronaut input-icon user-icon"></i>
                 </label>
             </span>
+            <div *ngIf="registerFormSubmitted && rForm.username.errors" class="error-container">
+                <p *ngIf="rForm.username.errors.required">Username is required.</p>
+                <p *ngIf="rForm.username.errors.minlength">Username must be minimum 5 characters.</p>
+                <p *ngIf="rForm.username.errors.pattern">Username must only contain alphanumeric characters.</p>
+            </div>
         </div>
         <div class="form-group">
-            <span class="input">
+            <span [ngClass]="{'input': true, 'error': registerFormSubmitted && rForm.password.invalid && rForm.password.errors}">
                 <input type="password" class="input-field" id="password"
-                        required
-                        [(ngModel)]="credentials.password" name="password"
-                        #password="ngModel" placeholder="Password">
+                        formControlName="password"
+                        placeholder="Password">
                 <label class="input-label" for="password">
                     <i class="fas fa-key input-icon password-icon"></i>
                 </label>
             </span>
+            <div *ngIf="registerFormSubmitted && rForm.password.errors" class="error-container">
+                <p *ngIf="rForm.password.errors.required">Password is required.</p>
+                <p *ngIf="rForm.password.errors.minlength">Password must be minimum 5 characters.</p>
+            </div>
         </div>
-        <button type="submit" class="btn btn-aqua btn-large submit-button" [disabled]="!registerForm.form.valid">Register</button>
+        <div class="form-group">
+            <span [ngClass]="{'input': true, 'error': registerFormSubmitted && rForm.confirmPassword.invalid && rForm.confirmPassword.errors}">
+                <input type="password" class="input-field" id="confirm_password"
+                        formControlName="confirmPassword"
+                        placeholder="Confirm Password">
+                <label class="input-label" for="confirm_password">
+                    <i class="fas fa-key input-icon password-icon"></i>
+                </label>
+            </span>
+            <div *ngIf="registerFormSubmitted && rForm.confirmPassword.errors" class="error-container">
+                <p *ngIf="rForm.confirmPassword.errors.required">Password confirmation is required.</p>
+                <p *ngIf="rForm.confirmPassword.errors.matchpassword">Password confirmation needs to match the password above.</p>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-aqua btn-large submit-button">Register</button>
     </form>
 </div>

@@ -154,6 +154,14 @@
                         color: $light-gray;
                     }
                 }
+
+                &.error {
+                    margin-bottom: 0;
+
+                    .input-icon {
+                        color: $vermillion;
+                    }
+                }
             }
         }
 
@@ -493,12 +501,6 @@
                 }
             }
 
-            .error-container {
-                > p {
-                    color: $vermillion;
-                }
-            }
-
             &.buttons-container {
                 text-align: right;
                 @include rem(padding-top, 30px);
@@ -508,5 +510,12 @@
                 }
             }
         }
+    }
+}
+
+.error-container {
+    > p {
+        color: $vermillion;
+        @include rem(font-size, 14px);
     }
 }
