@@ -127,6 +127,16 @@ export class AuthenticationService {
         return this.http.get(baseUrl + queryUrl);
     }
 
+    /**
+     * Async validation endpoint for email.
+     */
+    public validateEmail(email): Observable<any> {
+        const baseUrl = '/api/users/validateemail';
+        const queryUrl = `?email=${email}`;
+
+        return this.http.get(baseUrl + queryUrl);
+    }
+
     public logout(): void {
       this.token = '';
       window.localStorage.removeItem('risk-token');

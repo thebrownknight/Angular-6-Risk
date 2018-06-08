@@ -167,6 +167,43 @@
                         color: $vermillion;
                     }
                 }
+
+                // For password toggling
+                .toggle-password {
+                    position: absolute;
+                    bottom: 18px;
+                    right: 10px;
+                    cursor: pointer;
+
+                    &.disabled {
+                        pointer-events: none;
+                    }
+
+                    i {
+                        color: $light-gray;
+                        @include rem(font-size, 20px);
+                        @include transition(color, 0.25s);
+
+                        &:hover {
+                            color: $sunshine;
+                        }
+                    }
+                }
+
+                // For displaying the status of email and passwords
+                .status-icon {
+                    position: absolute;
+                    bottom: 20px;
+                    right: 10px;
+                    pointer-events: none;
+                    color: $light-gray;
+                    @include rem(font-size, 20px);
+                    @include transition(color, 0.25s);
+
+                    &.fa-check {
+                        color: $powder;
+                    }
+                }
             }
         }
 

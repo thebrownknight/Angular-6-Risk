@@ -37,3 +37,21 @@ module.exports.validateUsername = function(req, res) {
             }
         });
 }
+
+module.exports.validateEmail = function(req, res) {
+    User
+        .findOne({
+            'email': req.query.email
+        }, function(err, user) {
+            if (err) {
+                res.status(404).json(err);
+                return;
+            }
+
+            if (user) {
+                res.status(200).json({ 'emailExists': true });
+            } else {
+                res.status(200).json({ 'emailExists': false });
+            }
+        });
+}

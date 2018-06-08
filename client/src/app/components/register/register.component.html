@@ -13,10 +13,13 @@
                 <label class="input-label" for="email">
                     <i class="fas fa-envelope input-icon email-icon"></i>
                 </label>
+                <span *ngIf="rForm.email.status === 'PENDING'" class="fas fa-spinner fa-spin status-icon"></span>
+                <span *ngIf="rForm.email.errors === null && rForm.email.status === 'VALID'" class="fas fa-check status-icon"></span>
             </span>
             <div *ngIf="rForm.email.errors" class="error-container">
                 <p *ngIf="registerFormSubmitted && rForm.email.errors.required">Email is required.</p>
                 <p *ngIf="rForm.email.errors.email">Please enter a valid email address.</p>
+                <p *ngIf="rForm.email.errors.emailExists">Email already exists! Please enter a new one.</p>
             </div>
         </div>
         <div class="form-group">
@@ -27,24 +30,32 @@
                 <label class="input-label" for="username">
                     <i class="fas fa-user-astronaut input-icon user-icon"></i>
                 </label>
+                <span *ngIf="rForm.username.status === 'PENDING'" class="fas fa-spinner fa-spin status-icon"></span>
+                <span *ngIf="rForm.username.errors === null && rForm.username.status === 'VALID'" class="fas fa-check status-icon"></span>
             </span>
             <div *ngIf="rForm.username.errors" class="error-container">
                 <p *ngIf="registerFormSubmitted && rForm.username.errors.required">Username is required.</p>
                 <p *ngIf="rForm.username.errors.minlength">Username must be minimum 5 characters.</p>
                 <p *ngIf="rForm.username.errors.pattern">Username must only contain alphanumeric characters.</p>
+                <p *ngIf="rForm.username.errors.usernameExists">Username already exists! Please enter a new one.</p>
             </div>
         </div>
         <div [formGroup]="passwordFormGroup" class="full-width">
             <div class="form-group">
                 <span [ngClass]="{'input': true, 'error': registerFormSubmitted && pGroup.password.invalid && pGroup.password.errors}">
-                    <input type="password" class="input-field" id="password"
+                    <input [type]="showPassword ? 'text': 'password'" class="input-field" id="password"
                             formControlName="password"
-                            placeholder="Password">
+                            placeholder="Password"
+                            (blur)="rpStrengthMeter.dismiss()"
+                            (focus)="rpStrengthMeter.open()">
                     <label class="input-label" for="password">
                         <i class="fas fa-key input-icon password-icon"></i>
                     </label>
+                    <label [ngClass]="{'toggle-password': true, 'disabled': pGroup.password.value === ''}" (click)="togglePassword()">
+                        <i class="fas fa-eye"></i>
+                    </label>
                 </span>
-                <risk-password-strength-meter [passwordControl]="pGroup.password"></risk-password-strength-meter>
+                <risk-password-strength-meter #rpStrengthMeter [passwordControl]="pGroup.password" [password]="pGroup.password.value"></risk-password-strength-meter>
                 <div *ngIf="registerFormSubmitted && pGroup.password.errors" class="error-container">
                     <p *ngIf="pGroup.password.errors.required">Password is required.</p>
                     <p *ngIf="pGroup.password.errors.minlength">Password must be minimum 8 characters.</p>
@@ -52,11 +63,14 @@
             </div>
             <div class="form-group">
                 <span [ngClass]="{'input': true, 'error': registerFormSubmitted && pGroup.confirmPassword.invalid && pGroup.confirmPassword.errors}">
-                    <input type="password" class="input-field" id="confirm_password"
+                    <input [type]="showPassword ? 'text': 'password'" class="input-field" id="confirm_password"
                             formControlName="confirmPassword"
                             placeholder="Confirm Password">
                     <label class="input-label" for="confirm_password">
                         <i class="fas fa-key input-icon password-icon"></i>
+                    </label>
+                    <label [ngClass]="{'toggle-password': true, 'disabled': pGroup.confirmPassword.value === ''}" (click)="togglePassword()">
+                        <i class="fas fa-eye"></i>
                     </label>
                 </span>
                 <div *ngIf="passwordFormGroup.errors || pGroup.confirmPassword.errors" class="error-container">

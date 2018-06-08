@@ -19,6 +19,7 @@ let gameController = require('../controllers/game.controller.js');
 router.post('/users/register', authController.register);
 router.post('/users/login', authController.login);
 router.get('/users/validateusername', userController.validateUsername);
+router.get('/users/validateemail', userController.validateEmail);
 
 // router.get('/users/settings', userController.getSettings);
 
