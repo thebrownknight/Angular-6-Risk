@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '../../services/authentication.service';
+import { SocketService } from '../../services/sockets';
 import { UserDetails } from '../../helpers/data-models';
 
 @Component({
@@ -17,7 +18,9 @@ export class HeaderComponent implements OnInit {
     };
     isLoggedIn = false;
 
-    constructor(private auth: AuthenticationService) { }
+    constructor(private auth: AuthenticationService,
+        private socketIo: SocketService
+    ) { }
 
     ngOnInit() {
         this.isLoggedIn = this.auth.isLoggedIn();
@@ -28,6 +31,7 @@ export class HeaderComponent implements OnInit {
     }
 
     logout() {
+        this.socketIo.disconnect();
         this.auth.logout();
     }
 

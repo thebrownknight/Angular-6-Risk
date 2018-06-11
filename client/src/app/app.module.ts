@@ -32,6 +32,14 @@ import { RiskModalModule } from './components/ui/modal/modal.module';
 import { RiskAccordionModule } from './components/ui/accordion/accordion.module';
 import { RiskSlidePanelModule } from './components/ui/slide-panel/slidepanel.module';
 import { RiskAlertModule } from './components/ui/alert/alert.module';
+import { SocketModule, SocketConfig } from './services/sockets/index';
+
+// Sockets configuration
+const config: SocketConfig = {
+    url: 'http://localhost:8988',
+    options: {},
+    connectOnAppLoad: false
+};
 
 @NgModule({
   declarations: [
@@ -56,6 +64,7 @@ import { RiskAlertModule } from './components/ui/alert/alert.module';
     ReactiveFormsModule,
     HttpClientModule,
     routing,
+    SocketModule.forRoot(config),
     RiskModalModule.forRoot(),
     RiskAccordionModule,
     RiskSlidePanelModule,

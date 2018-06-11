@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map, switchMap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { map, switchMap, debounceTime, distinctUntilChanged, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 import { appConfig } from '../app.config';
@@ -61,14 +61,37 @@ export class AuthenticationService {
 
       const request = baseUrl.pipe(
         map((data: any) => {
-          if (data.token) {
-            this.saveToken(data.token);
-          }
-          return data;
-        })
+            if (data.token) {
+                this.saveToken(data.token);
+            }
+            return data;
+        }),
+        catchError(this.handleError)
       );
 
       return request;
+    }
+
+    /*
+     * Handle errors from the authentication.
+     */
+    private handleError(error: HttpErrorResponse) {
+        if (error.error instanceof ErrorEvent) {
+            // A client-side or network error occurred
+            console.error('An error occurred:', error.error.message);
+        } else {
+            // The backend returned an unsuccessful response code.
+            // The response body may contain clues as to what went wrong.
+            console.error(
+                `Backend returned code ${error.status}, ` +
+                `body was: ${error.error.message}`
+            );
+        }
+
+        // Return an observable with a user-facing error message.
+        return throwError(
+            error.error
+        );
     }
 
     /********************

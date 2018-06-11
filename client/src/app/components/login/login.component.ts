@@ -4,6 +4,10 @@ import { Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
 import { TokenPayload } from '../../helpers/data-models';
 
+import { throwError } from 'rxjs';
+
+import { SocketService } from '../../services/sockets';
+
 @Component({
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
@@ -12,9 +16,11 @@ export class LoginComponent implements OnInit {
     credentials: TokenPayload;
     loginForm: FormGroup;
     loginFormSubmitted = false;
+    loginError: string;
 
     constructor(
         private auth: AuthenticationService,
+        private socketIo: SocketService,
         private router: Router,
         private formBuilder: FormBuilder
     ) { }
@@ -23,7 +29,7 @@ export class LoginComponent implements OnInit {
         this.loginForm = this.formBuilder.group({
             username: ['', Validators.required],
             password: ['', Validators.required]
-        })
+        });
     }
 
     // Convenience getter for form
@@ -48,8 +54,13 @@ export class LoginComponent implements OnInit {
 
         this.auth.login(this.credentials).subscribe(() => {
             this.router.navigateByUrl('/dashboard');
+
+            // Initialize the socket connection
+            this.socketIo.connect();
         }, (err) => {
-            console.error(err);
+            if (err.message) {
+                this.loginError = err.message;
+            }
         });
     }
 }

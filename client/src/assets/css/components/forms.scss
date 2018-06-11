@@ -30,6 +30,15 @@
                 @include rem(font-size, 32px);
             }
         }
+
+        .form-errors {
+            color: $vermillion;
+            background: $off-white;
+            @include rem(font-size, 14px);
+            margin-bottom: 0;
+            @include rem(margin-top, 10px);
+            @include rem(padding, 10px 0);
+        }
     }
 
     form {

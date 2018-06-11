@@ -89,7 +89,7 @@ export enum SocketEvent {
 }
 
 export interface SocketMessage {
-    from?: UserDetails,
-    content?: any,
-    action?: Action
+    from?: UserDetails;
+    content?: any;
+    action?: SocketAction;
 }

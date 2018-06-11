@@ -6,13 +6,14 @@
 
 var app = require('../app');
 var http = require('http');
-let io = require('socket.io')(http);
+const io = require('socket.io')();
 var config = require('../config.json');
 
 /**
  * Get port from environment and store in Express
  */
 var port = normalizePort(process.env.PORT || config.port);
+let socketPort = normalizePort(process.env.SOCKETPORT || config.socketPort);
 app.set('port', port);
 
 /**
@@ -31,9 +32,18 @@ server.on('listening', onListening);
  * Setup socket.io connection and add methods for handling
  * different events.
  */
+let socketServer = http.createServer(app);
+io.attach(socketServer);
+
+// Initialize our websocket server on port socketPort
+socketServer.listen(socketPort, () => {
+    console.log('Socket server started on port ' + socketPort);
+});
+
+
 io.on('connection', (socket) => {
     // Log whenever a user connects
-    console.log('Connected client on port ' + port);
+    console.log('Connected client on port ' + socketPort);
 
     // Log whenever a client disconnects from our websocket server
     socket.on('disconnect', function() {
