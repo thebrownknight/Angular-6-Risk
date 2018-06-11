@@ -73,3 +73,23 @@ export enum AlertType {
     Info,
     Warning
 }
+
+/****************************************/
+// Socket message models.
+/****************************************/
+export enum SocketAction {
+    JOINED,
+    LEFT,
+    RENAME
+}
+
+export enum SocketEvent {
+    CONNECT = 'connect',
+    DISCONNECT = 'disconnect'
+}
+
+export interface SocketMessage {
+    from?: UserDetails,
+    content?: any,
+    action?: Action
+}
