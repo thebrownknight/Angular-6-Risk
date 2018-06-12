@@ -30,6 +30,8 @@ router.get('/games', auth, gameController.getGamesByUser);
 router.get('/games/public', gameController.getPublicGames);
 // Create a game with a specific user
 router.post('/games/create', auth, gameController.createGame);
+// Join a game with a specific user
+router.post('/games/join', auth, gameController.joinGame);
 
 
 module.exports = router;

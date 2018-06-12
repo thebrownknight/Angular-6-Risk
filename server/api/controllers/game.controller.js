@@ -96,6 +96,36 @@ module.exports.createGame = function(req, res) {
     }
 };
 
+module.exports.joinGame = function(req, res) {
+    // The payload will contain the user's ID
+    if (!req.payload._id) {
+        res.status(404).json({
+            "message": "UnauthorizedError: You're not allowed to join this game."
+        });
+    } else {
+        Game
+            .update(
+                {
+                    '_id': req.body.gameId,
+                    'players.player': req.payload._id
+                },
+                {
+                    $set: {
+                        'players.$.status': 'JOINED'
+                    }
+                },
+                function(err, raw) {
+                    if (err) {
+                        res.status(404).json(err);
+                        return;
+                    }
+
+                    res.status(200).json(raw);
+                }
+            );
+    }
+}
+
 ////////////////////////////////////////////
 // Private method to get user ID by username
 ////////////////////////////////////////////

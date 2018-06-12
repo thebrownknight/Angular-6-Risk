@@ -135,7 +135,7 @@
                             <i [ngClass]="{'game-type fas': true, 'fa-user-lock': game.gameType === 'private', 'fa-globe': game.gameType === 'public'}"></i>
                             <h3>{{game.title}}</h3>
                             <!-- <span *ngIf="!game.loggedInUserPending" class="pending-players">Waiting on {{game.pendingPlayers.length}} other player{{game.pendingPlayers.length > 1 ? 's' : ''}}</span> -->
-                            <span *ngIf="game.loggedInUserPending" class="join-game"><button type="button" class="btn btn-aqua btn-small">Join Game</button></span>
+                            <span *ngIf="game.loggedInUserPending" class="join-game"><button type="button" class="btn btn-aqua btn-small" (click)="joinGame(game._id, game.code)">Join Game</button></span>
                             <span class="created-date">Created on: {{game.createdAt}}</span>
                         </div>
                         <p>Players in game:</p>

@@ -44,8 +44,9 @@ socketServer.listen(socketPort, () => {
 io.use((socket, next) => {
     if (socket.handshake.query && socket.handshake.query.token) {
         jwt.verify(socket.handshake.query.token, config.secretKey, function(err, decoded) {
-            if (err) return next(new Error('Authentication error in socket.'));
+            if (err) return next(new Error('Authentication error in socket during verification.'));
             socket.decoded = decoded;
+            console.log(socket.request.headers.cookie);
             return next();
         });
     }
@@ -59,6 +60,29 @@ io.on('connection', (socket) => {
     // Log whenever a client disconnects from our websocket server
     socket.on('disconnect', function() {
         console.log('Client disconnected');
+    });
+
+    // When the client emits a "join room" event, add the client's socket ID
+    // to the given room
+    socket.on('join room', (room) => {
+        console.log('Client joining room ' + room);
+        let socketRooms = socket.rooms[socket.id];
+        // console.log(Object.keys(socket.rooms));
+
+        // We have to make sure the socket hasn't already been added to the room
+        // so we don't end up trying to add them twice
+        if ((socketRooms != null && socketRooms != undefined) && socketRooms.indexOf(room) < 0) {
+            socket.join(room, () => {
+                // console.log(socket.rooms);
+            });
+        }
+    });
+
+    // When the client emits a "joined game" event, we let everyone in the room know about
+    // event
+    socket.on('joined game', (gameCode) => {
+        console.log(socket.decoded);
+        socket.to('game ' + gameCode).emit('user joined game', socket.decoded);
     });
 
     // When we receive a 'message' event from our client, print out

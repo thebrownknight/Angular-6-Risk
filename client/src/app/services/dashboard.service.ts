@@ -25,6 +25,9 @@ export class DashboardService {
     public createNewGame(gamePayload: GamePayload): Observable<any> {
         return this.request('post', '/api/games/create', gamePayload, true);
     }
+    public joinGame(gId: any): Observable<any> {
+        return this.request('post', '/api/games/join', { gameId: gId }, true);
+    }
 
     private getToken(): string {
         if (!this.token) {

@@ -4,12 +4,15 @@ import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '
 import { RiskModal, ModalDismissReasons, RiskModalRef } from '../../ui/modal/modal.module';
 import { AlertService } from '../../../services/alert.service';
 import { AuthenticationService } from '../../../services/authentication.service';
+import { SocketService } from '../../../services/sockets';
 import { DashboardService } from '../../../services/dashboard.service';
 
 import { UsernameValidator } from '../../../helpers/custom-validators/existing-username-validator';
 import { UserDetails, GamePayload, GameDetails, PendingGameDetails } from '../../../helpers/data-models';
 
 import { Utils } from '../../../services/utils';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'risk-user-games',
@@ -33,6 +36,7 @@ export class UserGamesComponent implements OnInit {
         private formBuilder: FormBuilder,
         private alertService: AlertService,
         private authService: AuthenticationService,
+        private socketIo: SocketService,
         private dashboardService: DashboardService,
         private usernameValidator: UsernameValidator) {
         this.createForm();
@@ -58,6 +62,14 @@ export class UserGamesComponent implements OnInit {
                 });
                 this.gameCreationForm.get('numberOfPlayers').setValidators(Validators.required);
             }
+        });
+
+        // Subscribe to 'joined game' event
+        this.getEvent('user joined game').subscribe((msg) => {
+            console.log(msg);
+
+            // Refresh our list of games
+            this.getUserGames();
         });
     }
 
@@ -111,6 +123,10 @@ export class UserGamesComponent implements OnInit {
                             this.pendingGamesList.invitedGames.push(pendingGameDetails);
                         }
 
+                        // Emit message from socket to join the game room for each of the games
+                        // so we can be subscribed to messages to the different games
+                        this.socketIo.emit('join room', 'game ' + pendingGameDetails.code);
+
                         break;
                     case 'IN PROGRESS':
 
@@ -125,6 +141,9 @@ export class UserGamesComponent implements OnInit {
         });
     }
 
+    /**
+     * Method to create a new game from the modal.
+     */
     createGame() {
         this.gameCreationFormSubmitted = true;
 
@@ -162,6 +181,23 @@ export class UserGamesComponent implements OnInit {
                 console.error(err);
             });
         }
+    }
+
+    /**
+     * Method to join a game that the user has been invited to.
+     */
+    joinGame(gameId: any, gameCode: string): void {
+        this.dashboardService.joinGame(gameId).subscribe(() => {
+            console.log('Joined game ' + gameId + ' successfully.');
+
+            // Now that we've updated the database, emit the message via sockets
+            // We use the game code as the data to send since we've named our
+            // room accordingly
+            this.socketIo.emit('joined game', gameCode);
+            this.getUserGames();
+        }, (err) => {
+            console.error(err);
+        });
     }
 
     /**
@@ -206,6 +242,18 @@ export class UserGamesComponent implements OnInit {
     private clearGameLists(): void {
         this.pendingGamesList.userCreatedGames = [];
         this.pendingGamesList.invitedGames = [];
+    }
+
+    // Private method to listen for 'joined game' socket events
+    private getEvent(eventName: string): Observable<any> {
+        return this.socketIo
+            .fromEvent<any>(eventName)
+            .pipe(
+                map((data: any) => {
+                    console.log(data);
+                    return data[eventName];
+                })
+            );
     }
 
     // Reactive form methods
