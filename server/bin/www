@@ -8,6 +8,7 @@ var app = require('../app');
 var http = require('http');
 const io = require('socket.io')();
 var config = require('../config.json');
+const jwt = require('jsonwebtoken');
 
 /**
  * Get port from environment and store in Express
@@ -40,6 +41,16 @@ socketServer.listen(socketPort, () => {
     console.log('Socket server started on port ' + socketPort);
 });
 
+io.use((socket, next) => {
+    if (socket.handshake.query && socket.handshake.query.token) {
+        jwt.verify(socket.handshake.query.token, config.secretKey, function(err, decoded) {
+            if (err) return next(new Error('Authentication error in socket.'));
+            socket.decoded = decoded;
+            return next();
+        });
+    }
+    return next(new Error('Authentication error in socket.'));
+});
 
 io.on('connection', (socket) => {
     // Log whenever a user connects

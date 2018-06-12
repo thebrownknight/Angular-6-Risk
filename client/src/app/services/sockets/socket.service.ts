@@ -31,18 +31,22 @@ export class SocketService {
         this.ioSocket.once(eventName, callback);
     }
 
-    connect() {
+    connect(token?: any) {
         if (isPlatformServer(this.platformId)) {
             return {};
         }
         if (!this.initialized) {
-            const {url = '', options} = this.config;
-            this.ioSocket = io(url, options);
+            // const {url = '', options} = this.config;
+            const newConfig = Object.assign(this.config, { options: { query: token } });
+
+            console.log(newConfig);
+
+            this.ioSocket = io(newConfig.url, newConfig.options);
             this.initialized = true;
         } else {
             this.ioSocket = this.ioSocket.connect();
         }
-
+        console.log(this.ioSocket);
         return this.ioSocket;
     }
 

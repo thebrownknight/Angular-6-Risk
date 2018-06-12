@@ -52,11 +52,12 @@ export class LoginComponent implements OnInit {
             password: formValues.password
         };
 
-        this.auth.login(this.credentials).subscribe(() => {
+        this.auth.login(this.credentials).subscribe((token) => {
+            console.log(token);
             this.router.navigateByUrl('/dashboard');
 
             // Initialize the socket connection
-            this.socketIo.connect();
+            this.socketIo.connect(token);
         }, (err) => {
             if (err.message) {
                 this.loginError = err.message;
