@@ -14,6 +14,8 @@ import { Utils } from '../../../services/utils';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+type GameType = 'CREATED' | 'INPROGRESS' | 'COMPLETED';
+
 @Component({
   selector: 'risk-user-games',
   templateUrl: './user-games.component.html',
@@ -65,11 +67,11 @@ export class UserGamesComponent implements OnInit {
         });
 
         // Subscribe to 'joined game' event
-        this.getEvent('user joined game').subscribe((msg) => {
-            console.log(msg);
+        this.getEvent('user joined game').subscribe((data) => {
+            console.log(data);
 
-            // Refresh our list of games
-            this.getUserGames();
+            // Refresh the game that was affected
+            this.updateGame(data.gameCode);
         });
     }
 
@@ -82,10 +84,16 @@ export class UserGamesComponent implements OnInit {
         });
     }
 
-    testNotification(content) {
-        this.alertService.showSuccessAlert(content);
-    }
+    // testNotification(content) {
+    //     this.alertService.showSuccessAlert(content);
+    // }
 
+    /**
+     * Method to get the full list of the user's games.
+     * 1. Pending games
+     * 2. In progress games
+     * 3. Completed games
+     */
     getUserGames() {
         this.clearGameLists();
 
@@ -201,6 +209,64 @@ export class UserGamesComponent implements OnInit {
     }
 
     /**
+     * Update the pending game list by "refreshing" the game that was affected by another user joining/starting/canceling a game.
+     */
+     updateGame(gameCode: string): void {
+         // Make the call to get the game from the game code and subscribe to the observable
+         this.dashboardService.getGameByCode(gameCode).subscribe((retGame) => {
+             // Check the returned game's status and then map the array of existing games to update the game we're
+             // interested in
+             switch(retGame.status) {
+                 case 'CREATED':
+                    // Update the user created games list
+                    this.pendingGamesList.userCreatedGames = this.pendingGamesList.userCreatedGames.map((existGame) => {
+                        if (existGame.code === gameCode) {
+                            // We replace the existing game's players with the returned game's players
+                            // Also update the pending players and possibly logged in user pending
+                            existGame.players = []; // Reset the players array of existing game
+                            // Make a deep copy of the retGame.players array
+                            for (let i = 0; i < retGame.players.length; i++) {
+                                existGame.players.push(retGame.players[i]);
+                            }
+                            existGame.pendingPlayers = existGame.players.filter((player) => {
+                                return player.status === 'PENDING';
+                            });
+                            existGame.loggedInUserPending =
+                                existGame.pendingPlayers.some(e => e.player._id === this.loggedInUser._id);
+                        }
+
+                        return existGame;   // Finally return either the current array obj or the updated one
+                    });
+
+                    // TODO: MAKE THIS DRY!!!!
+                    this.pendingGamesList.invitedGames = this.pendingGamesList.invitedGames.map((iexistGame) => {
+                        if (iexistGame.code === gameCode) {
+                            // We replace the existing game's players with the returned game's players
+                            // Also update the pending players and possibly logged in user pending
+                            iexistGame.players = []; // Reset the players array of existing game
+                            // Make a deep copy of the retGame.players array
+                            for (let i = 0; i < retGame.players.length; i++) {
+                                iexistGame.players.push(retGame.players[i]);
+                            }
+                            iexistGame.pendingPlayers = iexistGame.players.filter((player) => {
+                                return player.status === 'PENDING';
+                            });
+                            iexistGame.loggedInUserPending =
+                                iexistGame.pendingPlayers.some(e => e.player._id === this.loggedInUser._id);
+                        }
+
+                        return iexistGame;   // Finally return either the current array obj or the updated one
+                    });
+                 break;
+                 case 'INPROGRESS':
+                 break;
+                 case 'COMPLETED':
+                 break;
+             }
+         });
+     }
+
+    /**
      * Methods for the dynamic usernames to send invites to
      */
     get usernames(): FormArray {
@@ -251,7 +317,7 @@ export class UserGamesComponent implements OnInit {
             .pipe(
                 map((data: any) => {
                     console.log(data);
-                    return data[eventName];
+                    return data;
                 })
             );
     }

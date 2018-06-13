@@ -26,6 +26,8 @@ router.get('/users/validateemail', userController.validateEmail);
 /*** GAME ROUTES ***/
 // Get all games created by a specific user
 router.get('/games', auth, gameController.getGamesByUser);
+// Get game by code
+router.get('/games/code/:gameCode', auth, gameController.getGameByCode);
 // Display list of all public games
 router.get('/games/public', gameController.getPublicGames);
 // Create a game with a specific user

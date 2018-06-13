@@ -37,6 +37,28 @@ module.exports.getGameById = function(req, res) {
 
 };
 
+module.exports.getGameByCode = function(req, res) {
+    let gameCode = req.params.gameCode;
+
+    if (!req.payload._id) {
+        res.status(403).json({
+            "message": "UnauthorizedError: Please login to view your games."
+        });
+    } else {
+        Game
+            .find({
+                'code': gameCode
+            })
+            .exec((err, game) => {
+                if (err) {
+                    res.status(404).json(err);
+                    return;
+                }
+                res.status(200).json(game);
+            });
+    }
+};
+
 module.exports.createGame = function(req, res) {
     // The payload will contain the user's ID
     if (!req.payload._id) {

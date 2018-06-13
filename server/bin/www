@@ -82,7 +82,11 @@ io.on('connection', (socket) => {
     // event
     socket.on('joined game', (gameCode) => {
         console.log(socket.decoded);
-        socket.to('game ' + gameCode).emit('user joined game', socket.decoded);
+        const joinedGamePayload = {
+            userDetails: socket.decoded,
+            gameCode: gameCode
+        };
+        socket.to('game ' + gameCode).emit('user joined game', joinedGamePayload);
     });
 
     // When we receive a 'message' event from our client, print out

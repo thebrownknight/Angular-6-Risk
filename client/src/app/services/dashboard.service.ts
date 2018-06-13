@@ -19,6 +19,10 @@ export class DashboardService {
     public getUserGames(): Observable<any> {
         return this.request('get', '/api/games');
     }
+    // Get game by game code
+    public getGameByCode(code: string): Observable<any> {
+        return this.request('get', '/api/games/code/' + code);
+    }
     public getPublicGames(): Observable<any> {
         return this.request('get', '/api/games/public');
     }

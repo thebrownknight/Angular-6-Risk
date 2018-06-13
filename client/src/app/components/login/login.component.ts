@@ -6,8 +6,6 @@ import { TokenPayload } from '../../helpers/data-models';
 
 import { throwError } from 'rxjs';
 
-import { SocketService } from '../../services/sockets';
-
 @Component({
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
@@ -20,7 +18,6 @@ export class LoginComponent implements OnInit {
 
     constructor(
         private auth: AuthenticationService,
-        private socketIo: SocketService,
         private router: Router,
         private formBuilder: FormBuilder
     ) { }
@@ -55,9 +52,6 @@ export class LoginComponent implements OnInit {
         this.auth.login(this.credentials).subscribe((token) => {
             console.log(token);
             this.router.navigateByUrl('/dashboard');
-
-            // Initialize the socket connection
-            this.socketIo.connect(token);
         }, (err) => {
             if (err.message) {
                 this.loginError = err.message;
