@@ -551,15 +551,6 @@
                     @include rem(font-size, 20px);
                 }
             }
-
-            &.buttons-container {
-                text-align: right;
-                @include rem(padding-top, 30px);
-
-                .btn:first-child {
-                    @include rem(margin-right, 10px);
-                }
-            }
         }
     }
 }

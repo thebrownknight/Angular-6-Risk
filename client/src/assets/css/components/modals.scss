@@ -48,7 +48,7 @@
                 h3 {
                     @include raleway-bold();
                     @include rem(font-size, 25px);
-                    @include rem(padding, 20px 0);
+                    @include rem(padding, 20px 35px);
                     margin: 0;
                     text-align: center;
                     background: $powder;
@@ -73,14 +73,23 @@
 
                     > i {
                         color: $white;
-                        @include rem(font-size, 25px);
-                        @include transition(color, 0.3s);
+                        @include rem(font-size, 22px);
+                        @include transition(color, 0.2s);
                     }
                 }
             }
 
             .modal-body {
                 @include rem(padding, 30px);
+
+                .buttons-container {
+                    text-align: right;
+                    @include rem(padding-top, 30px);
+        
+                    .btn:first-child {
+                        @include rem(margin-right, 10px);
+                    }
+                }
             }
         }
     }

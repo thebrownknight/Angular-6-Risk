@@ -8,7 +8,10 @@ import { Alert, AlertType } from '../helpers/data-models';
 @Injectable()
 export class AlertService {
     private subject = new Subject<Alert>();
+    private eventSource = new Subject<string>();
     private keepAfterRouteChange = false;
+
+    refreshNotification = this.eventSource.asObservable();
 
     constructor(private router: Router) {
         // Clear alert messages on route change unless 'keepAfterRouteChange' flag is true
@@ -28,7 +31,7 @@ export class AlertService {
     // Subscribe to alerts
     getAlert(alertId?: string): Observable<any> {
         return this.subject.asObservable().pipe(
-            filter((x: Alert) => x && x.alertId === alertId)
+            // filter((x: Alert) => x && x.alertId === alertId)
         );
     }
 
@@ -49,5 +52,9 @@ export class AlertService {
     // Helper methods
     clear(alertId?: string) {
         this.subject.next(new Alert({ alertId }));
+    }
+
+    notificationEvent(eventName: string) {
+        this.eventSource.next(eventName);
     }
 }

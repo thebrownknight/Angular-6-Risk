@@ -5,7 +5,7 @@
     cursor: pointer;
     @include border-radius(3px);
     border: none;
-    @include transition(0.3s all ease-in);
+    @include transition(0.2s all ease-in);
     color: $white;
     text-transform: uppercase;
     @include raleway-bold();
@@ -28,7 +28,15 @@
         }
     }
 
-    &.btn-yellow {
+    &.btn-neutral {
+        background: $light-gray;
+
+        &:hover, &:focus, &:active {
+            background: darken($light-gray, 10%);
+        }
+    }
+
+    &.btn-sunshine {
         background: $sunshine;
 
         &:hover, &:focus, &:active {

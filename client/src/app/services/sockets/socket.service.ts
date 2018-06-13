@@ -35,6 +35,8 @@ export class SocketService {
         if (isPlatformServer(this.platformId)) {
             return {};
         }
+        console.log(this.initialized);
+
         if (!this.initialized) {
             // const {url = '', options} = this.config;
             const newConfig = Object.assign(this.config, { options: { query: token } });
@@ -55,6 +57,8 @@ export class SocketService {
             return;
         }
         console.log('Disconnecting from the socket service...');
+        this.initialized = false;
+
         return this.ioSocket.disconnect.apply(this.ioSocket, arguments);
     }
 

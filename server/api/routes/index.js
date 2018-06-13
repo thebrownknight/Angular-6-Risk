@@ -34,6 +34,8 @@ router.get('/games/public', gameController.getPublicGames);
 router.post('/games/create', auth, gameController.createGame);
 // Join a game with a specific user
 router.post('/games/join', auth, gameController.joinGame);
+// Cancel/delete a game
+router.get('/games/:gId/delete', auth, gameController.deleteGame);
 
 
 module.exports = router;

@@ -11,7 +11,9 @@ export class DashboardComponent implements OnInit {
   constructor(private socketIo: SocketService) { }
 
   ngOnInit() {
-      const token = localStorage.getItem('risk-token');
+      const token = {
+          token: localStorage.getItem('risk-token')
+      };
 
       // Initialize the socket connection
       this.socketIo.connect(token);

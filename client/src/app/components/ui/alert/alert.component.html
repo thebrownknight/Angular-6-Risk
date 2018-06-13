@@ -3,6 +3,7 @@
         <ng-container *ngTemplateOutlet="alert.message"></ng-container>
     </div>
     <div class="alert-content" *ngIf="alertContent === 'string'" [innerHTML]="alert.message"></div>
+    <ng-template #alertContentComponent></ng-template>
     
     <a class="rs-close" (click)="removeAlert(alert)"><i class="fas fa-times"></i></a>
 </div>

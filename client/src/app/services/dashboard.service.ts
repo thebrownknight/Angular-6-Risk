@@ -32,6 +32,9 @@ export class DashboardService {
     public joinGame(gId: any): Observable<any> {
         return this.request('post', '/api/games/join', { gameId: gId }, true);
     }
+    public deleteGame(gId: any): Observable<any> {
+        return this.request('get', '/api/games/' + gId + '/delete');
+    }
 
     private getToken(): string {
         if (!this.token) {

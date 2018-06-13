@@ -58,6 +58,7 @@ export interface PendingGameDetails extends GameDetails {
 /****************************************/
 export class Alert {
     type: AlertType;
+    iconClass: string;
     message: any;
     alertId: string;
     keepAfterRouteChange: boolean;

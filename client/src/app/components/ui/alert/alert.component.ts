@@ -1,25 +1,33 @@
-import { Component, Input, OnInit, TemplateRef } from '@angular/core';
+import { Component, Input, OnInit, AfterViewInit, TemplateRef, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { ComponentFactoryResolver, ComponentRef, ViewChildren, ViewContainerRef, QueryList, ElementRef } from '@angular/core';
 
 import { Alert, AlertType } from '../../../helpers/data-models';
+import { AlertContentComponent } from './alert-content.component';
 import { AlertService } from '../../../services/alert.service';
 
-type AlertContent = 'template' | 'string';
+type AlertContent = 'template' | 'string' | 'component';
 
 @Component({
     selector: 'risk-alert',
     templateUrl: './alert.component.html'
 })
-export class AlertComponent implements OnInit {
+export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
+    @ViewChildren('alertContentComponent', { read: ViewContainerRef }) alertContentComponent: QueryList<ElementRef>;
+    componentRef: ComponentRef<any>;
+
     @Input() id: string;
     removingAlert: boolean;
     alertContent: AlertContent;
 
     alerts: Alert[] = [];
 
-    constructor(private alertService: AlertService) { }
+    constructor(private alertService: AlertService,
+        private resolver: ComponentFactoryResolver,
+        private cdRef: ChangeDetectorRef) { }
 
     ngOnInit() {
-        this.alertService.getAlert(this.id).subscribe((alert: Alert) => {
+        this.alertService.getAlert().subscribe((alert: Alert) => {
+            console.log(alert);
             if (!alert.message) {
                 // Clear alerts when an empty alert is received
                 this.alerts = [];
@@ -30,12 +38,35 @@ export class AlertComponent implements OnInit {
             if (alert.message instanceof TemplateRef) {
                 this.alertContent = 'template';
             } else {
-                this.alertContent = 'string';
+                this.alertContent = 'component';
+                this.alertContentComponent.changes.subscribe((acc) => {
+                    // Loop through all the panels
+                    acc.toArray().forEach((elem: any, index) => {
+                        elem.clear();
+
+                        if (this.componentRef) {
+                            this.componentRef.destroy();
+                        }
+
+                        const factory = this.resolver.resolveComponentFactory(AlertContentComponent);
+                        this.componentRef = elem.createComponent(factory);
+
+                        // Add inputs for the alert content component
+                        this.componentRef.instance.message = alert.message;
+                        this.componentRef.instance.iconClass = alert.iconClass;
+
+                        this.cdRef.detectChanges();
+                    });
+                });
             }
 
             // Add alert to array
             this.alerts.push(alert);
         });
+    }
+
+    ngAfterViewInit() {
+
     }
 
     removeAlert(alert: Alert) {
@@ -58,6 +89,12 @@ export class AlertComponent implements OnInit {
                 return 'rs-alert rs-alert-info';
             case AlertType.Warning:
                 return 'rs-alert rs-alert-warning';
+        }
+    }
+
+    ngOnDestroy() {
+        if (this.componentRef) {
+            this.componentRef.destroy();
         }
     }
 }

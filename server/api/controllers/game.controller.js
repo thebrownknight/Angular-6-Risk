@@ -148,6 +148,24 @@ module.exports.joinGame = function(req, res) {
     }
 }
 
+module.exports.deleteGame = function(req, res) {
+    // The payload will contain the user's ID
+    if (!req.payload._id) {
+        res.status(403).json({
+            "message": "UnauthorizedError: Please login to view your games."
+        });
+    } else {
+        Game
+            .findByIdAndRemove(req.params.gId, function(err, ret) {
+                if (err) {
+                    res.status(404).json(err);
+                    return;
+                }
+                res.status(200).json(ret);
+            });
+    }
+}
+
 ////////////////////////////////////////////
 // Private method to get user ID by username
 ////////////////////////////////////////////

@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 
 import { RiskModal, ModalDismissReasons, RiskModalRef } from '../../ui/modal/modal.module';
@@ -8,7 +8,7 @@ import { SocketService } from '../../../services/sockets';
 import { DashboardService } from '../../../services/dashboard.service';
 
 import { UsernameValidator } from '../../../helpers/custom-validators/existing-username-validator';
-import { UserDetails, GamePayload, GameDetails, PendingGameDetails } from '../../../helpers/data-models';
+import { UserDetails, GamePayload, GameDetails, PendingGameDetails, Alert, AlertType } from '../../../helpers/data-models';
 
 import { Utils } from '../../../services/utils';
 import { Observable } from 'rxjs';
@@ -66,12 +66,41 @@ export class UserGamesComponent implements OnInit {
             }
         });
 
-        // Subscribe to 'joined game' event
+        /**
+         * Subscribe to 'user created game' event
+         * This will be triggered when anyone creates a new game
+         * We have to check to see if the logged in user is one of the players in the created game
+         * and if so, we show a notification and ask them to accept the game.
+         */
+        this.getEvent('user created game').subscribe((data) => {
+            console.log(data);
+
+            // Check to see if the logged in user is in the game players list (check by ID)
+            if (data.players.some(e => e.player._id === this.loggedInUser._id)) {
+                // Show a notification
+                this.alertService.alert(new Alert({
+                    message: 'User `' + data.user + '` created a new game `' + data.game.title + '`',
+                    iconClass: 'fa-user-astronaut',
+                    type: AlertType.Success,
+                    alertId: 'game_create'
+                }));
+            }
+        });
+
+        // Subscribe to 'user joined game' event
+        // This will be triggered when someone else in either a game you've created or have been invited to
+        // has joined the game.
         this.getEvent('user joined game').subscribe((data) => {
             console.log(data);
 
             // Refresh the game that was affected
-            this.updateGame(data.gameCode);
+            this.updateGame(data.userDetails.username, data.gameCode);
+        });
+
+        this.alertService.refreshNotification.subscribe(eventName => {
+            if (eventName === 'reload_game_list') {
+                this.getUserGames();
+            }
         });
     }
 
@@ -95,6 +124,8 @@ export class UserGamesComponent implements OnInit {
      * 3. Completed games
      */
     getUserGames() {
+        console.log('HERE?');
+
         this.clearGameLists();
 
         this.dashboardService.getUserGames().subscribe((games) => {
@@ -180,8 +211,18 @@ export class UserGamesComponent implements OnInit {
 
                     // Show a notification
                     this.alertService.showSuccessAlert(
-                    '<div class="icon-container"><i class="fas fa-check icon"></i></div><p>New game `' + createdGame.title + '` created!'
+                    '<div class="icon-container"><i class="fas fa-check icon"></i></div>' +
+                    '<p>New game `' + createdGame.title + '` created!</p>'
                     );
+
+                    // Emit the game created event to all the users who were a part of the game
+                    const payload = {
+                        user: this.loggedInUser.username,
+                        game: createdGame
+                    };
+
+                    this.socketIo.emit('game created', payload);
+
                     // Retrieve the new user's game list
                     this.getUserGames();
                 }
@@ -209,60 +250,50 @@ export class UserGamesComponent implements OnInit {
     }
 
     /**
+     * Method to cancel an existing game.
+     */
+    deleteGame(gameId: any): void {
+        this.dashboardService.deleteGame(gameId).subscribe((delGame) => {
+            // Close the modal
+            this.riskModalRef.close();
+
+            // Show a notification
+            this.alertService.showSuccessAlert(
+                '<div class="icon-container"><i class="fas fa-check icon"></i></div><p>' + delGame.title + ' deleted successfully.</p>'
+                );
+
+            // Emit the game deleted event to all the users who were a part of the game
+            this.socketIo.emit('game deleted', delGame);
+
+            this.getUserGames();
+        });
+    }
+
+    /**
      * Update the pending game list by "refreshing" the game that was affected by another user joining/starting/canceling a game.
      */
-     updateGame(gameCode: string): void {
+     updateGame(username: string, gameCode: string): void {
          // Make the call to get the game from the game code and subscribe to the observable
          this.dashboardService.getGameByCode(gameCode).subscribe((retGame) => {
-             // Check the returned game's status and then map the array of existing games to update the game we're
-             // interested in
-             switch(retGame.status) {
-                 case 'CREATED':
+            // Show a notification
+            this.alertService.showSuccessAlert(
+                '<div class="icon-container"><i class="fas fa-user icon"></i></div><p>'
+                + username + 'has joined game `' + retGame.title + '`!</p>'
+                );
+
+            // Check the returned game's status and then map the array of existing games to update the game we're
+            // interested in
+            switch (retGame.status) {
+                case 'CREATED':
                     // Update the user created games list
-                    this.pendingGamesList.userCreatedGames = this.pendingGamesList.userCreatedGames.map((existGame) => {
-                        if (existGame.code === gameCode) {
-                            // We replace the existing game's players with the returned game's players
-                            // Also update the pending players and possibly logged in user pending
-                            existGame.players = []; // Reset the players array of existing game
-                            // Make a deep copy of the retGame.players array
-                            for (let i = 0; i < retGame.players.length; i++) {
-                                existGame.players.push(retGame.players[i]);
-                            }
-                            existGame.pendingPlayers = existGame.players.filter((player) => {
-                                return player.status === 'PENDING';
-                            });
-                            existGame.loggedInUserPending =
-                                existGame.pendingPlayers.some(e => e.player._id === this.loggedInUser._id);
-                        }
-
-                        return existGame;   // Finally return either the current array obj or the updated one
-                    });
-
-                    // TODO: MAKE THIS DRY!!!!
-                    this.pendingGamesList.invitedGames = this.pendingGamesList.invitedGames.map((iexistGame) => {
-                        if (iexistGame.code === gameCode) {
-                            // We replace the existing game's players with the returned game's players
-                            // Also update the pending players and possibly logged in user pending
-                            iexistGame.players = []; // Reset the players array of existing game
-                            // Make a deep copy of the retGame.players array
-                            for (let i = 0; i < retGame.players.length; i++) {
-                                iexistGame.players.push(retGame.players[i]);
-                            }
-                            iexistGame.pendingPlayers = iexistGame.players.filter((player) => {
-                                return player.status === 'PENDING';
-                            });
-                            iexistGame.loggedInUserPending =
-                                iexistGame.pendingPlayers.some(e => e.player._id === this.loggedInUser._id);
-                        }
-
-                        return iexistGame;   // Finally return either the current array obj or the updated one
-                    });
-                 break;
-                 case 'INPROGRESS':
-                 break;
-                 case 'COMPLETED':
-                 break;
-             }
+                    this.pendingGamesList.userCreatedGames = this.swapUpdatedGame(this.pendingGamesList.userCreatedGames, retGame);
+                    this.pendingGamesList.invitedGames = this.swapUpdatedGame(this.pendingGamesList.invitedGames, retGame);
+                    break;
+                case 'INPROGRESS':
+                    break;
+                case 'COMPLETED':
+                    break;
+            }
          });
      }
 
@@ -320,6 +351,28 @@ export class UserGamesComponent implements OnInit {
                     return data;
                 })
             );
+    }
+
+    // Private method to update array of games with an updated game
+    private swapUpdatedGame(gameArray: any, gameToSwap: any) {
+        return gameArray.map((iexistGame) => {
+            if (iexistGame.code === gameToSwap.code) {
+                // We replace the existing game's players with the returned game's players
+                // Also update the pending players and possibly logged in user pending
+                iexistGame.players = []; // Reset the players array of existing game
+                // Make a deep copy of the gameToSwap.players array
+                for (let i = 0; i < gameToSwap.players.length; i++) {
+                    iexistGame.players.push(gameToSwap.players[i]);
+                }
+                iexistGame.pendingPlayers = iexistGame.players.filter((player) => {
+                    return player.status === 'PENDING';
+                });
+                iexistGame.loggedInUserPending =
+                    iexistGame.pendingPlayers.some(e => e.player._id === this.loggedInUser._id);
+            }
+
+            return iexistGame;   // Finally return either the current array obj or the updated one
+        });
     }
 
     // Reactive form methods

@@ -49,7 +49,11 @@
                             vertical-align: top;
                             color: darken($sunshine, 10%);
                         }
-                        .pending-players, .join-game {
+                        .start-game {
+                            @extend .pending-players;
+                            color: $aqua;
+                        }
+                        .pending-players, .join-game, .start-game {
                             @include flex-grow(1);
                         }
                         .created-date {
@@ -105,6 +109,15 @@
                     }
                 }
             }
+        }
+    }
+}
+
+// Modals within the dashboard
+.delete-game-modal {
+    .modal-body {
+        p {
+            @include rem(font-size, 14px);
         }
     }
 }
