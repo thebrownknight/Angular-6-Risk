@@ -46,9 +46,11 @@ module.exports.getGameByCode = function(req, res) {
         });
     } else {
         Game
-            .find({
+            .findOne({
                 'code': gameCode
             })
+            .populate('creator')
+            .populate('players.player')
             .exec((err, game) => {
                 if (err) {
                     res.status(404).json(err);

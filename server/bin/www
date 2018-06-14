@@ -65,8 +65,8 @@ io.on('connection', (socket) => {
     // Game creation event
     // When the client emits a "game created" event, we just emit back the information
     // and subscribe on the client's side
-    socket.on('game created', (createdGame) => {
-        socket.broadcast.emit('user created game', createdGame);
+    socket.on('game created', (payload) => {
+        socket.broadcast.emit('user created game', payload);
     });
 
     // When the client emits a "join room" event, add the client's socket ID

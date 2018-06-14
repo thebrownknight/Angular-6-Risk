@@ -76,13 +76,14 @@ export class UserGamesComponent implements OnInit {
             console.log(data);
 
             // Check to see if the logged in user is in the game players list (check by ID)
-            if (data.players.some(e => e.player._id === this.loggedInUser._id)) {
+            if (data.game.players.some(e => e.player === this.loggedInUser._id)) {
                 // Show a notification
                 this.alertService.alert(new Alert({
                     message: 'User `' + data.user + '` created a new game `' + data.game.title + '`',
                     iconClass: 'fa-user-astronaut',
                     type: AlertType.Success,
-                    alertId: 'game_create'
+                    alertId: 'game_create',
+                    buttonTitle: 'Accept Invitation'
                 }));
             }
         });
@@ -124,8 +125,6 @@ export class UserGamesComponent implements OnInit {
      * 3. Completed games
      */
     getUserGames() {
-        console.log('HERE?');
-
         this.clearGameLists();
 
         this.dashboardService.getUserGames().subscribe((games) => {
@@ -210,10 +209,12 @@ export class UserGamesComponent implements OnInit {
                     this.riskModalRef.close();
 
                     // Show a notification
-                    this.alertService.showSuccessAlert(
-                    '<div class="icon-container"><i class="fas fa-check icon"></i></div>' +
-                    '<p>New game `' + createdGame.title + '` created!</p>'
-                    );
+                    this.alertService.alert(new Alert({
+                        message: 'New game `' + createdGame.title + '` created!',
+                        iconClass: 'fa-check',
+                        type: AlertType.Success,
+                        dismiss: true
+                    }));
 
                     // Emit the game created event to all the users who were a part of the game
                     const payload = {
@@ -258,9 +259,12 @@ export class UserGamesComponent implements OnInit {
             this.riskModalRef.close();
 
             // Show a notification
-            this.alertService.showSuccessAlert(
-                '<div class="icon-container"><i class="fas fa-check icon"></i></div><p>' + delGame.title + ' deleted successfully.</p>'
-                );
+            this.alertService.alert(new Alert({
+                message: delGame.title + ' deleted successfully.',
+                iconClass: 'fa-check',
+                type: AlertType.Success,
+                dismiss: true
+            }));
 
             // Emit the game deleted event to all the users who were a part of the game
             this.socketIo.emit('game deleted', delGame);
@@ -275,11 +279,13 @@ export class UserGamesComponent implements OnInit {
      updateGame(username: string, gameCode: string): void {
          // Make the call to get the game from the game code and subscribe to the observable
          this.dashboardService.getGameByCode(gameCode).subscribe((retGame) => {
+
             // Show a notification
-            this.alertService.showSuccessAlert(
-                '<div class="icon-container"><i class="fas fa-user icon"></i></div><p>'
-                + username + 'has joined game `' + retGame.title + '`!</p>'
-                );
+            this.alertService.alert(new Alert({
+                message: username + 'has joined game `' + retGame.title + '` created!',
+                iconClass: 'fa-user',
+                type: AlertType.Success
+            }));
 
             // Check the returned game's status and then map the array of existing games to update the game we're
             // interested in

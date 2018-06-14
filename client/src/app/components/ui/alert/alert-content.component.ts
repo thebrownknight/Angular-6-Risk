@@ -10,14 +10,14 @@ import { AlertService } from '../../../services/alert.service';
                 <i [ngClass]="'fas icon ' + iconClass"></i>
             </div>
             <p>{{message}}</p>
-            <button class="btn btn-sunshine btn-small" (click)="reloadList()">Accept Invitation</button>
+            <button *ngIf="buttonTitle !== ''" class="btn btn-sunshine btn-small" (click)="reloadList()">{{buttonTitle}}</button>
         </div>
     `
 })
 export class AlertContentComponent implements OnInit {
-    @Input() iconClass;
-    @Input() clickHandler;
-    @Input() message;
+    @Input() iconClass: string;
+    @Input() message: string;
+    @Input() buttonTitle: string;
 
     constructor(private alertService: AlertService) { }
 

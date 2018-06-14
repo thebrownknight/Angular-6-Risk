@@ -60,7 +60,9 @@ export class Alert {
     type: AlertType;
     iconClass: string;
     message: any;
+    buttonTitle?: string;
     alertId: string;
+    dismiss: boolean;
     keepAfterRouteChange: boolean;
 
     constructor(init?: Partial<Alert>) {

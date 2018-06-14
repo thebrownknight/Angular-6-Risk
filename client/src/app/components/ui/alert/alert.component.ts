@@ -5,7 +5,7 @@ import { Alert, AlertType } from '../../../helpers/data-models';
 import { AlertContentComponent } from './alert-content.component';
 import { AlertService } from '../../../services/alert.service';
 
-type AlertContent = 'template' | 'string' | 'component';
+type AlertContent = 'template' | 'component';
 
 @Component({
     selector: 'risk-alert',
@@ -27,7 +27,7 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnInit() {
         this.alertService.getAlert().subscribe((alert: Alert) => {
-            console.log(alert);
+
             if (!alert.message) {
                 // Clear alerts when an empty alert is received
                 this.alerts = [];
@@ -39,6 +39,9 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.alertContent = 'template';
             } else {
                 this.alertContent = 'component';
+                // Since we're looking at a ViewContainerRef (ng-template) inside
+                // an ngFor directive, we have to subscribe to the changes property
+                // of the ViewContainerRef
                 this.alertContentComponent.changes.subscribe((acc) => {
                     // Loop through all the panels
                     acc.toArray().forEach((elem: any, index) => {
@@ -54,6 +57,7 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
                         // Add inputs for the alert content component
                         this.componentRef.instance.message = alert.message;
                         this.componentRef.instance.iconClass = alert.iconClass;
+                        this.componentRef.instance.buttonTitle = alert.buttonTitle ? alert.buttonTitle : '';
 
                         this.cdRef.detectChanges();
                     });
@@ -62,6 +66,12 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
 
             // Add alert to array
             this.alerts.push(alert);
+
+            if (alert.dismiss) {
+                setTimeout(() => {
+                    this.removeAlert(alert)
+                }, 3000);
+            }
         });
     }
 
