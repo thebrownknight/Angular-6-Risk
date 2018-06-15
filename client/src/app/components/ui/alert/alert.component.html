@@ -1,4 +1,4 @@
-<div *ngFor="let alert of alerts" class="{{ cssClass(alert) }} rs-box rs-bar rs-effect-slidetop">
+<div *ngFor="let alert of alerts" [ngClass]="{ 'rs-alert rs-box rs-bar rs-effect-slidetop': true, 'rs-hide': removingAlert, 'rs-alert-success': alert.type === 0, 'rs-alert-warning': alert.type === 3 }">
     <div class="alert-content" *ngIf="alertContent === 'template'">
         <ng-container *ngTemplateOutlet="alert.message"></ng-container>
     </div>

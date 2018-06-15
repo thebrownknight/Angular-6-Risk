@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, AfterViewInit, TemplateRef, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { ComponentFactoryResolver, ComponentRef, ViewChildren, ViewContainerRef, QueryList, ElementRef } from '@angular/core';
+import { HostBinding } from '@angular/core';
 
 import { Alert, AlertType } from '../../../helpers/data-models';
 import { AlertContentComponent } from './alert-content.component';
@@ -27,10 +28,12 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnInit() {
         this.alertService.getAlert().subscribe((alert: Alert) => {
-
+            console.log(alert);
             if (!alert.message) {
                 // Clear alerts when an empty alert is received
-                this.alerts = [];
+                // this.alerts = [];
+
+                this.removeAlert(alert);
                 return;
             }
 
@@ -43,6 +46,7 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
                 // an ngFor directive, we have to subscribe to the changes property
                 // of the ViewContainerRef
                 this.alertContentComponent.changes.subscribe((acc) => {
+                    console.log(acc);
                     // Loop through all the panels
                     acc.toArray().forEach((elem: any, index) => {
                         elem.clear();
@@ -55,9 +59,12 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
                         this.componentRef = elem.createComponent(factory);
 
                         // Add inputs for the alert content component
+                        this.componentRef.instance.alertId = alert.alertId ? alert.alertId : '';
                         this.componentRef.instance.message = alert.message;
                         this.componentRef.instance.iconClass = alert.iconClass;
                         this.componentRef.instance.buttonTitle = alert.buttonTitle ? alert.buttonTitle : '';
+                        this.componentRef.instance.buttonAction = alert.buttonAction ? alert.buttonAction : 'reload_game_list';
+                        this.componentRef.instance.params = alert.params;
 
                         this.cdRef.detectChanges();
                     });
@@ -69,8 +76,11 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
 
             if (alert.dismiss) {
                 setTimeout(() => {
-                    this.removeAlert(alert)
-                }, 3000);
+                    this.removeAlert(alert);
+                    if (this.removingAlert) {
+                        this.removingAlert = false;
+                    }
+                }, 5000);
             }
         });
     }
@@ -81,7 +91,7 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
 
     removeAlert(alert: Alert) {
         this.removingAlert =  true;
-        this.alerts = this.alerts.filter(x => x !== alert);
+        this.alerts = this.alerts.filter(x => x.alertId !== alert.alertId);
         this.removingAlert = false;
     }
 
@@ -92,13 +102,13 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
         // Return CSS class based on alerty type
         switch (alert.type) {
             case AlertType.Success:
-                return 'rs-alert rs-alert-success';
+                return 'rs-alert-success';
             case AlertType.Error:
-                return 'rs-alert rs-alert-error';
+                return 'rs-alert-error';
             case AlertType.Info:
-                return 'rs-alert rs-alert-info';
+                return 'rs-alert-info';
             case AlertType.Warning:
-                return 'rs-alert rs-alert-warning';
+                return 'rs-alert-warning';
         }
     }
 

@@ -9,15 +9,18 @@ import { AlertService } from '../../../services/alert.service';
             <div class="icon-container">
                 <i [ngClass]="'fas icon ' + iconClass"></i>
             </div>
-            <p>{{message}}</p>
-            <button *ngIf="buttonTitle !== ''" class="btn btn-sunshine btn-small" (click)="reloadList()">{{buttonTitle}}</button>
+            <p [innerHtml]="message"></p>
+            <button *ngIf="buttonTitle !== ''" class="btn btn-sunshine btn-small" (click)="action()">{{buttonTitle}}</button>
         </div>
     `
 })
 export class AlertContentComponent implements OnInit {
+    @Input() alertId: string;
     @Input() iconClass: string;
     @Input() message: string;
     @Input() buttonTitle: string;
+    @Input() buttonAction: string;
+    @Input() params: any;
 
     constructor(private alertService: AlertService) { }
 
@@ -25,8 +28,9 @@ export class AlertContentComponent implements OnInit {
 
     }
 
-    reloadList() {
-        this.alertService.clear('game_create');
-        this.alertService.notificationEvent('reload_game_list');
+    action() {
+        console.log(this.params);
+        this.alertService.clear(this.alertId);
+        this.alertService.notificationEvent(this.buttonAction, this.params);
     }
 }

@@ -61,6 +61,8 @@ export class Alert {
     iconClass: string;
     message: any;
     buttonTitle?: string;
+    buttonAction?: string;
+    params?: any;
     alertId: string;
     dismiss: boolean;
     keepAfterRouteChange: boolean;
@@ -75,6 +77,11 @@ export enum AlertType {
     Error,
     Info,
     Warning
+}
+
+export interface NotificationEvent {
+    eventName: string;
+    params?: any;
 }
 
 /****************************************/

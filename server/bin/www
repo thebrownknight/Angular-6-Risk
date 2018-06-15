@@ -46,7 +46,6 @@ io.use((socket, next) => {
         jwt.verify(socket.handshake.query.token, config.secretKey, function(err, decoded) {
             if (err) return next(new Error('Authentication error in socket during verification.'));
             socket.decoded = decoded;
-            console.log(socket.request.headers.cookie);
             return next();
         });
     }
@@ -55,7 +54,7 @@ io.use((socket, next) => {
 
 io.on('connection', (socket) => {
     // Log whenever a user connects
-    console.log('Connected client on port ' + socketPort);
+    console.log('Connected client on port ' + socketPort + ' with id ' + socket.id);
 
     // Log whenever a client disconnects from our websocket server
     socket.on('disconnect', function() {
@@ -67,6 +66,14 @@ io.on('connection', (socket) => {
     // and subscribe on the client's side
     socket.on('game created', (payload) => {
         socket.broadcast.emit('user created game', payload);
+    });
+
+    // Game deletion event
+    // When the client emits a "game deleted" event, we just emit back the information
+    // and subscribe on the client's side
+    socket.on('game deleted', (payload) => {
+        let gameCode = payload.game.code;
+        socket.to('game ' + gameCode).emit('user deleted game', payload);
     });
 
     // When the client emits a "join room" event, add the client's socket ID
@@ -88,7 +95,7 @@ io.on('connection', (socket) => {
     // When the client emits a "joined game" event, we let everyone in the room know about
     // event
     socket.on('joined game', (gameCode) => {
-        console.log(socket.decoded);
+        // console.log(socket.decoded);
         const joinedGamePayload = {
             userDetails: socket.decoded,
             gameCode: gameCode

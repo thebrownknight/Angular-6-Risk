@@ -15,7 +15,7 @@
                         <p class="help-text">Enter the title of the game.</p>
                         <input placeholder="My Awesome Risk Game" type="text" [ngClass]="{'input-field': true, 'error': !this.gameCreationForm.get('title').valid && gameCreationFormSubmitted}" formControlName="title">
                     </label>
-                    <div *ngIf="!this.gameCreationForm.get('title').valid && gameCreationFormSubmitted && this.gameCreationForm.get('title').errors !== null" class="error-container">
+                    <div *ngIf="!this.gameCreationForm.get('title').valid && gameCreationFormSubmitted && this.gameCreationForm.get('title').errors !== null && this.gameCreationForm.get('title').dirty" class="error-container">
                         <p *ngIf="this.gameCreationForm.get('title').errors.required">
                             Please enter the title of the game you are creating.
                         </p>
@@ -39,7 +39,7 @@
                         </div>
                     </div>
                 </div>
-                <div [hidden]="this.gameCreationForm.get('gameType').value === 'public'" class="form-group" formArrayName="usernames">
+                <div *ngIf="this.gameCreationForm.get('gameType').value === 'private'" class="form-group" formArrayName="usernames">
                     <div class="usernames-block">
                         <label class="input-label">
                             <span class="input-label-content">Invite Players</span>
@@ -73,7 +73,7 @@
                         </div>
                     </div>
                 </div>
-                <div [hidden]="this.gameCreationForm.get('gameType').value === 'private'" class="form-group">
+                <div *ngIf="this.gameCreationForm.get('gameType').value === 'public'" class="form-group">
                     <div class="select-container">
                         <label class="input-label">
                             <span class="input-label-content">Maximum Number of Players</span>
@@ -154,9 +154,10 @@
                         <div class="accordion-header">
                             <i [ngClass]="{'game-type fas': true, 'fa-user-lock': game.gameType === 'private', 'fa-globe': game.gameType === 'public'}"></i>
                             <h3>{{game.title}}</h3>
-                            <!-- <span *ngIf="!game.loggedInUserPending" class="pending-players">Waiting on {{game.pendingPlayers.length}} other player{{game.pendingPlayers.length > 1 ? 's' : ''}}</span> -->
                             <span *ngIf="game.loggedInUserPending" class="join-game"><button type="button" class="btn btn-aqua btn-small" (click)="joinGame(game._id, game.code)">Join Game</button></span>
-                            <span class="created-date">Created on: {{game.createdAt}}</span>
+                            <span *ngIf="!game.loggedInUserPending && game.pendingPlayers.length > 0" class="pending-players">Waiting on {{game.pendingPlayers.length}} other player{{game.pendingPlayers.length > 1 ? 's' : ''}}</span>
+                            <span *ngIf="!game.loggedInUserPending && game.pendingPlayers.length === 0" class="pending-players">Waiting on <b>{{game.creator.username}}</b> to start the game</span>
+                            <span class="created-date">Invited by <b>{{game.creator.username}}</b></span>
                         </div>
                         <p>Players in game:</p>
                         <ul class="game-players">

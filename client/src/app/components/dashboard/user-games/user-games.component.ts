@@ -8,7 +8,8 @@ import { SocketService } from '../../../services/sockets';
 import { DashboardService } from '../../../services/dashboard.service';
 
 import { UsernameValidator } from '../../../helpers/custom-validators/existing-username-validator';
-import { UserDetails, GamePayload, GameDetails, PendingGameDetails, Alert, AlertType } from '../../../helpers/data-models';
+import { UserDetails, GamePayload, GameDetails, PendingGameDetails } from '../../../helpers/data-models';
+import { Alert, AlertType, NotificationEvent } from '../../../helpers/data-models';
 
 import { Utils } from '../../../services/utils';
 import { Observable } from 'rxjs';
@@ -79,11 +80,16 @@ export class UserGamesComponent implements OnInit {
             if (data.game.players.some(e => e.player === this.loggedInUser._id)) {
                 // Show a notification
                 this.alertService.alert(new Alert({
-                    message: 'User `' + data.user + '` created a new game `' + data.game.title + '`',
+                    message: 'User <b>' + data.user + '</b> invited you to their game `' + data.game.title + '`',
                     iconClass: 'fa-user-astronaut',
                     type: AlertType.Success,
-                    alertId: 'game_create',
-                    buttonTitle: 'Accept Invitation'
+                    alertId: 'game_create_notification',
+                    buttonTitle: 'Join Game',
+                    buttonAction: 'join_game',
+                    params: {
+                        gameId: data.game._id,
+                        gameCode: data.game.code
+                    }
                 }));
             }
         });
@@ -98,9 +104,26 @@ export class UserGamesComponent implements OnInit {
             this.updateGame(data.userDetails.username, data.gameCode);
         });
 
-        this.alertService.refreshNotification.subscribe(eventName => {
-            if (eventName === 'reload_game_list') {
+        // Subscribe to 'user deleted game' event
+        // This will be triggered when the creator of a game decides to delete a game
+        // before it starts.
+        this.getEvent('user deleted game').subscribe((data) => {
+            console.log(data);
+
+            this.alertService.alert(new Alert({
+                message: 'User <b>' + data.user + '</b> deleted game `' + data.game.title + '`',
+                iconClass: 'fa-trash-alt',
+                type: AlertType.Warning,
+                alertId: 'game_delete_notification',
+                buttonTitle: 'Reload List'
+            }));
+        });
+
+        this.alertService.refreshNotification.subscribe((ev: NotificationEvent) => {
+            if (ev.eventName === 'reload_game_list') {
                 this.getUserGames();
+            } else if (ev.eventName === 'join_game') {
+                this.joinGame(ev.params.gameId, ev.params.gameCode);
             }
         });
     }
@@ -213,6 +236,7 @@ export class UserGamesComponent implements OnInit {
                         message: 'New game `' + createdGame.title + '` created!',
                         iconClass: 'fa-check',
                         type: AlertType.Success,
+                        alertId: 'game_create',
                         dismiss: true
                     }));
 
@@ -226,6 +250,12 @@ export class UserGamesComponent implements OnInit {
 
                     // Retrieve the new user's game list
                     this.getUserGames();
+
+                    // Reset game creation form
+                    this.gameCreationForm.reset({
+                        gameType: 'private',
+                        numberOfPlayers: 2
+                    });
                 }
             }, (err) => {
                 console.error(err);
@@ -238,7 +268,14 @@ export class UserGamesComponent implements OnInit {
      */
     joinGame(gameId: any, gameCode: string): void {
         this.dashboardService.joinGame(gameId).subscribe(() => {
-            console.log('Joined game ' + gameId + ' successfully.');
+            // Show a notification
+            this.alertService.alert(new Alert({
+                message: 'Joined game successfully.',
+                iconClass: 'fa-check',
+                type: AlertType.Success,
+                alertId: 'game_joined',
+                // dismiss: true
+            }));
 
             // Now that we've updated the database, emit the message via sockets
             // We use the game code as the data to send since we've named our
@@ -263,11 +300,17 @@ export class UserGamesComponent implements OnInit {
                 message: delGame.title + ' deleted successfully.',
                 iconClass: 'fa-check',
                 type: AlertType.Success,
+                alertId: 'game_deleted',
                 dismiss: true
             }));
 
+            const payload = {
+                user: this.loggedInUser.username,
+                game: delGame
+            };
+
             // Emit the game deleted event to all the users who were a part of the game
-            this.socketIo.emit('game deleted', delGame);
+            this.socketIo.emit('game deleted', payload);
 
             this.getUserGames();
         });
@@ -282,8 +325,10 @@ export class UserGamesComponent implements OnInit {
 
             // Show a notification
             this.alertService.alert(new Alert({
-                message: username + 'has joined game `' + retGame.title + '` created!',
+                message: username + ' has joined your game `' + retGame.title + '`!',
                 iconClass: 'fa-user',
+                alertId: 'game_joined_notification',
+                dismiss: true,
                 type: AlertType.Success
             }));
 

@@ -1,26 +1,32 @@
 .rs-box {
     position: fixed;
-    background: $powder;
-    @include rem(padding-right, 22px);
     line-height: 1.4;
     z-index: 1000;
     pointer-events: auto;
     box-shadow: 0px 1px 4px $dark-gray;
     top: 0;
-    left: 0;
-    width: 100%;
+    left: 50%;
+    width: 300px;
+    @include transform(translateX(-50%));
+    @include rem(padding, 15px);
 
     .alert-content {
         @include flexbox();
         @include justify-content(flex-start);
         @include align-items(center);
+        @include flex-wrap(wrap);
+
+        .btn {
+            width: 100%;
+            @include rem(margin-top, 15px);
+        }
     }
 
     .rs-close {
         cursor: pointer;
         background: transparent;
-        top: 50%;
-        right: 20px;
+        top: 20px;
+        right: 10px;
         width: 20px;
         height: 20px;
         @include transform(translateY(-50%));
@@ -50,13 +56,10 @@
 
         .icon-container {
             text-align: center;
-            background: darken($aqua, 10%);
-            @include rem(padding, 15px 20px);
+            @include rem(padding, 3px 0 0);
 
             .icon {
                 @include rem(font-size, 24px);
-
-                color: $sunshine;
             }
         }
 
@@ -67,17 +70,76 @@
             @include animation-fill-mode(both);
         }
         p {
-            margin-bottom: 0;
-            @include rem(padding, 0 18px);
-            color: $white;
-            @include rem(font-size, 20px);
+            @include rem(margin, 0 0 0 15px);
+            @include rem(padding, 0 30px 0 0);
+            @include rem(font-size, 16px);
             @include raleway-regular();
             @include animation-name(animFade);
+            @include flex(1);
         }
     }
 
     &.rs-hide {
         @include animation-direction(reverse);
+    }
+
+    // Styles for different alert types
+    &.rs-alert-success {
+        background: $powder;
+
+        .icon-container {
+            // background: darken($aqua, 10%);
+
+            .icon {
+                color: $white;
+            }
+        }
+
+        p {
+            color: $white;
+        }
+
+        .rs-close {
+            &:hover, &:focus {
+                > i {
+                    color: darken($white, 10%);
+                }
+            }
+    
+            > i {
+                @include transition(color 0.2s);
+                color: $white;
+                @include rem(font-size, 20px);
+            }
+        }
+    }
+    &.rs-alert-warning {
+        background: $light-gray;
+
+        .icon-container {
+
+            .icon {
+                color: $vermillion;
+            }
+        }
+
+        p {
+            color: $dark-gray;
+        }
+
+        .rs-close {
+            &:hover, &:focus {
+                > i {
+                    color: darken($vermillion, 10%);
+                }
+            }
+    
+            > i {
+                @include transition(color 0.2s);
+                color: $vermillion;
+                @include rem(font-size, 20px);
+            }
+        }
     }
 }
 
