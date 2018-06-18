@@ -30,7 +30,7 @@ export class DashboardService {
         return this.request('post', '/api/games/create', gamePayload, true);
     }
     public joinGame(gId: any): Observable<any> {
-        return this.request('post', '/api/games/join', { gameId: gId }, true);
+        return this.request('post', '/api/games/' + gId + '/join', {}, true);
     }
     public deleteGame(gId: any): Observable<any> {
         return this.request('get', '/api/games/' + gId + '/delete');

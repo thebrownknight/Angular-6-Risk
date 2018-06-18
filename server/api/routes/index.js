@@ -33,7 +33,7 @@ router.get('/games/public', gameController.getPublicGames);
 // Create a game with a specific user
 router.post('/games/create', auth, gameController.createGame);
 // Join a game with a specific user
-router.post('/games/join', auth, gameController.joinGame);
+router.post('/games/:gId/join', auth, gameController.joinGame);
 // Cancel/delete a game
 router.get('/games/:gId/delete', auth, gameController.deleteGame);
 

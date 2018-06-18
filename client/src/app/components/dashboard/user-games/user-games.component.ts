@@ -154,6 +154,9 @@ export class UserGamesComponent implements OnInit {
             const pgd_ucg_arr = [];
             const pgd_ig_arr = [];
 
+            // Array for in progress games
+            const in_progress_arr = [];
+
             // Take incoming games and set the gamesList variable
             // to display on the front-end
             games.forEach((game) => {

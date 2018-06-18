@@ -130,7 +130,7 @@ module.exports.joinGame = function(req, res) {
         Game
             .update(
                 {
-                    '_id': req.body.gameId,
+                    '_id': req.params.gId,
                     'players.player': req.payload._id
                 },
                 {
@@ -165,6 +165,16 @@ module.exports.deleteGame = function(req, res) {
                 }
                 res.status(200).json(ret);
             });
+    }
+}
+
+module.exports.startGame = function(req, res) {
+    if (!req.payload._id) {
+        res.status(403).json({
+            "message": "UnauthorizedError: Please login to complete this action."
+        });
+    } else {
+
     }
 }
 
