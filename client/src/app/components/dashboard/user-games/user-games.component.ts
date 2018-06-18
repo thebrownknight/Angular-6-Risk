@@ -74,7 +74,7 @@ export class UserGamesComponent implements OnInit {
          * and if so, we show a notification and ask them to accept the game.
          */
         this.getEvent('user created game').subscribe((data) => {
-            console.log(data);
+            // console.log(data);
 
             // Check to see if the logged in user is in the game players list (check by ID)
             if (data.game.players.some(e => e.player === this.loggedInUser._id)) {
@@ -83,7 +83,7 @@ export class UserGamesComponent implements OnInit {
                     message: 'User <b>' + data.user + '</b> invited you to their game `' + data.game.title + '`',
                     iconClass: 'fa-user-astronaut',
                     type: AlertType.Success,
-                    alertId: 'game_create_notification',
+                    alertId: 'game_create_notification_' + data.game.code,
                     buttonTitle: 'Join Game',
                     buttonAction: 'join_game',
                     params: {
@@ -91,6 +91,8 @@ export class UserGamesComponent implements OnInit {
                         gameCode: data.game.code
                     }
                 }));
+
+                this.getUserGames();
             }
         });
 
@@ -114,7 +116,7 @@ export class UserGamesComponent implements OnInit {
                 message: 'User <b>' + data.user + '</b> deleted game `' + data.game.title + '`',
                 iconClass: 'fa-trash-alt',
                 type: AlertType.Warning,
-                alertId: 'game_delete_notification',
+                alertId: 'game_delete_notification_' + data.game.code,
                 buttonTitle: 'Reload List'
             }));
         });
@@ -137,10 +139,6 @@ export class UserGamesComponent implements OnInit {
         });
     }
 
-    // testNotification(content) {
-    //     this.alertService.showSuccessAlert(content);
-    // }
-
     /**
      * Method to get the full list of the user's games.
      * 1. Pending games
@@ -148,10 +146,13 @@ export class UserGamesComponent implements OnInit {
      * 3. Completed games
      */
     getUserGames() {
-        this.clearGameLists();
+        // this.clearGameLists();
 
         this.dashboardService.getUserGames().subscribe((games) => {
             // console.log(games);
+            // Arrays for user-created games and invited games
+            const pgd_ucg_arr = [];
+            const pgd_ig_arr = [];
 
             // Take incoming games and set the gamesList variable
             // to display on the front-end
@@ -179,9 +180,9 @@ export class UserGamesComponent implements OnInit {
 
                         // Break out user created and invited games
                         if (this.loggedInUser._id === pendingGameDetails.creator._id) {
-                            this.pendingGamesList.userCreatedGames.push(pendingGameDetails);
+                            pgd_ucg_arr.push(pendingGameDetails);
                         } else {
-                            this.pendingGamesList.invitedGames.push(pendingGameDetails);
+                            pgd_ig_arr.push(pendingGameDetails);
                         }
 
                         // Emit message from socket to join the game room for each of the games
@@ -196,6 +197,10 @@ export class UserGamesComponent implements OnInit {
                         break;
                 }
             });
+
+            // Set the lists for pending user-created games and invited games so we get seamless data-binding
+            this.pendingGamesList.userCreatedGames = Utils.deepCopy(pgd_ucg_arr);
+            this.pendingGamesList.invitedGames = Utils.deepCopy(pgd_ig_arr);
 
         }, (err) => {
             console.error(err);
@@ -274,7 +279,7 @@ export class UserGamesComponent implements OnInit {
                 iconClass: 'fa-check',
                 type: AlertType.Success,
                 alertId: 'game_joined',
-                // dismiss: true
+                dismiss: true
             }));
 
             // Now that we've updated the database, emit the message via sockets
@@ -327,8 +332,8 @@ export class UserGamesComponent implements OnInit {
             this.alertService.alert(new Alert({
                 message: username + ' has joined your game `' + retGame.title + '`!',
                 iconClass: 'fa-user',
-                alertId: 'game_joined_notification',
-                dismiss: true,
+                alertId: 'game_joined_notification_' + retGame.code,
+                // dismiss: true,
                 type: AlertType.Success
             }));
 
@@ -387,10 +392,10 @@ export class UserGamesComponent implements OnInit {
         }
     }
 
-    private clearGameLists(): void {
-        this.pendingGamesList.userCreatedGames = [];
-        this.pendingGamesList.invitedGames = [];
-    }
+    // private clearGameLists(): void {
+    //     this.pendingGamesList.userCreatedGames = [];
+    //     this.pendingGamesList.invitedGames = [];
+    // }
 
     // Private method to listen for 'joined game' socket events
     private getEvent(eventName: string): Observable<any> {
@@ -398,7 +403,7 @@ export class UserGamesComponent implements OnInit {
             .fromEvent<any>(eventName)
             .pipe(
                 map((data: any) => {
-                    console.log(data);
+                    // console.log(data);
                     return data;
                 })
             );

@@ -30,7 +30,8 @@ export module Utils {
             return;
         }
 
-        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        const months = ['January', 'February', 'March', 'April',
+            'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
             year = inputDate.getFullYear(),
             month = months[inputDate.getMonth()],
             date = inputDate.getDate(),
@@ -44,5 +45,9 @@ export module Utils {
         }
 
         return formattedDate;
+    }
+
+    export function deepCopy<T>(o: T): T {
+        return JSON.parse(JSON.stringify(o));
     }
 }
