@@ -174,7 +174,23 @@ module.exports.startGame = function(req, res) {
             "message": "UnauthorizedError: Please login to complete this action."
         });
     } else {
+        // We just need to change the status of the game to 'IN PROGRESS'
+        Game
+            .update({ '_id': req.params.gId },
+                {
+                    $set: {
+                        'status': 'IN PROGRESS'
+                    }
+                },
+                function(err, raw) {
+                    if (err) {
+                        res.status(404).json(err);
+                        return;
+                    }
 
+                    res.status(200).json(raw);
+                }
+            );
     }
 }
 

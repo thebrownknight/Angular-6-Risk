@@ -296,6 +296,17 @@ export class UserGamesComponent implements OnInit {
     }
 
     /**
+     * Method to start a game.
+     */
+    startGame(game: any) {
+        this.dashboardService.startGame(game._id).subscribe(() => {
+            
+        }, (err) => {
+            console.error(err);
+        });
+    }
+
+    /**
      * Method to cancel an existing game.
      */
     deleteGame(gameId: any): void {

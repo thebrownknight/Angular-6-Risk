@@ -122,7 +122,7 @@
                             </li>
                         </ul>
                         <div *ngIf="game.creator._id === loggedInUser._id" class="buttons-container">
-                            <button [disabled]="(game.players.length - game.pendingPlayers.length) < 2" type="button" class="btn btn-aqua">Start Game</button>
+                            <button [disabled]="(game.players.length - game.pendingPlayers.length) < 2" type="button" class="btn btn-aqua" (click)="startGame(game)">Start Game</button>
                             <button type="button" class="btn btn-vermillion" (click)="open(deleteGameTpl)">Delete Game</button>
 
                             <ng-template #deleteGameTpl let-c="close" let-d="dismiss">

@@ -32,6 +32,9 @@ export class DashboardService {
     public joinGame(gId: any): Observable<any> {
         return this.request('post', '/api/games/' + gId + '/join', {}, true);
     }
+    public startGame(gId: any): Observable<any> {
+        return this.request('post', '/api/games/' + gId + '/start', {}, true);
+    }
     public deleteGame(gId: any): Observable<any> {
         return this.request('get', '/api/games/' + gId + '/delete');
     }
