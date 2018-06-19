@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 
 import { RiskModal, ModalDismissReasons, RiskModalRef } from '../../ui/modal/modal.module';
@@ -35,7 +36,9 @@ export class UserGamesComponent implements OnInit {
     inProgressGamesList: GameDetails[] = [];
     completedGamesList: GameDetails[] = [];
 
-    constructor(private modalService: RiskModal,
+    constructor(
+        private router: Router,
+        private modalService: RiskModal,
         private formBuilder: FormBuilder,
         private alertService: AlertService,
         private authService: AuthenticationService,
@@ -299,8 +302,23 @@ export class UserGamesComponent implements OnInit {
      * Method to start a game.
      */
     startGame(game: any) {
-        this.dashboardService.startGame(game._id).subscribe(() => {
-            
+        this.dashboardService.startGame(game._id).subscribe((startedGame) => {
+            // Show started game notification to user who started it
+            this.alertService.alert(new Alert({
+                message: 'Started game `' + startedGame.title + '`!',
+                iconClass: 'fa-kiwi-bird',
+                type: AlertType.Success,
+                alertId: 'started_game_' + startedGame.code,
+                dismiss: true
+            }));
+
+            // Now we redirect the user to the new risk game
+            this.router.navigate(['/risk', startedGame.code]);
+
+            // Now we notify everyone in the game that the game has started
+            this.socketIo.emit('game started', startedGame);
+
+            // TODO: Write message service to send messages to an inbox
         }, (err) => {
             console.error(err);
         });

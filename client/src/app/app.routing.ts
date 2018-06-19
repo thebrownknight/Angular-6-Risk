@@ -8,10 +8,10 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { AuthGuardService } from './services/auth-guard.service';
 
 const appRoutes: Routes = [
-    { path: 'risk', component: MapComponent, canActivate: [AuthGuardService] },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuardService] },
+    { path: 'risk/:code', component: MapComponent, canActivate: [AuthGuardService] },
     { path: '', redirectTo: '/login', pathMatch: 'full' },
 
     // Otherwise redirect to login

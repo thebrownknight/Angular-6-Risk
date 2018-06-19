@@ -2,7 +2,7 @@
     <div class="container">
         <h1 class="risk-logo">Risk</h1>
         <div [hidden]="!isLoggedIn" class="profile-manager">
-            <span><i class="fas fa-user"></i> {{userDetails.email}} <i class="fas fa-caret-down"></i></span>
+            <span><i class="fas fa-user"></i> {{userDetails.username}} <i class="fas fa-caret-down"></i></span>
             <div class="manager-dropdown">
                 <a href="/dashboard">Dashboard</a>
                 <a href  class="profile-link" (click)="logout()">Logout</a>

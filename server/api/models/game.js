@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const crypto = require('crypto');
-const config = require('../../config.json');
 
 let gameSchema = new mongoose.Schema({
     title: String,
