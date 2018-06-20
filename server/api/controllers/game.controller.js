@@ -176,19 +176,20 @@ module.exports.startGame = function(req, res) {
     } else {
         // We just need to change the status of the game to 'IN PROGRESS'
         Game
-            .update({ '_id': req.params.gId },
+            .findOneAndUpdate({ '_id': req.params.gId },
                 {
                     $set: {
                         'status': 'IN PROGRESS'
                     }
                 },
-                function(err, raw) {
+                { new: true },
+                function(err, doc) {
                     if (err) {
                         res.status(404).json(err);
                         return;
                     }
 
-                    res.status(200).json(raw);
+                    res.status(200).json(doc);
                 }
             );
     }

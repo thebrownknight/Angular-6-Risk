@@ -9,7 +9,7 @@ import { SocketService } from '../../../services/sockets';
 import { DashboardService } from '../../../services/dashboard.service';
 
 import { UsernameValidator } from '../../../helpers/custom-validators/existing-username-validator';
-import { UserDetails, GamePayload, GameDetails, PendingGameDetails } from '../../../helpers/data-models';
+import { UserDetails, GamePayload, GameDetails, PendingGameDetails, InProgressGameDetails } from '../../../helpers/data-models';
 import { Alert, AlertType, NotificationEvent } from '../../../helpers/data-models';
 
 import { Utils } from '../../../services/utils';
@@ -33,7 +33,7 @@ export class UserGamesComponent implements OnInit {
         userCreatedGames: [],
         invitedGames: []
     };
-    inProgressGamesList: GameDetails[] = [];
+    inProgressGamesList: InProgressGameDetails[] = [];
     completedGamesList: GameDetails[] = [];
 
     constructor(
@@ -163,6 +163,8 @@ export class UserGamesComponent implements OnInit {
             // Take incoming games and set the gamesList variable
             // to display on the front-end
             games.forEach((game) => {
+                // Grab the basic game details that pending, in progress, and
+                // completed games will be using
                 const gameDetails  = {
                     _id: game._id,
                     createdAt: Utils.formatDate(new Date(game.createdAt)),
@@ -175,6 +177,9 @@ export class UserGamesComponent implements OnInit {
                     code: game.code,
                     status: game.status
                 };
+
+                // Based on the game's status, we fill the appropriate array
+                // to display on the front-end
                 switch (game.status) {
                     case 'CREATED':
                         const pendingGameDetails = gameDetails as PendingGameDetails;
@@ -197,7 +202,9 @@ export class UserGamesComponent implements OnInit {
 
                         break;
                     case 'IN PROGRESS':
+                        const ipGameDetails = gameDetails as InProgressGameDetails;
 
+                        in_progress_arr.push(ipGameDetails);
                         break;
                     case 'COMPLETED':
                         break;
@@ -207,6 +214,8 @@ export class UserGamesComponent implements OnInit {
             // Set the lists for pending user-created games and invited games so we get seamless data-binding
             this.pendingGamesList.userCreatedGames = Utils.deepCopy(pgd_ucg_arr);
             this.pendingGamesList.invitedGames = Utils.deepCopy(pgd_ig_arr);
+
+            this.inProgressGamesList = Utils.deepCopy(in_progress_arr);
 
         }, (err) => {
             console.error(err);

@@ -53,6 +53,16 @@ export interface PendingGameDetails extends GameDetails {
     [key: string]: any;
 }
 
+/**
+ * Model for in progress games.
+ */
+export interface InProgressGameDetails extends GameDetails {
+    currentTurn: any;
+    currentLeader: any;
+    duration: string;
+    playerMeta: Array<any>;
+}
+
 /****************************************/
 // Alert data models.
 /****************************************/
