@@ -261,7 +261,9 @@
             width: 100%;
 
             &:not(:last-child) {
-                @include rem(margin-bottom, 20px);
+                @include rem(padding-bottom, 15px);
+                @include rem(margin-bottom, 15px);
+                border-bottom: 1px solid $off-white;
             }
 
             .input-label {
@@ -412,6 +414,11 @@
                         @include transition(all 0.25s linear);
                         @include opensans-regular();
                         color: $dark-gray;
+
+                        > i {
+                            @include rem(font-size, 18px);
+                            @include rem(margin-right, 5px);
+                        }
                     }
 
                     .check {

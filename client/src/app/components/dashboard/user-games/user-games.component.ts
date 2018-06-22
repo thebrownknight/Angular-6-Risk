@@ -36,6 +36,10 @@ export class UserGamesComponent implements OnInit {
     inProgressGamesList: InProgressGameDetails[] = [];
     completedGamesList: GameDetails[] = [];
 
+    // Possible game icons
+    gameIcons = [''];
+    // Possible game colors
+
     constructor(
         private router: Router,
         private modalService: RiskModal,
@@ -477,6 +481,8 @@ export class UserGamesComponent implements OnInit {
         this.gameCreationForm = this.formBuilder.group({
             title: ['', Validators.required],
             gameType: 'private',
+            gameIcon: ['', Validators.required],
+            gameColor: ['', Validators.required],
             usernames: this.formBuilder.array([this.createUsername()]),
             numberOfPlayers: 2
         });

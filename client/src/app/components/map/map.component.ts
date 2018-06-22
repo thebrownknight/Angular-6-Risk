@@ -45,14 +45,19 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
                 },
                 afterInit: ($self, paper, areas, plots, options) => {
                     // $('.risk-board .map').off('resizeEnd');
+                    // const winH = $(window).height();
 
-                    $(window).on('resize', () => {
-                        paper.ellipse(100, 200, 100, 60).attr({stroke: "#0067bf", fill: "#63a2d7", opacity: 0.4});
-                    }).trigger('resize');
+                    // $(window).on('resize', () => {
+                    //     paper.ellipse(100, 200, 100, 60).attr({stroke: '#0067bf', fill: '#63a2d7', opacity: 0.4});
+
+                    //     console.log((this.mapW * winH) / this.mapH);
+
+                    //     // paper.setSize((this.mapW * winH) / this.mapH, (winH - 117));
+                    //     paper.setSize(800, 600);
+                    // }).trigger('resize');
 
                     // $(window).on('resize', () => {
                     //     const winW = $(window).width(),
-                        const winH = $(window).height();
                     //         winRatio = winW / winH,
                     //         mapRatio = this.mapW / this.mapH;
 
@@ -73,7 +78,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
                      // You are free to call all Raphael.js functions on paper object
                     //  paper.ellipse(100, 200, 100, 60).attr({stroke:"#0067bf", fill:"#63a2d7",opacity:0.4});
                     //  paper.ellipse(300, 150, 80, 100).attr({stroke:"#4aa23c", fill:"#74d763",opacity:0.4});
-                    //  paper.path("m 198.57144,240 c 0,0 23.57142,163.57143 143.57142,136.42857").attr({stroke:"#4aa23c", "stroke-width":4});
                     // paper.setSize((this.mapW * winH) / this.mapH, (winH - 117));
                 }
             }

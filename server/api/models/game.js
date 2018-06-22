@@ -10,12 +10,18 @@ let gameSchema = new mongoose.Schema({
     },
     players: [{
         status: String,
+        color: String,
+        icon: String,
         player: {
             type: mongoose.Schema.ObjectId,
             ref: 'User'
         }
     }],
     gameType: String,
+    map: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Map'
+    },
     code: {
         type: String,
         unique: true
@@ -27,6 +33,10 @@ let gameSchema = new mongoose.Schema({
     endDate: {
         type: Date,
         default: null
+    },
+    gameMeta: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'GameMeta'
     }
 }, { timestamps: true });
 

@@ -39,6 +39,57 @@
                         </div>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label class="input-label">
+                        <span class="input-label-content">Icon</span>
+                        <p class="help-text">Choose your icon to use during the game.</p>
+                    </label>
+                    <div class="radio-button-container">
+                        <div class="button-container">
+                            <input id="icon_ambulance" type="radio" class="radio-field" formControlName="gameIcon">
+                            <label for="icon_ambulance"><i class="fas fa-ambulance"></i></label>
+                            <div class="check"></div>
+                        </div>
+                        <div class="button-container">
+                            <input id="icon_frog" type="radio" class="radio-field" formControlName="gameIcon">
+                            <label for="icon_frog"><i class="fas fa-frog"></i></label>
+                            <div class="check"></div>
+                        </div>
+                        <div class="button-container">
+                            <input id="icon_dove" type="radio" class="radio-field" formControlName="gameIcon">
+                            <label for="icon_dove"><i class="fas fa-dove"></i></label>
+                            <div class="check"></div>
+                        </div>
+                        <div class="button-container">
+                            <input id="icon_bicycle" type="radio" class="radio-field" formControlName="gameIcon">
+                            <label for="icon_bicycle"><i class="fas fa-bicycle"></i></label>
+                            <div class="check"></div>
+                        </div>
+                        <div class="button-container">
+                            <input id="icon_bug" type="radio" class="radio-field" formControlName="gameIcon">
+                            <label for="icon_bug"><i class="fas fa-bug"></i></label>
+                            <div class="check"></div>
+                        </div>
+                        <div class="button-container">
+                            <input id="icon_fighter-jet" type="radio" class="radio-field" formControlName="gameIcon">
+                            <label for="icon_fighter-jet"><i class="fas fa-fighter-jet"></i></label>
+                            <div class="check"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="input-label">
+                        <span class="input-label-content">Icon</span>
+                        <p class="help-text">Choose your icon to use during the game.</p>
+                    </label>
+                    <div class="radio-button-container">
+                        <div class="button-container" *ngFor="let color of gameColors; let i=index">
+                            <input id="color_" type="radio" class="radio-field" formControlName="gameIcon">
+                            <label for="color_yellow"><div class="color-block" [ngStyle]=""></label>
+                            <div class="check"></div>
+                        </div>
+                    </div>
+                </div>
                 <div *ngIf="this.gameCreationForm.get('gameType').value === 'private'" class="form-group" formArrayName="usernames">
                     <div class="usernames-block">
                         <label class="input-label">
