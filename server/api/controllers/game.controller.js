@@ -85,6 +85,8 @@ module.exports.createGame = function(req, res) {
             // Add the creator as a player by default
             game.players.push({
                 status: 'JOINED',
+                color: req.body.creatorColor,
+                icon: req.body.creatorIcon,
                 player: req.payload._id
             });
             var playersArray = req.body.players;
@@ -128,16 +130,19 @@ module.exports.joinGame = function(req, res) {
         });
     } else {
         Game
-            .update(
+            .findOneAndUpdate(
                 {
                     '_id': req.params.gId,
                     'players.player': req.payload._id
                 },
                 {
                     $set: {
-                        'players.$.status': 'JOINED'
+                        'players.$.status': 'JOINED',
+                        'players.$.color': req.body.playerColor,
+                        'players.$.icon': req.body.playerIcon
                     }
                 },
+                { new: true },
                 function(err, raw) {
                     if (err) {
                         res.status(404).json(err);
@@ -146,7 +151,7 @@ module.exports.joinGame = function(req, res) {
 
                     res.status(200).json(raw);
                 }
-            );
+            ).populate('players.player');
     }
 }
 
@@ -214,6 +219,8 @@ getUserIds = function(usernames, callback) {
                 var nUserIds = userIds.map(function(curValue, index) {
                     var rObj = {
                         'status': 'PENDING',
+                        'color': '',
+                        'icon': '',
                         'player': curValue._id
                     };
                     return rObj;

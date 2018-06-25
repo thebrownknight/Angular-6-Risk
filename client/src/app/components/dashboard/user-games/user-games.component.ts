@@ -29,6 +29,9 @@ export class UserGamesComponent implements OnInit {
     gameCreationForm: FormGroup;
     gameCreationFormSubmitted: Boolean;
 
+    joinGameForm: FormGroup;
+    joinGameFormSubmitted: Boolean;
+
     pendingGamesList = {
         userCreatedGames: [],
         invitedGames: []
@@ -37,8 +40,24 @@ export class UserGamesComponent implements OnInit {
     completedGamesList: GameDetails[] = [];
 
     // Possible game icons
-    gameIcons = [''];
+    // gameIcons = ['ambulance', 'frog', 'dove', 'bicycle', 'bug', 'fighter-jet'];
+    gameIcons = [
+        { name: 'ambulance', selected: false },
+        { name: 'frog', selected: false },
+        { name: 'dove', selected: false },
+        { name: 'bicycle', selected: false },
+        { name: 'bug', selected: false },
+        { name: 'fighter-jet', selected: false }
+    ];
     // Possible game colors
+    gameColors = [
+        { name: 'yellow', hex: '#e0d42a', selected: false },
+        { name: 'orange', hex: '#e29426', selected: false },
+        { name: 'blue', hex: '#456dbc', selected: false },
+        { name: 'red', hex: '#e84545', selected: false },
+        { name: 'green', hex: '#3ca855', selected: false },
+        { name: 'purple', hex: '#d25ef2', selected: false }
+    ];
 
     constructor(
         private router: Router,
@@ -49,7 +68,7 @@ export class UserGamesComponent implements OnInit {
         private socketIo: SocketService,
         private dashboardService: DashboardService,
         private usernameValidator: UsernameValidator) {
-        this.createForm();
+        this.createForms();
 
         // Get and store user details for customized output on games lists
         this.loggedInUser = this.authService.getUserDetails();
@@ -90,13 +109,13 @@ export class UserGamesComponent implements OnInit {
                     message: 'User <b>' + data.user + '</b> invited you to their game `' + data.game.title + '`',
                     iconClass: 'fa-user-astronaut',
                     type: AlertType.Success,
-                    alertId: 'game_create_notification_' + data.game.code,
-                    buttonTitle: 'Join Game',
-                    buttonAction: 'join_game',
-                    params: {
-                        gameId: data.game._id,
-                        gameCode: data.game.code
-                    }
+                    alertId: 'game_create_notification_' + data.game.code
+                    // buttonTitle: 'Join Game',
+                    // buttonAction: 'join_game',
+                    // params: {
+                    //     gameId: data.game._id,
+                    //     gameCode: data.game.code
+                    // }
                 }));
 
                 this.getUserGames();
@@ -110,7 +129,7 @@ export class UserGamesComponent implements OnInit {
             console.log(data);
 
             // Refresh the game that was affected
-            this.updateGame(data.userDetails.username, data.gameCode);
+            this.updateGame(data);
         });
 
         // Subscribe to 'user deleted game' event
@@ -128,6 +147,7 @@ export class UserGamesComponent implements OnInit {
             }));
         });
 
+        // Subscribe to notifications from alerts
         this.alertService.refreshNotification.subscribe((ev: NotificationEvent) => {
             if (ev.eventName === 'reload_game_list') {
                 this.getUserGames();
@@ -197,6 +217,22 @@ export class UserGamesComponent implements OnInit {
                         if (this.loggedInUser._id === pendingGameDetails.creator._id) {
                             pgd_ucg_arr.push(pendingGameDetails);
                         } else {
+                            // Populate the available icons to choose from for the game
+                            pendingGameDetails.availableGameIcons = this.gameIcons.map((elem) => {
+                                elem.selected = game.players.some((el) => {
+                                    return el.icon === elem.name;
+                                });
+                                return elem;
+                            });
+
+                            // Populate the available colors to choose from for the game
+                            pendingGameDetails.availableGameColors = this.gameColors.map((elem) => {
+                                elem.selected = game.players.some((el) => {
+                                    return el.color === elem.hex;
+                                });
+                                return elem;
+                            });
+
                             pgd_ig_arr.push(pendingGameDetails);
                         }
 
@@ -243,6 +279,8 @@ export class UserGamesComponent implements OnInit {
             const gameDetails: GamePayload = {
                 title: formModel.title as string,
                 gameType: formModel.gameType as string,
+                creatorIcon: formModel.gameIcon as string,
+                creatorColor: formModel.gameColor as string,
                 players: nPlayers as Array<string>
             };
 
@@ -291,24 +329,42 @@ export class UserGamesComponent implements OnInit {
      * Method to join a game that the user has been invited to.
      */
     joinGame(gameId: any, gameCode: string): void {
-        this.dashboardService.joinGame(gameId).subscribe(() => {
-            // Show a notification
-            this.alertService.alert(new Alert({
-                message: 'Joined game successfully.',
-                iconClass: 'fa-check',
-                type: AlertType.Success,
-                alertId: 'game_joined',
-                dismiss: true
-            }));
+        this.joinGameFormSubmitted = true;
 
-            // Now that we've updated the database, emit the message via sockets
-            // We use the game code as the data to send since we've named our
-            // room accordingly
-            this.socketIo.emit('joined game', gameCode);
-            this.getUserGames();
-        }, (err) => {
-            console.error(err);
-        });
+        // Wrap the whole thing in a conditional to make sure the
+        // joinGameForm is valid
+        if (this.joinGameForm.valid) {
+            const formValues = this.joinGameForm.value;
+
+            // Close the join game modal
+            this.riskModalRef.close();
+
+            // Create the payload to join the game
+            const joinGamePayload = {
+                gameId: gameId,
+                playerColor: formValues.gameColor as string,
+                playerIcon: formValues.gameIcon as string
+            };
+
+            this.dashboardService.joinGame(joinGamePayload).subscribe((joinedGame) => {
+                // Show a notification
+                this.alertService.alert(new Alert({
+                    message: 'Joined game `' + joinedGame.title + '` successfully.',
+                    iconClass: 'fa-check',
+                    type: AlertType.Success,
+                    alertId: 'game_joined',
+                    dismiss: true
+                }));
+
+                // Now that we've updated the database, emit the message via sockets
+                // We use the game code as the data to send since we've named our
+                // room accordingly
+                this.socketIo.emit('joined game', joinedGame);
+                this.getUserGames();
+            }, (err) => {
+                console.error(err);
+            });
+        }
     }
 
     /**
@@ -369,33 +425,29 @@ export class UserGamesComponent implements OnInit {
     /**
      * Update the pending game list by "refreshing" the game that was affected by another user joining/starting/canceling a game.
      */
-     updateGame(username: string, gameCode: string): void {
-         // Make the call to get the game from the game code and subscribe to the observable
-         this.dashboardService.getGameByCode(gameCode).subscribe((retGame) => {
+     updateGame(data: any): void {
+        // Show a notification
+        this.alertService.alert(new Alert({
+            message: data.userDetails.username + ' has joined your game `' + data.game.title + '`!',
+            iconClass: 'fa-user',
+            alertId: 'game_joined_notification_' + data.game.code,
+            // dismiss: true,
+            type: AlertType.Success
+        }));
 
-            // Show a notification
-            this.alertService.alert(new Alert({
-                message: username + ' has joined your game `' + retGame.title + '`!',
-                iconClass: 'fa-user',
-                alertId: 'game_joined_notification_' + retGame.code,
-                // dismiss: true,
-                type: AlertType.Success
-            }));
-
-            // Check the returned game's status and then map the array of existing games to update the game we're
-            // interested in
-            switch (retGame.status) {
-                case 'CREATED':
-                    // Update the user created games list
-                    this.pendingGamesList.userCreatedGames = this.swapUpdatedGame(this.pendingGamesList.userCreatedGames, retGame);
-                    this.pendingGamesList.invitedGames = this.swapUpdatedGame(this.pendingGamesList.invitedGames, retGame);
-                    break;
-                case 'INPROGRESS':
-                    break;
-                case 'COMPLETED':
-                    break;
-            }
-         });
+        // Check the returned game's status and then map the array of existing games to update the game we're
+        // interested in
+        switch (data.game.status) {
+            case 'CREATED':
+                // Update the user created games list
+                this.pendingGamesList.userCreatedGames = this.swapUpdatedGame(this.pendingGamesList.userCreatedGames, data.game);
+                this.pendingGamesList.invitedGames = this.swapUpdatedGame(this.pendingGamesList.invitedGames, data.game);
+                break;
+            case 'INPROGRESS':
+                break;
+            case 'COMPLETED':
+                break;
+        }
      }
 
     /**
@@ -468,6 +520,21 @@ export class UserGamesComponent implements OnInit {
                 iexistGame.pendingPlayers = iexistGame.players.filter((player) => {
                     return player.status === 'PENDING';
                 });
+                // Populate the available icons to choose from for the game
+                iexistGame.availableGameIcons = this.gameIcons.map((elem) => {
+                    elem.selected = iexistGame.players.some((el) => {
+                        return el.icon === elem.name;
+                    });
+                    return elem;
+                });
+
+                // Populate the available colors to choose from for the game
+                iexistGame.availableGameColors = this.gameColors.map((elem) => {
+                    elem.selected = iexistGame.players.some((el) => {
+                        return el.color === elem.hex;
+                    });
+                    return elem;
+                });
                 iexistGame.loggedInUserPending =
                     iexistGame.pendingPlayers.some(e => e.player._id === this.loggedInUser._id);
             }
@@ -477,7 +544,7 @@ export class UserGamesComponent implements OnInit {
     }
 
     // Reactive form methods
-    private createForm() {
+    private createForms() {
         this.gameCreationForm = this.formBuilder.group({
             title: ['', Validators.required],
             gameType: 'private',
@@ -485,6 +552,11 @@ export class UserGamesComponent implements OnInit {
             gameColor: ['', Validators.required],
             usernames: this.formBuilder.array([this.createUsername()]),
             numberOfPlayers: 2
+        });
+
+        this.joinGameForm = this.formBuilder.group({
+            gameIcon: ['', Validators.required],
+            gameColor: ['', Validators.required]
         });
     }
 

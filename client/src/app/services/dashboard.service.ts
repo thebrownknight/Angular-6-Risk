@@ -29,8 +29,15 @@ export class DashboardService {
     public createNewGame(gamePayload: GamePayload): Observable<any> {
         return this.request('post', '/api/games/create', gamePayload, true);
     }
-    public joinGame(gId: any): Observable<any> {
-        return this.request('post', '/api/games/' + gId + '/join', {}, true);
+    public joinGame(joinGamePayload: any): Observable<any> {
+        const routePayload = {
+            playerIcon: joinGamePayload.playerIcon,
+            playerColor: joinGamePayload.playerColor
+        };
+
+        return this.request(
+            'post',
+            '/api/games/' + joinGamePayload.gameId + '/join', routePayload, true);
     }
     public startGame(gId: any): Observable<any> {
         return this.request('post', '/api/games/' + gId + '/start', {}, true);

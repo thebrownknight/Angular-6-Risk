@@ -77,11 +77,16 @@
                         @include rem(padding-left, 0);
 
                         > li {
-                            &:before {
-                                content: '\f007';
-                                font-family: 'Font Awesome 5 Free';
-                                color: $dark-gray;
-                                @include rem(margin-right, 5px);
+                            // &:before {
+                            //     content: '\f007';
+                            //     font-family: 'Font Awesome 5 Free';
+                            //     color: $dark-gray;
+                            //     @include rem(margin-right, 5px);
+                            // }
+
+                            > span {
+                                display: inline-block;
+                                vertical-align: middle;
                             }
 
                             .joined-status {
@@ -91,6 +96,10 @@
                             .pending-status {
                                 @include raleway-bold();
                                 color: $vermillion;
+                            }
+                            .player-icon-color {
+                                margin-right: 7px;
+                                @include rem(font-size, 18px);
                             }
                         }
                     }

@@ -419,6 +419,13 @@
                             @include rem(font-size, 18px);
                             @include rem(margin-right, 5px);
                         }
+
+                        > .color-block {
+                            width: 20px;
+                            height: 10px;
+                            display: inline-block;
+                            vertical-align: middle;
+                        }
                     }
 
                     .check {
@@ -472,6 +479,23 @@
                                 display: block;
                                 background: $powder;
                             }
+                        }
+                    }
+
+                    // Disabled state
+                    &.disabled {
+                        pointer-events: none;
+
+                        label {
+                            color: $light-gray;
+                        }
+
+                        .check {
+                            border: 2px solid $light-gray;
+                        }
+
+                        .color-block {
+                            background-color: $light-gray !important;
                         }
                     }
                 }

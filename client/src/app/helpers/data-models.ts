@@ -26,6 +26,10 @@ export interface GamePayload {
     gameType: string;
     players?: Array<string>;
     numberOfPlayers?: number;
+
+    // Creator specific fields
+    creatorIcon?: string;
+    creatorColor?: string;
 }
 
 /**
