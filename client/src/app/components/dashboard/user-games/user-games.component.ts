@@ -122,6 +122,16 @@ export class UserGamesComponent implements OnInit {
             }
         });
 
+        // Subscribe to 'user started game' event
+        this.getEvent('user started game').subscribe((game) => {
+            this.alertService.alert(new Alert({
+                message: 'The game `' + game.title + '` has started!',
+                iconClass: 'fa-user-astronaut',
+                type: AlertType.Success,
+                alertId: 'game_start_notification_' + game.code
+            }));
+        });
+
         // Subscribe to 'user joined game' event
         // This will be triggered when someone else in either a game you've created or have been invited to
         // has joined the game.

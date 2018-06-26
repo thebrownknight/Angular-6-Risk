@@ -1,5 +1,6 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { standardMap } from '../../../assets/scripts/maps/standard';
 
 // jQuery declaration
 declare var $: any;
@@ -15,8 +16,9 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     private mapH = 465.85077;
     $mapArea: any;
 
-    constructor(
-        private route: ActivatedRoute) { }
+    constructor(private route: ActivatedRoute) {
+
+    }
 
     ngOnInit() {
         this.sub = this.route.params.subscribe(params => {
@@ -25,6 +27,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
+        const mapAreas = {};
         this.$mapArea = $('.risk-board');
         this.$mapArea.mapael({
             map: {
@@ -35,7 +38,29 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
                 },
                 defaultArea: {
                     eventHandlers: {
-                        click: (e, id) => {
+                        click: (e, id, mapElem) => {
+                            const newData = {
+                                areas: {}
+                            };
+
+                            // TODO: Reset the color of the continent before we highlight the nearby areas
+
+                            this.getNearbyTerritories(id).forEach((territory) => {
+                                newData.areas[territory] = {
+                                    attrs: {
+                                        fill: '#FF0000'
+                                    }
+                                };
+                            });
+
+                            // We set the fill of the nearby territories to red
+                            this.$mapArea.trigger('update', [{
+                                mapOptions: newData,
+                                animDuration: 2000
+                            }]);
+                        },
+                        dblclick: (e, id, mapElem, textElem) => {
+                            console.log(id);
                             this.$mapArea.trigger('zoom', {
                                 area: id,
                                 areaMargin: 10
@@ -44,6 +69,23 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                 },
                 afterInit: ($self, paper, areas, plots, options) => {
+                    const newData = {
+                        'areas': {}
+                    };
+
+                    standardMap.regions.forEach((region) => {
+                        Object.keys(region.territories).forEach((territory) => {
+                            newData.areas[territory] = {
+                                'attrs': {
+                                    fill: region.defaultColor
+                                }
+                            };
+                        });
+                    });
+
+                    this.$mapArea.trigger('update', [{
+                        mapOptions: newData
+                    }]);
                     // $('.risk-board .map').off('resizeEnd');
                     // const winH = $(window).height();
 
@@ -86,6 +128,20 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     clearZoom() {
         this.$mapArea.trigger('zoom', { level: 0 });
+    }
+
+    // Private helper method to get the nearby territories of the territory
+    // passed in as a parameter
+    private getNearbyTerritories(territory: string): Array<string> {
+        let nearbyTerritories = Array<string>();
+
+        standardMap.regions.forEach((region) => {
+            if (region.territories[territory]) {
+                nearbyTerritories = region.territories[territory].nearbyTerritories;
+            }
+        });
+
+        return nearbyTerritories;
     }
 
     ngOnDestroy() {

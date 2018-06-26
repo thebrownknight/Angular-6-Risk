@@ -68,6 +68,13 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('user created game', payload);
     });
 
+    // Game started event
+    // When the client emits a "game started" event, we just emit back the information
+    // and subscribe on the client's side
+    socket.on('game started', (payload) => {
+        socket.broadcast.emit('user started game', payload);
+    });
+
     // Game deletion event
     // When the client emits a "game deleted" event, we just emit back the information
     // and subscribe on the client's side
