@@ -14,6 +14,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     private sub: any;
     private mapW = 708.11981;
     private mapH = 465.85077;
+
+    private tempNearbyTerritories: Array<string> = [];
     $mapArea: any;
 
     constructor(private route: ActivatedRoute) {
@@ -43,20 +45,39 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
                                 areas: {}
                             };
 
-                            // TODO: Reset the color of the continent before we highlight the nearby areas
+                            /* Reset the color of the continent before we highlight the nearby areas */
+                            // First get the continent that the territory resides in
+                            const continentId = this.getContinent(id);
+                            const continentDefaultColor = this.getDefaultColorByContinent(continentId);
 
-                            this.getNearbyTerritories(id).forEach((territory) => {
-                                newData.areas[territory] = {
+                            // Second we check if there are already selected nearbyTerritories and if so,
+                            // we just reset them instead of the whole map
+                            if (this.tempNearbyTerritories.length > 0) {
+                                this.tempNearbyTerritories.forEach((territoryId) => {
+                                    // Get the continent of the territory and get the default color to reset to
+                                    newData.areas[territoryId] = {
+                                        attrs: {
+                                            fill: continentDefaultColor
+                                        }
+                                    };
+                                });
+                            }
+
+                            // Set a reference to the nearby territories so we can reset them on click of a different
+                            // territory
+                            this.tempNearbyTerritories = this.getNearbyTerritories(id);
+                            this.tempNearbyTerritories.forEach((territoryId) => {
+                                newData.areas[territoryId] = {
                                     attrs: {
                                         fill: '#FF0000'
                                     }
                                 };
                             });
 
-                            // We set the fill of the nearby territories to red
+                            // Finally we set the colors of all the territories to the correct ones based on the logic above
                             this.$mapArea.trigger('update', [{
                                 mapOptions: newData,
-                                animDuration: 2000
+                                animDuration: 500
                             }]);
                         },
                         dblclick: (e, id, mapElem, textElem) => {
@@ -130,14 +151,49 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
         this.$mapArea.trigger('zoom', { level: 0 });
     }
 
+    /**
+     * PRIVATE HELPER METHODS
+     */
+    // Method to get the continent of a territory
+    private getContinent(territoryId: string): string {
+        let continentId = '';
+        standardMap.regions.forEach((region) => {
+            if (region.territories[territoryId]) {
+                continentId = region.id;
+            }
+        });
+        return continentId;
+    }
+
+    // Method to get territories of continent as an array of IDs
+    private getTerritories(continentId: string): Array<any> {
+        return Object.keys(standardMap.regions.filter((region) => {
+            return region.id === continentId;
+        })[0].territories);
+    }
+
+    // Method to get the default color of a continent
+    private getDefaultColorByContinent(continentId: string): string {
+        return standardMap.regions.filter((region) => {
+            return region.id === continentId;
+        })[0].defaultColor;
+    }
+
+    // Method to get the default color of a territory
+    private getDefaultColorByTerritory(territoryId: string): string {
+        return standardMap.regions.filter((region) => {
+            return region.id === this.getContinent(territoryId);
+        })[0].defaultColor;
+    }
+
     // Private helper method to get the nearby territories of the territory
     // passed in as a parameter
-    private getNearbyTerritories(territory: string): Array<string> {
+    private getNearbyTerritories(territoryId: string): Array<string> {
         let nearbyTerritories = Array<string>();
 
         standardMap.regions.forEach((region) => {
-            if (region.territories[territory]) {
-                nearbyTerritories = region.territories[territory].nearbyTerritories;
+            if (region.territories[territoryId]) {
+                nearbyTerritories = region.territories[territoryId].nearbyTerritories;
             }
         });
 

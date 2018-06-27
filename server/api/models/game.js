@@ -18,10 +18,10 @@ let gameSchema = new mongoose.Schema({
         }
     }],
     gameType: String,
-    map: {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Map'
-    },
+    // map: {
+    //     type: mongoose.Schema.ObjectId,
+    //     ref: 'Map'
+    // },
     code: {
         type: String,
         unique: true
