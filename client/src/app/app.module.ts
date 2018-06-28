@@ -20,6 +20,7 @@ import { MapComponent } from './components/map/map.component';
 import { LoginComponent } from './components/login/login.component';
 import { PasswordStrengthComponent, RegisterComponent } from './components/register/index';
 import { HeaderComponent } from './components/header/header.component';
+import { MapHeaderComponent } from './components/header/map-header/map-header.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { PublicGamesComponent } from './components/dashboard/public-games/public-games.component';
 import { UserSettingsComponent } from './components/dashboard/user-settings/user-settings.component';
@@ -51,6 +52,7 @@ const config: SocketConfig = {
     LoginComponent,
     RegisterComponent,
     HeaderComponent,
+    MapHeaderComponent,
     DashboardComponent,
     PublicGamesComponent,
     UserSettingsComponent,

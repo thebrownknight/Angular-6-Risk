@@ -6,10 +6,22 @@ const mongoose = require('mongoose');
  * state: [
  *  {
  *      player: ObjectId("5b117a758f0c6a2eccb278b5"),
- *      territoryMeta: [{
- *          name: 'tunisia',
- *          troops: 4
- *      }]
+ *      status: WAITING | CURRENTTURN | KNOCKEDOUT,
+ *      territoryMeta: [
+ *          {
+ *              id: 'tunisia',
+ *              troops: 4
+ *          },
+ *          {
+ *              id: 'ontario',
+ *              troops: 3
+ *          }
+ *      ],
+ *      cards: [
+ *          {
+ *              type: ''
+ *          }
+ *      ]
  *  }
  * ],
  * log: [

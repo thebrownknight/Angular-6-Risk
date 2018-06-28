@@ -65,7 +65,7 @@ export interface RiskModalOptions {
 @Injectable()
 export class RiskModal {
     constructor(
-        private _moduleCFR: ComponentFactoryResolver, private _injector: Injector, private _modalStack: RiskModalStack
+        private _moduleCFR: ComponentFactoryResolver, private _injector: Injector, private _modalStack: RiskModalStack, private utils: Utils
     ) { }
 
     /**
@@ -84,7 +84,7 @@ export class RiskModal {
             windowClass: '',
             backdropClass: ''
         };
-        options = Utils.mergeObjects(defaults, options === undefined ? {} : options);
+        options = this.utils.mergeObjects(defaults, options === undefined ? {} : options);
         return this._modalStack.open(this._moduleCFR, this._injector, content, options);
     }
 }

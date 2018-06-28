@@ -63,6 +63,7 @@ export class UserGamesComponent implements OnInit {
         private router: Router,
         private modalService: RiskModal,
         private formBuilder: FormBuilder,
+        private utils: Utils,
         private alertService: AlertService,
         private authService: AuthenticationService,
         private socketIo: SocketService,
@@ -201,7 +202,7 @@ export class UserGamesComponent implements OnInit {
                 // completed games will be using
                 const gameDetails  = {
                     _id: game._id,
-                    createdAt: Utils.formatDate(new Date(game.createdAt)),
+                    createdAt: this.utils.formatDate(new Date(game.createdAt)),
                     title: game.title,
                     creator: game.creator,
                     players: game.players,
@@ -262,10 +263,10 @@ export class UserGamesComponent implements OnInit {
             });
 
             // Set the lists for pending user-created games and invited games so we get seamless data-binding
-            this.pendingGamesList.userCreatedGames = Utils.deepCopy(pgd_ucg_arr);
-            this.pendingGamesList.invitedGames = Utils.deepCopy(pgd_ig_arr);
+            this.pendingGamesList.userCreatedGames = this.utils.deepCopy(pgd_ucg_arr);
+            this.pendingGamesList.invitedGames = this.utils.deepCopy(pgd_ig_arr);
 
-            this.inProgressGamesList = Utils.deepCopy(in_progress_arr);
+            this.inProgressGamesList = this.utils.deepCopy(in_progress_arr);
 
         }, (err) => {
             console.error(err);
