@@ -1,5 +1,7 @@
 <header>
     <div class="container">
-        <p *ngFor="let p of players">{{p.status}}, {{p.icon}}, {{p.color}}</p>
+        <div class="player-list">
+            <p *ngFor="let p of players"><i [ngStyle]="{'color': p.color}" class="fas fa-{{p.icon}}"></i> - {{p.player.username}}</p>
+        </div>
     </div>
 </header>

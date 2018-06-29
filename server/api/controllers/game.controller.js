@@ -78,6 +78,7 @@ module.exports.createGame = function(req, res) {
         game.title = req.body.title;
         game.creator = req.payload._id;
         game.gameType = req.body.gameType;
+        game.map = req.body.map ? req.body.map : 'standard';
         game.generateCode();
 
         // Conditional fields for public and private games
