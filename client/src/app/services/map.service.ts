@@ -9,7 +9,10 @@ import { Utils } from './utils';
 
 @Injectable()
 export class MapService {
+    // Counter for player in players array
+    private currentPlayerIndex = 0;
     private activeMap: any;
+    private assignedTerritories: Array<any>;
 
     constructor(
         private http: HttpClient,
@@ -64,7 +67,67 @@ export class MapService {
         const gameState = [],
             gameLog = [];
 
+        // Populate the gameState array with the objects for each player since
+        // these objects themselves won't be changing, just the territoryMeta inside
+        players.forEach(player => {
+            const playerStateObj = {
+                player: player._id, // for player reference
+                status: 'WAITING',  // initial player status
+                territoryMeta: [],  // list of territories the player controls
+                cards: [] // cards the player has received from successful attacks
+            };
 
+            gameState.push(playerStateObj);
+        });
+
+        // Distribution logic
+        // 1. We go through each region, grab the number of territories and divide
+        // it by the number of players so we know roughly how many territories
+        // each person should get
+        // 2.
+        this.activeMap.regions.forEach((region) => {
+            // Get reference to territories in region as an array
+            const regionTerritories = Object.keys(region.territories);
+
+            // Rough number of territories each player should be receiving
+            // per region
+            const numTerritoriesPerPlayer = Math.floor(regionTerritories.length / players.length);
+
+            // Randomly select a territory to assign to a player
+            // const randomTerritory = this.getRandomTerritory(region.territories);
+
+            // Shuffle the list of territories so we can just loop through and assign
+            const shuffledTerritories = this.shuffleTerritories(region.territories);
+
+            shuffledTerritories.forEach((randTerritory) => {
+                // Assign the territory to the player
+                gameState[this.currentPlayerIndex].territoryMeta.push({
+                    id: randTerritory,
+                    troops: 3
+                });
+
+                // Add to the game log
+                gameLog.push({
+                    player: players[this.currentPlayerIndex]._id,
+                    turnType: 'get_troops',
+                    data: {
+                        territory: randTerritory,
+                        troops: 3
+                    }
+                });
+
+                this.assignedTerritories.push(randTerritory);
+
+                // Increment the current player index so we can add to the game state correctly
+                this.currentPlayerIndex++;
+
+                // If the player index hits the player length, reset it back to 0
+                if (this.currentPlayerIndex === players.length) {
+                    this.currentPlayerIndex = 0;
+                }
+            });
+
+        });
         return;
     }
 
@@ -115,5 +178,36 @@ export class MapService {
         });
 
         return nearbyTerritories;
+    }
+
+    private getRandomTerritory(inputArray: Array<any>): any {
+        const rand = inputArray[Math.floor(Math.random() * inputArray.length)];
+        if (!this.assignedTerritories.includes(rand)) {
+            return rand;
+        }
+
+        // Otherwise, we just call the function again to get a different item
+        return this.getRandomTerritory(inputArray);
+    }
+
+    // Fisher-Yates (aka Knuth) shuffle
+    private shuffleTerritories(inputArray: Array<any>): any {
+        let currentIndex = inputArray.length;
+        let tempValue = -1;
+        let randomIndex = -1;
+
+        // While there are elements remaining to shuffle
+        while (0 !== currentIndex) {
+            // Pick a remaining element
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+
+            // And swap it with the current element.
+            tempValue = inputArray[currentIndex];
+            inputArray[currentIndex] = inputArray[randomIndex];
+            inputArray[randomIndex] = tempValue;
+        }
+
+        return inputArray;
     }
 }
