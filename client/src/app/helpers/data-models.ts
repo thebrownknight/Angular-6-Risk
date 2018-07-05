@@ -117,3 +117,13 @@ export interface SocketMessage {
     content?: any;
     action?: SocketAction;
 }
+
+/****************************************/
+// Map/game models.
+/****************************************/
+export enum TurnType {
+    GetTroops,
+    Attack,
+    Fortify,
+    DiceRoll
+}

@@ -15,12 +15,9 @@ import { AuthenticationService } from './services/authentication.service';
 import { AlertService } from './services/alert.service';
 
 import { UsernameValidator } from './helpers/custom-validators/existing-username-validator';
-
-import { MapComponent } from './components/map/map.component';
 import { LoginComponent } from './components/login/login.component';
 import { PasswordStrengthComponent, RegisterComponent } from './components/register/index';
 import { HeaderComponent } from './components/header/header.component';
-import { MapHeaderComponent } from './components/header/map-header/map-header.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { PublicGamesComponent } from './components/dashboard/public-games/public-games.component';
 import { UserSettingsComponent } from './components/dashboard/user-settings/user-settings.component';
@@ -34,6 +31,7 @@ import { RiskAccordionModule } from './components/ui/accordion/accordion.module'
 import { RiskSlidePanelModule } from './components/ui/slide-panel/slidepanel.module';
 import { RiskAlertModule } from './components/ui/alert/alert.module';
 import { SocketModule, SocketConfig } from './services/sockets/index';
+import { MapModule } from './components/map/map.module';
 
 // Sockets configuration
 const config: SocketConfig = {
@@ -48,11 +46,9 @@ const config: SocketConfig = {
     TabsComponent,
     TabComponent,
     PasswordStrengthComponent,
-    MapComponent,
     LoginComponent,
     RegisterComponent,
     HeaderComponent,
-    MapHeaderComponent,
     DashboardComponent,
     PublicGamesComponent,
     UserSettingsComponent,
@@ -70,7 +66,8 @@ const config: SocketConfig = {
     RiskModalModule.forRoot(),
     RiskAccordionModule,
     RiskSlidePanelModule,
-    RiskAlertModule
+    RiskAlertModule,
+    MapModule
   ],
   providers: [
     AuthGuardService,

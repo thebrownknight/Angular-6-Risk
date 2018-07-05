@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 
-import { MapService } from '../../services/map.service';
+import { MapService } from '../../../services/map.service';
 
 // jQuery declaration
 declare var $: any;
@@ -76,38 +76,38 @@ export class MapComponent implements OnInit, OnDestroy {
 
                             /* Reset the color of the continent before we highlight the nearby areas */
                             // First get the continent that the territory resides in
-                            const continentId = this.mapService.getContinent(id);
-                            const continentDefaultColor = this.mapService.getDefaultColorByContinent(continentId);
+                            // const continentId = this.mapService.getContinent(id);
+                            // const continentDefaultColor = this.mapService.getDefaultColorByContinent(continentId);
 
                             // Second we check if there are already selected nearbyTerritories and if so,
                             // we just reset them instead of the whole map
-                            if (this.tempNearbyTerritories.length > 0) {
-                                this.tempNearbyTerritories.forEach((territoryId) => {
-                                    // Get the continent of the territory and get the default color to reset to
-                                    newData.areas[territoryId] = {
-                                        attrs: {
-                                            fill: continentDefaultColor
-                                        }
-                                    };
-                                });
-                            }
+                            // if (this.tempNearbyTerritories.length > 0) {
+                            //     this.tempNearbyTerritories.forEach((territoryId) => {
+                            //         // Get the continent of the territory and get the default color to reset to
+                            //         newData.areas[territoryId] = {
+                            //             attrs: {
+                            //                 fill: continentDefaultColor
+                            //             }
+                            //         };
+                            //     });
+                            // }
 
                             // Set a reference to the nearby territories so we can reset them on click of a different
                             // territory
-                            this.tempNearbyTerritories = this.mapService.getNearbyTerritories(id);
-                            this.tempNearbyTerritories.forEach((territoryId) => {
-                                newData.areas[territoryId] = {
-                                    attrs: {
-                                        fill: '#FF0000'
-                                    }
-                                };
-                            });
+                            // this.tempNearbyTerritories = this.mapService.getNearbyTerritories(id);
+                            // this.tempNearbyTerritories.forEach((territoryId) => {
+                            //     newData.areas[territoryId] = {
+                            //         attrs: {
+                            //             fill: '#FF0000'
+                            //         }
+                            //     };
+                            // });
 
                             // Finally we set the colors of all the territories to the correct ones based on the logic above
-                            this.$mapArea.trigger('update', [{
-                                mapOptions: newData,
-                                animDuration: 200
-                            }]);
+                            // this.$mapArea.trigger('update', [{
+                            //     mapOptions: newData,
+                            //     animDuration: 200
+                            // }]);
                         },
                         dblclick: (e, id, mapElem, textElem) => {
                             console.log(id);
@@ -121,7 +121,36 @@ export class MapComponent implements OnInit, OnDestroy {
                 afterInit: ($self, paper, areas, plots, options) => {
                     console.log(this.mapService.getActiveMap());
                     // We do the random distribution of territories to the players
-                    this.mapService.assignTerritories(this.gamePlayers);
+                    this.gameMeta = this.mapService.assignTerritories(this.gamePlayers);
+
+                    // Now we grab the territoryMeta from each player and fill the colors of the territories with the players' colors
+                    const playerColorMap = {};
+                    this.gamePlayers.forEach(player => {
+                        playerColorMap[player._id] = player.color;
+                    });
+
+                    // Initialize the new map info we're going to update with
+                    const newData = {
+                        areas: {}
+                    };
+
+                    this.gameMeta.forEach(playerMeta => {
+                        // console.log(playerMeta);
+                        playerMeta.territoryMeta.forEach(territory => {
+                            newData.areas[territory.id] = {
+                                attrs: {
+                                    fill: playerColorMap[playerMeta.player]
+                                },
+                                attrsHover: {
+                                    fill: playerColorMap[playerMeta.player]
+                                }
+                            };
+                        });
+                    });
+
+                    this.$mapArea.trigger('update', [{
+                        mapOptions: newData
+                    }]);
                 }
             }
         });

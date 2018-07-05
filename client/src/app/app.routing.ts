@@ -2,7 +2,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { RegisterComponent } from './components/register/register.component';
 import { LoginComponent } from './components/login/login.component';
-import { MapComponent } from './components/map/map.component';
+import { MapComponent } from './components/map/map-component/map.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 import { AuthGuardService } from './services/auth-guard.service';

@@ -1,9 +1,10 @@
 import { Injectable, Inject, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import { standardMap } from '../../assets/scripts/maps';
 import { Utils } from './utils';
+import { TurnType } from '../helpers/data-models';
 
 /* https://stackoverflow.com/questions/42396804/how-to-write-a-service-constructor-that-requires-parameters-in-angular-2 */
 
@@ -12,7 +13,12 @@ export class MapService {
     // Counter for player in players array
     private currentPlayerIndex = 0;
     private activeMap: any;
-    private assignedTerritories: Array<any>;
+    private assignedTerritories: Array<any> = [];
+    private gameLog: Array<any> = [];
+
+    // Variables for emitting game log activity
+    private eventSource = new Subject<any>();
+    gameLogUpdates$ = this.eventSource.asObservable();
 
     constructor(
         private http: HttpClient,
@@ -64,8 +70,7 @@ export class MapService {
     public assignTerritories(players: Array<any>): any {
         // We'll be pushing our information into here and then sending them
         // to the backend route to handle adding to db
-        const gameState = [],
-            gameLog = [];
+        const gameState = [];
 
         // Populate the gameState array with the objects for each player since
         // these objects themselves won't be changing, just the territoryMeta inside
@@ -97,7 +102,7 @@ export class MapService {
             // const randomTerritory = this.getRandomTerritory(region.territories);
 
             // Shuffle the list of territories so we can just loop through and assign
-            const shuffledTerritories = this.shuffleTerritories(region.territories);
+            const shuffledTerritories = this.shuffleTerritories(Object.keys(region.territories));
 
             shuffledTerritories.forEach((randTerritory) => {
                 // Assign the territory to the player
@@ -107,14 +112,13 @@ export class MapService {
                 });
 
                 // Add to the game log
-                gameLog.push({
-                    player: players[this.currentPlayerIndex]._id,
-                    turnType: 'get_troops',
-                    data: {
-                        territory: randTerritory,
-                        troops: 3
-                    }
-                });
+                // Player is getting troops at this point, start with 3 in each
+                // territory
+                this.addToGameLog(
+                    players[this.currentPlayerIndex],
+                    TurnType.GetTroops,
+                    { id: randTerritory, troops: 3 }
+                );
 
                 this.assignedTerritories.push(randTerritory);
 
@@ -128,11 +132,11 @@ export class MapService {
             });
 
         });
-        return;
+        return gameState;
     }
 
     /**
-     * HELPER METHODS for getting information from the map
+     * Public methods
      */
     // Method to get the continent of a territory
     public getContinent(territoryId: string): string {
@@ -180,6 +184,23 @@ export class MapService {
         return nearbyTerritories;
     }
 
+    // Method to return territory name from id
+    public getName(territoryId: string): string {
+        let territoryName = '';
+
+        this.activeMap.regions.forEach(region => {
+            if (region.territories[territoryId]) {
+                territoryName = region.territories[territoryId].name;
+            }
+        });
+
+        return territoryName;
+    }
+
+    /**
+     * Private methods
+     */
+
     private getRandomTerritory(inputArray: Array<any>): any {
         const rand = inputArray[Math.floor(Math.random() * inputArray.length)];
         if (!this.assignedTerritories.includes(rand)) {
@@ -209,5 +230,19 @@ export class MapService {
         }
 
         return inputArray;
+    }
+
+    // Add to game log
+    private addToGameLog(playerObj: any, type: TurnType, data: any): void {
+        const record = {
+            player: playerObj.player,
+            turnType: type,
+            data: data
+        };
+        this.gameLog.push(record);
+
+        // Emit the data using the subject above - next will pass the data to any
+        // subscribers
+        this.eventSource.next(record);
     }
 }

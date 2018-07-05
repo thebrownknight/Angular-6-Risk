@@ -1,0 +1,22 @@
+.game-log {
+    position: absolute;
+    left: 22px;
+    bottom: 10px;
+    height: 205px;
+    overflow: hidden;
+
+    background: $white;
+    box-shadow: 0px 0px 3px $dark-gray;
+    @include rem(padding, 15px);
+    @include border-radius(2px);
+
+    .record {
+        p {
+            .fa-child {
+                color: $powder;
+                @include rem(font-size, 14px);
+                margin-right: 5px;
+            }
+        }
+    }
+}
