@@ -1,9 +1,36 @@
+.game-log-trigger {
+    position: fixed;
+    height: 205px;
+    background-color: $powder;
+    left: 0px;
+    bottom: 50%;
+    width: 30px;
+    box-shadow: 0px 0px 3px $dark-gray;
+    text-align: center;
+    @include transform(translateY(45%));
+    @include transition(all 0.2s ease-in);
+    cursor: pointer;
+
+    &:hover {
+        background-color: darken($powder, 10%);
+    }
+
+    i {
+        color: $white;
+        @include rem(font-size, 16px);
+        position: relative;
+        top: 50%;
+        @include transform(translateY(-50%));
+    }
+}
 .game-log {
+    display: none;
     position: absolute;
     left: 22px;
     bottom: 10px;
     height: 205px;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: scroll;
 
     background: $white;
     box-shadow: 0px 0px 3px $dark-gray;
@@ -11,11 +38,20 @@
     @include border-radius(2px);
 
     .record {
+        &:not(:last-child) {
+            margin-bottom: 15px;
+        }
+
         p {
             .fa-child {
                 color: $powder;
                 @include rem(font-size, 14px);
                 margin-right: 5px;
+            }
+
+            .player-tag {
+                color: $white;
+                @include rem(padding, 3px);
             }
         }
     }

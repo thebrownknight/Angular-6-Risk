@@ -1,4 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { trigger, state, style, animate, transition } from '@angular/animations';
 
 import { MapService } from '../../../services/map.service';
 import { TurnType } from '../../../helpers/data-models';
@@ -21,10 +22,14 @@ export class GameLogComponent implements OnInit {
     ngOnInit() {
         // Subscribe to game log events
         this.mapService.gameLogUpdates$.subscribe((record) => {
-            console.log(record);
+            // console.log(record);
             record.data['territoryName'] = this.mapService.getName(record.data.id);
             this.gameLog.push(record);
         });
+    }
+
+    toggleGameLog() {
+
     }
 
     private formatMessage(record: any): string {
