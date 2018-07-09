@@ -1,5 +1,8 @@
-<header>
+<header class="risk-map-header">
     <div class="container">
+        <div class="current-turn">
+            
+        </div>
         <div class="player-list">
             <p *ngFor="let p of players"><i [ngStyle]="{'color': p.color}" class="fas fa-{{p.icon}}"></i> - {{p.player.username}}</p>
         </div>

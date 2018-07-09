@@ -2,9 +2,10 @@ import { Injectable, Inject, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 
-import { standardMap } from '../../assets/scripts/maps';
-import { Utils } from './utils';
-import { TurnType } from '../helpers/data-models';
+import { standardMap } from '../../../assets/scripts/maps';
+import { Utils } from '../../services/utils';
+import { DiceService } from './dice.service';
+import { TurnType } from '../../helpers/data-models';
 
 /* https://stackoverflow.com/questions/42396804/how-to-write-a-service-constructor-that-requires-parameters-in-angular-2 */
 
@@ -14,15 +15,22 @@ export class MapService {
     private currentPlayerIndex = 0;
     private activeMap: any;
     private assignedTerritories: Array<any> = [];
+
+    private gameState: Array<any> = [];
     private gameLog: Array<any> = [];
 
     // Variables for emitting game log activity
     private eventSource = new Subject<any>();
     gameLogUpdates$ = this.eventSource.asObservable();
 
+    // Variables for emitting game state activity
+    private gameStateEventSource = new Subject<any>();
+    gameStateUpdates$ = this.gameStateEventSource.asObservable();
+
     constructor(
         private http: HttpClient,
-        private utils: Utils
+        private utils: Utils,
+        private diceService
     ) { }
 
     /**
@@ -70,19 +78,20 @@ export class MapService {
     public assignTerritories(players: Array<any>): any {
         // We'll be pushing our information into here and then sending them
         // to the backend route to handle adding to db
-        const gameState = [];
+        // const gameState = [];
 
         // Populate the gameState array with the objects for each player since
         // these objects themselves won't be changing, just the territoryMeta inside
-        players.forEach(player => {
+        players.forEach((player, index) => {
             const playerStateObj = {
                 player: player._id, // for player reference
                 status: 'WAITING',  // initial player status
+                turnOrder: (index + 1), // player's turn order
                 territoryMeta: [],  // list of territories the player controls
                 cards: [] // cards the player has received from successful attacks
             };
 
-            gameState.push(playerStateObj);
+            this.gameState.push(playerStateObj);
         });
 
         // Distribution logic
@@ -106,7 +115,7 @@ export class MapService {
 
             shuffledTerritories.forEach((randTerritory) => {
                 // Assign the territory to the player
-                gameState[this.currentPlayerIndex].territoryMeta.push({
+                this.gameState[this.currentPlayerIndex].territoryMeta.push({
                     id: randTerritory,
                     troops: 3
                 });
@@ -132,7 +141,11 @@ export class MapService {
             });
 
         });
-        return gameState;
+
+        // Emit the game state to any listeners
+        this.gameStateEventSource.next(this.gameState);
+
+        return this.gameState;
     }
 
     /**
@@ -196,6 +209,13 @@ export class MapService {
 
         return territoryName;
     }
+
+    // Method to assign turn order to an array of players
+    // We will utilize the Dice class in order to roll dice randomly to determine order
+    public assignTurnOrder(players: Array<any>): any {
+
+    }
+
 
     /**
      * Private methods

@@ -12,6 +12,7 @@ let gameSchema = new mongoose.Schema({
         status: String,
         color: String,
         icon: String,
+        turnOrder: Number,
         player: {
             type: mongoose.Schema.ObjectId,
             ref: 'User'

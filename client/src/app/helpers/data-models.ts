@@ -127,3 +127,8 @@ export enum TurnType {
     Fortify,
     DiceRoll
 }
+
+export enum DiceRollType {
+    TurnOrderRoll,
+    AttackRoll
+}

@@ -1,0 +1,9 @@
+<section class="carousel-wrapper">
+    <button class="carousel-prev" (click)="prev()"><i class="fas fa-angle-left"></i></button>
+    <ul class="carousel-inner" #carousel>
+        <li *ngFor="let item of items;" *riskCItem class="carousel-item">
+            <ng-container [ngTemplateOutlet]="item.tpl"></ng-container>
+        </li>
+    </ul>
+    <button class="carousel-next" (click)="next()"><i class="fas fa-angle-right"></i></button>
+</section>

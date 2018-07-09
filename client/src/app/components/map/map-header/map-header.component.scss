@@ -1,0 +1,76 @@
+@import '../../../../assets/css/global/variables';
+@import '../../../../assets/css/global/mixins';
+
+header {
+    padding: 10px 0;
+    width: 100%;
+
+    &:after {
+        display: block;
+        clear: both;
+        content: "";
+    }
+    .container {
+        @include flexbox();
+        @include justify-content(space-between);
+        @include align-items(center);
+
+        .profile-manager {
+            cursor: pointer;
+            @include transition(all 0.3s);
+            position: relative;
+
+            &:hover {
+                > span {
+                    color: $aqua;
+                }
+
+                .manager-dropdown {
+                    display: block;
+                }
+            }
+
+            > span {
+                display: inline-block;
+                @include rem(font-size, 14px);
+                @include opensans-regular();
+                @include transition(all 0.2s);
+                color: $dark-gray;
+
+                i {
+                    @include rem(font-size, 16px);
+
+                    &:first-child {
+                        @include rem(padding-right, 5px);
+                    }
+                    &:last-child {
+                        @include rem(padding-left, 5px);
+                    }
+                }
+            }
+
+            .manager-dropdown {
+                display: none;
+                position: absolute;
+                left: 30%;
+                background-color: $powder;
+                right: 0;
+                z-index: 100;
+                border: 1px solid $light-gray;
+                text-align: center;
+                @include rem(padding, 15px);
+                @include border-radius(3px);
+
+                > a {
+                    color: $white;
+                    display: block;
+                    @include rem(font-size, 14px);
+
+                    &:first-child {
+                        @include rem(margin-bottom, 10px);
+                    }
+                }
+            }
+        }
+    }
+}

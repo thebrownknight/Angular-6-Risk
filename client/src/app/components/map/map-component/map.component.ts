@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 
-import { MapService } from '../../../services/map.service';
+import { MapService } from '../map.service';
 
 // jQuery declaration
 declare var $: any;
@@ -45,8 +45,18 @@ export class MapComponent implements OnInit, OnDestroy {
                 // Send the map name (string) to the service to set the active map
                 this.mapService.setActiveMap(game.map);
 
-                // Set the game players to pass to the map header component
-                this.gamePlayers = game.players;
+                // Assign turn order for the players
+                // Only do this if the turnOrder is not set yet
+                if (!game.players[0].turnOrder) {
+                    this.gamePlayers = this.mapService.assignTurnOrder(game.players);
+                } else {
+                    this.gamePlayers = game.players.sort((a, b) => {
+                        if (a.turnOrder < b.turnOrder) { return -1; }
+                        if (a.turnOrder > b.turnOrder) { return 1; }
+
+                        return 0;
+                    });
+                }
 
                 this.setupMap();
             } else {
@@ -119,7 +129,7 @@ export class MapComponent implements OnInit, OnDestroy {
                     }
                 },
                 afterInit: ($self, paper, areas, plots, options) => {
-                    console.log(this.mapService.getActiveMap());
+                    // console.log(this.mapService.getActiveMap());
                     // We do the random distribution of territories to the players
                     this.gameMeta = this.mapService.assignTerritories(this.gamePlayers);
 

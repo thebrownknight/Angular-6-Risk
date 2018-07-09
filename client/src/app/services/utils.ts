@@ -55,6 +55,10 @@ export class Utils {
         return true;
     }
 
+    public objectContainsValue(obj, value: any): boolean {
+        return Object.values(obj).indexOf(value) > -1;
+    }
+
     public mergeObjects(obj1, obj2): any {
         const mergedObj = {};
 

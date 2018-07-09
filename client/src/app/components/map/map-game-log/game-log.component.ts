@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 
-import { MapService } from '../../../services/map.service';
+import { MapService } from '../map.service';
 import { TurnType } from '../../../helpers/data-models';
 
 // When we include a service in 'providers', it is instantiated and this state is
@@ -12,10 +12,27 @@ import { TurnType } from '../../../helpers/data-models';
 
 @Component({
     selector: 'risk-game-log',
-    templateUrl: './game-log.component.html'
+    templateUrl: './game-log.component.html',
+    animations: [
+        trigger('toggleGameLog', [
+            state('opened', style({
+                transform: 'translateX(0)'
+            })),
+            state('closed', style({
+                transform: 'translateX(-100%)'
+            })),
+            transition('closed => opened', [
+                animate('300ms ease-in')
+            ]),
+            transition('opened => closed', [
+                animate('300ms ease-out')
+            ])
+        ])
+    ]
 })
 export class GameLogComponent implements OnInit {
     gameLog: Array<any> = [];
+    logState = 'closed';
 
     constructor(private mapService: MapService) { }
 
@@ -29,7 +46,7 @@ export class GameLogComponent implements OnInit {
     }
 
     toggleGameLog() {
-
+        this.logState = this.logState === 'opened' ? 'closed' : 'opened';
     }
 
     private formatMessage(record: any): string {

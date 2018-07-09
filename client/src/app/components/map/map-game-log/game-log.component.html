@@ -1,12 +1,15 @@
-<div class="game-log-trigger" (click)="toggleGameLog()">
-    <i class="fas fa-arrow-right"></i>
-</div>
-<div *ngIf="showLog" class="game-log">
-    <div class="record" *ngFor="let record of gameLog">
-        <p *ngIf="record.turnType === 0">
-            <i class="fas fa-child"></i>
-            <span class="player-tag" [ngStyle]="{'background-color': record.player.color}">{{record.player.player.username}}</span> received
-            <span class="outcome">{{record.data.troops}} troops for {{record.data.territoryName}}</span>
-        </p>
+<div class="game-log" [@toggleGameLog]="logState">
+    <div class="game-log-trigger" (click)="toggleGameLog()">
+        <i class="fas fa-list-alt"></i>
+        <span>Game Log</span>
+    </div>
+    <div class="game-log-info">
+        <div class="record" *ngFor="let record of gameLog">
+            <p *ngIf="record.turnType === 0">
+                <i class="fas fa-child"></i>
+                <span class="player-tag" [ngStyle]="{'background-color': record.player.color}">{{record.player.player.username}}</span> received
+                <span class="outcome">{{record.data.troops}} troops for {{record.data.territoryName}}</span>
+            </p>
+        </div>
     </div>
 </div>
