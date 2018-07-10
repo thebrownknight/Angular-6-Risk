@@ -10,6 +10,11 @@
                 <span class="player-tag" [ngStyle]="{'background-color': record.player.color}">{{record.player.player.username}}</span> received
                 <span class="outcome">{{record.data.troops}} troops for {{record.data.territoryName}}</span>
             </p>
+            <p *ngIf="record.turnType === 3">
+                <i class="fas fa-dice"></i>
+                <span class="player-tag" [ngStyle]="{'background-color': record.player.color}">{{record.player.player.username}}</span> rolled
+                <span class="outcome">{{record.data.roll}}</span>
+            </p>
         </div>
     </div>
 </div>

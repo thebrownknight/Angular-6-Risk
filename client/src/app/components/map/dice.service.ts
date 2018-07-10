@@ -38,12 +38,12 @@ export class DiceService {
 
     /**
      * Method to determine turn order of players.
-     * @param players - Array of player IDs
+     * @param playerIds - Array of player IDs
      * @returns Object with player ID as key and turnOrder as value
      */
-    turnOrderRoll(players: Array<any>): any {
+    turnOrderRoll(playerIds: Array<any>): any {
         const turnOrderObj = {};
-        players.forEach((player) => {
+        playerIds.forEach((player) => {
             let tempRoll = this.roll(1);
             while (this.utils.objectContainsValue(turnOrderObj, tempRoll)) {
                 tempRoll = this.roll(1);

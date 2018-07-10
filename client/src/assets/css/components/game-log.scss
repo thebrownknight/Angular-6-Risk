@@ -45,13 +45,20 @@
         .record {
             &:not(:last-child) {
                 margin-bottom: 15px;
+                border-bottom: 1px solid $off-white;
+                padding-bottom: 7px;
             }
     
             p {
-                .fa-child {
-                    color: $powder;
+                .fas {
                     @include rem(font-size, 14px);
                     margin-right: 5px;
+                }
+                .fa-child {
+                    color: $powder;
+                }
+                .fa-dice {
+                    color: $aqua;
                 }
     
                 .player-tag {

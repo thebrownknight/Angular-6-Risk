@@ -13,6 +13,7 @@ import { TurnType } from '../../helpers/data-models';
 export class MapService {
     // Counter for player in players array
     private currentPlayerIndex = 0;
+    private activeGameID: any;
     private activeMap: any;
     private assignedTerritories: Array<any> = [];
 
@@ -28,19 +29,17 @@ export class MapService {
     gameStateUpdates$ = this.gameStateEventSource.asObservable();
 
     constructor(
-        private http: HttpClient,
         private utils: Utils,
-        private diceService
+        private diceService: DiceService
     ) { }
 
     /**
      * Getters and setters
      */
-    public getActiveMap() {
-        return this.activeMap;
-    }
+    public setGameConfiguration(config: any) {
+        this.activeGameID = config.gameID;
+        const map = config.map;
 
-    public setActiveMap(map: string) {
         switch (map) {
             case 'standard':
                 this.activeMap = standardMap;
@@ -213,7 +212,44 @@ export class MapService {
     // Method to assign turn order to an array of players
     // We will utilize the Dice class in order to roll dice randomly to determine order
     public assignTurnOrder(players: Array<any>): any {
+        const rTurnOrder = {
+            players: {}
+        };
+        // First, grab the array of player IDs to pass to the dice rolling service
+        const playerIdsArray = players.map(p => {
+            return p.player._id;
+        });
 
+        // Now we call the dice rolling service to return us back an object
+        // with the player IDs as keys and the dice roll itself as values
+        const newTurnOrder = this.diceService.turnOrderRoll(playerIdsArray);
+
+        // TODO: Log these dice rolls in the game log
+
+        // Create a new array of players with the turnOrder property populated
+        let nPlayersArr = players.map(rp => {
+            rp['turnOrder'] = newTurnOrder[rp.player._id];
+            this.addToGameLog(rp, TurnType.DiceRoll, { roll: newTurnOrder[rp.player._id]});
+            return rp;
+        });
+        nPlayersArr = this.utils.sortPlayers(nPlayersArr, 'desc');
+
+        nPlayersArr = nPlayersArr.map((p, index) => {
+            p['turnOrder'] = index + 1;
+            rTurnOrder.players[p.player._id] = index + 1;
+            return p;
+        });
+
+        // Send a request to the backend to update the turn order
+        this.utils.sendRequest('post', `/api/games/${this.activeGameID}/setturnorder`, rTurnOrder, true).subscribe((data) => {
+            if (data.success) {
+                console.log('Turn order has been updated in the database.');
+            }
+        }, error => {
+            console.error(error);
+        });
+
+        return nPlayersArr;
     }
 
 

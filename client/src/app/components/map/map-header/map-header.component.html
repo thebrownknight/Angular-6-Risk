@@ -4,7 +4,7 @@
             
         </div>
         <div class="player-list">
-            <p *ngFor="let p of players"><i [ngStyle]="{'color': p.color}" class="fas fa-{{p.icon}}"></i> - {{p.player.username}}</p>
+            <p *ngFor="let p of players"><i [ngStyle]="{'color': p.color}" class="fas fa-{{p.icon}}"></i> - {{p.player.username}} {{p.turnOrder}}</p>
         </div>
     </div>
 </header>

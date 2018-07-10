@@ -88,6 +88,7 @@ module.exports.createGame = function(req, res) {
                 status: 'JOINED',
                 color: req.body.creatorColor,
                 icon: req.body.creatorIcon,
+                turnOrder: -1,
                 player: req.payload._id
             });
             var playersArray = req.body.players;
@@ -198,6 +199,38 @@ module.exports.startGame = function(req, res) {
                     res.status(200).json(doc);
                 }
             );
+    }
+}
+
+module.exports.setTurnOrder = function(req, res) {
+    if (!req.payload._id) {
+        res.status(403).json({
+            "message": "UnauthorizedError: Please login to complete this action."
+        });
+    } else {
+        const playerIdsArr = Object.keys(req.body.players);
+
+        // As a workaround to the issue where the positional operator won't work
+        // for multiple elements in an array, we have to loop over the player IDs
+        // and update each one -_-
+        playerIdsArr.forEach(id => {
+            // Update the turnOrder property of the players
+            Game
+                .update(
+                    {
+                        '_id': req.params.gId,
+                        'players.player': id
+                    },
+                    {
+                        $set: {
+                            'players.$.turnOrder': req.body.players[id]
+                        }
+                    }, {
+                        multi: true
+                    }).exec();
+        });
+
+        res.status(200).json({ success: true });
     }
 }
 

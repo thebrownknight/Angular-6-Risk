@@ -5,6 +5,8 @@ import { MapHeaderComponent } from './map-header/map-header.component';
 import { MapComponent } from './map-component/map.component';
 import { GameLogComponent } from './map-game-log/game-log.component';
 
+import { DiceService } from './dice.service';
+
 @NgModule({
     imports: [
         CommonModule
@@ -16,6 +18,9 @@ import { GameLogComponent } from './map-game-log/game-log.component';
     ],
     exports: [
         MapComponent
+    ],
+    providers: [
+        DiceService
     ]
 })
 export class MapModule { }

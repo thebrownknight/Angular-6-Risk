@@ -4,6 +4,8 @@ import { switchMap } from 'rxjs/operators';
 
 import { MapService } from '../map.service';
 
+import { Utils } from '../../../services/utils';
+
 // jQuery declaration
 declare var $: any;
 
@@ -31,7 +33,8 @@ export class MapComponent implements OnInit, OnDestroy {
     constructor(
         private router: Router,
         private route: ActivatedRoute,
-        private mapService: MapService
+        private mapService: MapService,
+        private utils: Utils
     ) { }
 
     ngOnInit() {
@@ -42,20 +45,18 @@ export class MapComponent implements OnInit, OnDestroy {
         ).subscribe((game) => {
             if (game) {
                 // console.log(game);
-                // Send the map name (string) to the service to set the active map
-                this.mapService.setActiveMap(game.map);
+                // Send the map name and game ID to the service to set the common game information to reference in the service
+                this.mapService.setGameConfiguration({
+                    map: game.map,
+                    gameID: game._id
+                });
 
                 // Assign turn order for the players
                 // Only do this if the turnOrder is not set yet
-                if (!game.players[0].turnOrder) {
+                if (game.players[0].turnOrder === -1) {
                     this.gamePlayers = this.mapService.assignTurnOrder(game.players);
                 } else {
-                    this.gamePlayers = game.players.sort((a, b) => {
-                        if (a.turnOrder < b.turnOrder) { return -1; }
-                        if (a.turnOrder > b.turnOrder) { return 1; }
-
-                        return 0;
-                    });
+                    this.gamePlayers = this.utils.sortPlayers(game.players, 'asc');
                 }
 
                 this.setupMap();

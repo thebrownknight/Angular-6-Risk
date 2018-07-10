@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+type SortDirection = 'asc' | 'desc';
+
 @Injectable({
     providedIn: 'root'
 })
@@ -99,5 +101,27 @@ export class Utils {
 
     public deepCopy<T>(o: T): T {
         return JSON.parse(JSON.stringify(o));
+    }
+
+    /**
+     * Method to help sort the players by turnOrder.
+     */
+    public sortPlayers(playersObj: Array<any>, dir: SortDirection): Array<any> {
+        switch (dir) {
+            case 'asc':
+                return playersObj.sort((a, b) => {
+                    if (a.turnOrder < b.turnOrder) { return -1; }
+                    if (a.turnOrder > b.turnOrder) { return 1; }
+
+                    return 0;
+                });
+            case 'desc':
+                return playersObj.sort((a, b) => {
+                    if (a.turnOrder < b.turnOrder) { return 1; }
+                    if (a.turnOrder > b.turnOrder) { return -1; }
+
+                    return 0;
+                });
+        }
     }
 }

@@ -38,6 +38,8 @@ router.post('/games/:gId/join', auth, gameController.joinGame);
 router.post('/games/:gId/start', auth, gameController.startGame);
 // Cancel/delete a game
 router.get('/games/:gId/delete', auth, gameController.deleteGame);
+// Set turn order
+router.post('/games/:gId/setturnorder', auth, gameController.setTurnOrder);
 
 
 module.exports = router;
