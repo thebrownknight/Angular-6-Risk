@@ -1,0 +1,48 @@
+.risk-board {
+    .mapTooltip {
+        position: absolute;
+        background-color: $dark-gray;
+        opacity: 0.80;
+        filter: alpha(opacity=80);
+        @include rem(padding, 10px);
+        z-index: 1000;
+        max-width: 200px;
+        display: none;
+        color: $white;
+        border: 1px solid $sunshine;
+
+        .territory-name {
+            @include rem(font-size, 16px);
+        }
+        .occupant {
+            @include rem(font-size, 14px);
+        }
+    }
+
+    .zoomButton {
+        background-color: $powder;
+        color: $white;
+        position: absolute;
+        right: 180px;
+        width: 25px;
+        height: 25px;
+        text-align: center;
+        @include rem(font-size, 14px);
+        cursor: pointer;
+        @include transition(background-color 0.2s ease-in);
+
+        &:hover {
+            background-color: darken($powder, 10%);
+        }
+
+        &.zoomReset {
+            bottom: 190px;
+        }
+        &.zoomIn {
+            bottom: 155px;
+        }
+        &.zoomOut {
+            bottom: 120px;
+        }
+    }
+}

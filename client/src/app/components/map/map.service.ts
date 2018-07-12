@@ -83,7 +83,7 @@ export class MapService {
         // these objects themselves won't be changing, just the territoryMeta inside
         players.forEach((player, index) => {
             const playerStateObj = {
-                player: player._id, // for player reference
+                player: player.player._id, // for player reference
                 status: 'WAITING',  // initial player status
                 turnOrder: (index + 1), // player's turn order
                 territoryMeta: [],  // list of territories the player controls

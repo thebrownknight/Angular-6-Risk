@@ -10,64 +10,58 @@ header {
         clear: both;
         content: "";
     }
-    .container {
+    .inner-container {
         @include flexbox();
         @include justify-content(space-between);
         @include align-items(center);
+        @include rem(padding, 0 30px);
 
         .profile-manager {
             cursor: pointer;
             @include transition(all 0.3s);
             position: relative;
 
-            &:hover {
-                > span {
-                    color: $aqua;
-                }
+            .user-icon {
+                > i {
+                    @include rem(font-size, 30px);
+                    vertical-align: middle;
 
-                .manager-dropdown {
-                    display: block;
-                }
-            }
-
-            > span {
-                display: inline-block;
-                @include rem(font-size, 14px);
-                @include opensans-regular();
-                @include transition(all 0.2s);
-                color: $dark-gray;
-
-                i {
-                    @include rem(font-size, 16px);
-
-                    &:first-child {
-                        @include rem(padding-right, 5px);
-                    }
-                    &:last-child {
-                        @include rem(padding-left, 5px);
+                    &.fa-caret-down, &.fa-caret-up {
+                        @include rem(font-size, 20px);
+                        margin-left: 5px;
                     }
                 }
             }
 
             .manager-dropdown {
-                display: none;
                 position: absolute;
-                left: 30%;
-                background-color: $powder;
-                right: 0;
-                z-index: 100;
-                border: 1px solid $light-gray;
-                text-align: center;
-                @include rem(padding, 15px);
-                @include border-radius(3px);
+                top: 40px;
+                background: $tan;
+                box-shadow: 0px 1px 2px $light-gray;
+                @include rem(padding, 10px);
+
+                &:after {
+                    bottom: 100%;
+                    left: 50%;
+                    border: solid transparent;
+                    content: " ";
+                    height: 0;
+                    width: 0;
+                    position: absolute;
+                    pointer-events: none;
+                    border-bottom-color: $tan;
+                    border-width: 20px;
+                    margin-left: -20px;
+                }
 
                 > a {
-                    color: $white;
+                    color: $dark-gray;
                     display: block;
+                    @include raleway-regular();
                     @include rem(font-size, 14px);
 
-                    &:first-child {
-                        @include rem(margin-bottom, 10px);
+                    &:not(:last-child) {
+                        margin-bottom: 10px;
                     }
                 }
             }

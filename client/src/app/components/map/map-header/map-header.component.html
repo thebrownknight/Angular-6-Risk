@@ -1,5 +1,15 @@
 <header class="risk-map-header">
-    <div class="container">
+    <div class="inner-container">
+        <div class="profile-manager">
+            <div class="user-icon" (click)="toggleProfileManager()">
+                <i class="fas fa-{{fullLoggedInUserDetails.icon}}" [ngStyle]="{'color': fullLoggedInUserDetails.color}"></i>
+                <i [ngClass]="{'fas': true, 'fa-caret-down': profileManagerState === 'closed', 'fa-caret-up': profileManagerState === 'opened'}" [ngStyle]="{'color': fullLoggedInUserDetails.color}"></i>
+            </div>
+            <div class="manager-dropdown" [@toggleProfileManager]="profileManagerState">
+                <a href="/dashboard">Dashboard</a>
+                <a href (click)="logout()">Logout</a>
+            </div>
+        </div>
         <div class="current-turn">
             
         </div>

@@ -2,9 +2,11 @@ import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 
+import { AuthenticationService } from '../../../services/authentication.service';
 import { MapService } from '../map.service';
 
 import { Utils } from '../../../services/utils';
+import { UserDetails } from '../../../helpers/data-models';
 
 // jQuery declaration
 declare var $: any;
@@ -26,6 +28,8 @@ export class MapComponent implements OnInit, OnDestroy {
     // private mapH = 465.85077;
 
     private tempNearbyTerritories: Array<string> = [];
+    private loggedInUser: UserDetails;
+
     $mapArea: any;  // Reference to the jQuery Mapael object
     gamePlayers: Array<any> = [];   // Array of the players in the game
     gameMeta: any;
@@ -33,9 +37,12 @@ export class MapComponent implements OnInit, OnDestroy {
     constructor(
         private router: Router,
         private route: ActivatedRoute,
+        private authService: AuthenticationService,
         private mapService: MapService,
         private utils: Utils
-    ) { }
+    ) {
+        this.loggedInUser = this.authService.getUserDetails();
+    }
 
     ngOnInit() {
         this.route.paramMap.pipe(
@@ -130,38 +137,75 @@ export class MapComponent implements OnInit, OnDestroy {
                     }
                 },
                 afterInit: ($self, paper, areas, plots, options) => {
-                    // console.log(this.mapService.getActiveMap());
+                    // Initialize the new map info we're going to update with
+                    const newData = {
+                        areas: {},
+                        legend: {
+                            area: {
+                                title: 'Players',
+                                cssClass: 'areaLegend',
+                                // exclusive: true,
+                                slices: []
+                            }
+                        }
+                    };
+
                     // We do the random distribution of territories to the players
                     this.gameMeta = this.mapService.assignTerritories(this.gamePlayers);
 
                     // Now we grab the territoryMeta from each player and fill the colors of the territories with the players' colors
-                    const playerColorMap = {};
+                    const playerColorMap = {}, playerUsernameMap = {};
                     this.gamePlayers.forEach(player => {
-                        playerColorMap[player._id] = player.color;
-                    });
+                        playerColorMap[player.player._id] = player.color;
+                        playerUsernameMap[player.player._id] = player.player.username;
 
-                    // Initialize the new map info we're going to update with
-                    const newData = {
-                        areas: {}
-                    };
+                        const isLoggedIn = this.loggedInUser._id === player.player._id;
+
+                        // Set the legend here too so we can save looping again
+                        newData.legend.area.slices.push({
+                            attrs: {
+                                fill: player.color
+                            },
+                            sliceValue: player.player.username,
+                            label: player.player.username,
+                            // clicked: isLoggedIn
+                        });
+                    });
 
                     this.gameMeta.forEach(playerMeta => {
                         // console.log(playerMeta);
                         playerMeta.territoryMeta.forEach(territory => {
+                            const territoryName = this.mapService.getName(territory.id);
                             newData.areas[territory.id] = {
+                                value: playerUsernameMap[playerMeta.player],
                                 attrs: {
-                                    fill: playerColorMap[playerMeta.player]
+                                    fill: playerColorMap[playerMeta.player],
+                                    stroke: "#FFFFFF",
+                                    "stroke-width": 1
                                 },
                                 attrsHover: {
                                     fill: playerColorMap[playerMeta.player]
+                                },
+                                tooltip: {
+                                    content: '<p class="territory-name">' + territoryName + '</p><p class="occupant">Current Occupant : ' + playerUsernameMap[playerMeta.player] + '</p>'
                                 }
                             };
                         });
                     });
 
+                    console.log(newData);
+
                     this.$mapArea.trigger('update', [{
                         mapOptions: newData
                     }]);
+                }
+            },
+            legend: {
+                area: {
+                    title: "",
+                    slices: [
+                        {}
+                    ]
                 }
             }
         });
