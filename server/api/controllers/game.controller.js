@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 let User = mongoose.model('User');
 let Game = mongoose.model('Game');
+let GameMeta = mongoose.model('GameMeta');
 
 module.exports.getPublicGames = function(req, res) {
     Game.
@@ -34,7 +35,27 @@ module.exports.getGamesByUser = function(req, res) {
 };
 
 module.exports.getGameById = function(req, res) {
+    let gameId = req.params.gId;
 
+    if (!req.payload._id) {
+        res.status(403).json({
+            "message": "UnauthorizedError: Please login to view the game."
+        });
+    } else {
+        Game
+            .findOne({
+                '_id': gameId
+            })
+            .populate('creator')
+            .populate('players.player')
+            .exec((err, game) => {
+                if (err) {
+                    res.status(404).json(err);
+                    return;
+                }
+                res.status(200).json(game);
+            });
+    }
 };
 
 module.exports.getGameByCode = function(req, res) {
@@ -51,6 +72,7 @@ module.exports.getGameByCode = function(req, res) {
             })
             .populate('creator')
             .populate('players.player')
+            .populate('gameMeta')
             .exec((err, game) => {
                 if (err) {
                     res.status(404).json(err);
@@ -231,6 +253,73 @@ module.exports.setTurnOrder = function(req, res) {
         });
 
         res.status(200).json({ success: true });
+    }
+}
+
+/**
+ * Add game meta information to the database.
+ */
+module.exports.setGameMeta = function(req, res) {
+    const gameId = req.params.gId;
+    const gameState = req.body.gameState;
+    const gameLogRecords = req.body.gameLogRecords;
+
+    if (!req.payload._id) {
+        res.status(403).json({
+            'message': 'UnauthorizedError: Please login to set the game meta information.'
+        });
+    } else {
+        // First we get the game we're modifying the game meta for
+        Game
+            .findById(gameId, (err, game) => {
+                if (err) {
+                    res.status(404).json(err);
+                    return;
+                }
+                // No errors, proceed onwards
+                if (game) {
+                    // Now check to see if the gameMeta is null or not
+                    if (game.gameMeta) {
+                        // Get the gameMeta object from the table so we can update it
+                        GameMeta.findByIdAndUpdate(game.gameMeta, {
+
+                        }, (gmerr, gamemeta) => {
+
+                        });
+                    } else {
+                        // The gameMeta record in the gamemeta table doesn't exist, we have to create a new one and save it
+                        let gameMetaObj = new GameMeta();
+
+                        gameMetaObj.state = gameState;
+                        gameMetaObj.log = gameLogRecords;
+
+                        gameMetaObj.save((gmobjerr, gmobj) => {
+                            if (gmobjerr) {
+                                res.status(404).json(gmobjerr);
+                                return;
+                            }
+
+                            if (gmobj && gmobj._id) {
+                                // Now save the game itself with ID that we get back from the gamemeta object
+                                game.gameMeta = gmobj._id;
+                                game.save((gsaveerr, retgame) => {
+                                    if (gsaveerr) {
+                                        res.status(404).json(gsaveerr);
+                                        return;
+                                    }
+
+                                    res.status(200).json(retgame);
+                                });
+                            }
+                        });
+                    }
+                } else {
+                    res.status(404).json({
+                        'message': 'Game Not Found: The game you are trying to access could not be retrieved.'
+                    });
+                    return;
+                }
+            });
     }
 }
 

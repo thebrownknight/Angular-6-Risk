@@ -41,5 +41,8 @@ router.get('/games/:gId/delete', auth, gameController.deleteGame);
 // Set turn order
 router.post('/games/:gId/setturnorder', auth, gameController.setTurnOrder);
 
+// Add game meta information
+router.post('/games/:gId/setgamemeta', auth, gameController.setGameMeta);
+
 
 module.exports = router;

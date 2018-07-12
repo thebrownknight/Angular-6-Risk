@@ -84,8 +84,8 @@ export class MapService {
         players.forEach((player, index) => {
             const playerStateObj = {
                 player: player.player._id, // for player reference
-                status: 'WAITING',  // initial player status
-                turnOrder: (index + 1), // player's turn order
+                status: (index === 0) ? 'CURRENTTURN' : 'WAITING',  // initial player status
+                // turnOrder: (index + 1), // player's turn order
                 territoryMeta: [],  // list of territories the player controls
                 cards: [] // cards the player has received from successful attacks
             };
@@ -139,6 +139,18 @@ export class MapService {
                 }
             });
 
+        });
+
+        const payload = {
+            gameState: this.gameState,
+            gameLogRecords: this.gameLog
+        };
+
+        // Save the game state in the db
+        this.utils.sendRequest('post', `/api/games/${this.activeGameID}/setgamemeta`, payload, true).subscribe(data => {
+            console.log(data);
+        }, err => {
+            console.error(err);
         });
 
         // Emit the game state to any listeners

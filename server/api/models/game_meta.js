@@ -38,13 +38,19 @@ const mongoose = require('mongoose');
 
 let gameMetaSchema = new mongoose.Schema({
     state: [{
+        _id: false,
         player: {
             type: mongoose.Schema.ObjectId,
             ref: 'User'
         },
+        status: String,
         territoryMeta: [{
-            name: String,
+            _id: false,
+            id: String,
             troops: Number
+        }],
+        cards: [{
+            type: String
         }]
     }],
     log: [{
@@ -53,9 +59,7 @@ let gameMetaSchema = new mongoose.Schema({
             ref: 'User'
         },
         turnType: String,
-        data: {
-            country: String
-        }
+        data: Object
     }]
 });
 

@@ -69,7 +69,7 @@ export class MapHeaderComponent implements OnInit, OnChanges {
      * Toggle the profile manager dropdown.
      */
     toggleProfileManager() {
-        this.profileManagerState = this.profileManagerState === 'closed' ? 'opened': 'closed';
+        this.profileManagerState = this.profileManagerState === 'closed' ? 'opened' : 'closed';
     }
 
     /**

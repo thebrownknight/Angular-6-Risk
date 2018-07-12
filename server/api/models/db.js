@@ -57,3 +57,4 @@ process.on('SIGINT', function() {
 // Bring in your schemas and models
 require('./user');
 require('./game');
+require('./game_meta');

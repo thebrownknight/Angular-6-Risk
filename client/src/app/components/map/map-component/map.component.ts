@@ -32,7 +32,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
     $mapArea: any;  // Reference to the jQuery Mapael object
     gamePlayers: Array<any> = [];   // Array of the players in the game
-    gameMeta: any;
+    gameState: any;
 
     constructor(
         private router: Router,
@@ -66,7 +66,12 @@ export class MapComponent implements OnInit, OnDestroy {
                     this.gamePlayers = this.utils.sortPlayers(game.players, 'asc');
                 }
 
-                this.setupMap();
+                if (game.gameMeta) {
+                    this.gameState = game.gameMeta.state;
+                    this.setupMap(false);
+                } else {
+                    this.setupMap(true);
+                }
             } else {
                 // Incorrect code, navigate back to the dashboard
                 // This will also take care of redirecting back to the
@@ -76,7 +81,7 @@ export class MapComponent implements OnInit, OnDestroy {
         });
     }
 
-    setupMap() {
+    setupMap(assignNewTerritories: boolean) {
         this.$mapArea = $('.risk-board');
         this.$mapArea.mapael({
             map: {
@@ -150,8 +155,10 @@ export class MapComponent implements OnInit, OnDestroy {
                         }
                     };
 
-                    // We do the random distribution of territories to the players
-                    this.gameMeta = this.mapService.assignTerritories(this.gamePlayers);
+                    if (assignNewTerritories) {
+                        // We do the random distribution of territories to the players
+                        this.gameState = this.mapService.assignTerritories(this.gamePlayers);
+                    }
 
                     // Now we grab the territoryMeta from each player and fill the colors of the territories with the players' colors
                     const playerColorMap = {}, playerUsernameMap = {};
@@ -172,7 +179,7 @@ export class MapComponent implements OnInit, OnDestroy {
                         });
                     });
 
-                    this.gameMeta.forEach(playerMeta => {
+                    this.gameState.forEach(playerMeta => {
                         // console.log(playerMeta);
                         playerMeta.territoryMeta.forEach(territory => {
                             const territoryName = this.mapService.getName(territory.id);
@@ -180,14 +187,15 @@ export class MapComponent implements OnInit, OnDestroy {
                                 value: playerUsernameMap[playerMeta.player],
                                 attrs: {
                                     fill: playerColorMap[playerMeta.player],
-                                    stroke: "#FFFFFF",
-                                    "stroke-width": 1
+                                    stroke: '#FFFFFF',
+                                    'stroke-width': 1
                                 },
                                 attrsHover: {
                                     fill: playerColorMap[playerMeta.player]
                                 },
                                 tooltip: {
-                                    content: '<p class="territory-name">' + territoryName + '</p><p class="occupant">Current Occupant : ' + playerUsernameMap[playerMeta.player] + '</p>'
+                                    content: `<p class="territory-name">${territoryName}</p>
+                                        <p class="occupant">Current Occupant : ${playerUsernameMap[playerMeta.player]}</p>`
                                 }
                             };
                         });
@@ -202,7 +210,7 @@ export class MapComponent implements OnInit, OnDestroy {
             },
             legend: {
                 area: {
-                    title: "",
+                    title: '',
                     slices: [
                         {}
                     ]
