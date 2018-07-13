@@ -104,6 +104,52 @@ export class Utils {
     }
 
     /**
+     * Helper method to lighten/darken colors using JavaScript.
+     * Use positive numbers for lightening, negative numbers for darkening.
+     */
+    /* tslint:disable:no-bitwise */
+    public lightDarkenColor(color, amount) {
+        let usePound = false;
+
+        // If the first character of the color is a pound sign, set the flag
+        if (color[0] === '#') {
+            color = color.slice(1); // Set the color without the pound sign
+            usePound = true;
+        }
+
+        // Convert the color to a base16 number
+        const num = parseInt(color, 16);
+
+        let r = (num >> 16) + amount;
+
+        // We can't have greater than 255 or less than 0 for an rgb value
+        if (r > 255) {
+            r = 255;
+        } else if (r < 0) {
+            r = 0;
+        }
+
+        let b = ((num >> 8) & 0x00FF) + amount;
+
+        if (b > 255) {
+            b = 255;
+        } else if (b < 0) {
+            b = 0;
+        }
+
+        let g = (num & 0x0000FF) + amount;
+
+        if (g > 255) {
+            g = 255;
+        } else if (g < 0) {
+            g = 0;
+        }
+
+        return (usePound ? '#' : '') + (g | (b << 8) | (r << 16)).toString(16);
+    }
+    /* tslint:enable:no-bitwise */
+
+    /**
      * Method to help sort the players by turnOrder.
      */
     public sortPlayers(playersObj: Array<any>, dir: SortDirection): Array<any> {

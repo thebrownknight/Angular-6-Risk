@@ -6,10 +6,13 @@
         filter: alpha(opacity=80);
         @include rem(padding, 10px);
         z-index: 1000;
-        max-width: 200px;
         display: none;
         color: $white;
         border: 1px solid $sunshine;
+
+        > span {
+            display: block;
+        }
 
         .territory-name {
             @include rem(font-size, 16px);
@@ -20,10 +23,10 @@
     }
 
     .zoomButton {
-        background-color: $powder;
+        background-color: $aqua;
         color: $white;
         position: absolute;
-        right: 180px;
+        right: 130px;
         width: 25px;
         height: 25px;
         text-align: center;
@@ -36,13 +39,13 @@
         }
 
         &.zoomReset {
-            bottom: 190px;
+            bottom: 120px;
         }
         &.zoomIn {
-            bottom: 155px;
+            bottom: 85px;
         }
         &.zoomOut {
-            bottom: 120px;
+            bottom: 50px;
         }
     }
 }

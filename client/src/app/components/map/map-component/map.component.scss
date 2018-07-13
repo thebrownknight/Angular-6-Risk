@@ -1,5 +1,13 @@
 .risk-board {
+    padding-top: 20px;
+
     .map {
         height: 100%;
+    }
+
+    .areaLegend {
+        position: absolute;
+        bottom: 40px;
+        left: 60px;
     }
 }

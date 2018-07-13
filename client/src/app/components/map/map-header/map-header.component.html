@@ -3,6 +3,7 @@
         <div class="profile-manager">
             <div class="user-icon" (click)="toggleProfileManager()">
                 <i class="fas fa-{{fullLoggedInUserDetails.icon}}" [ngStyle]="{'color': fullLoggedInUserDetails.color}"></i>
+                <span *ngIf="fullLoggedInUserDetails.player">{{fullLoggedInUserDetails.player.username}}</span>
                 <i [ngClass]="{'fas': true, 'fa-caret-down': profileManagerState === 'closed', 'fa-caret-up': profileManagerState === 'opened'}" [ngStyle]="{'color': fullLoggedInUserDetails.color}"></i>
             </div>
             <div class="manager-dropdown" [@toggleProfileManager]="profileManagerState">
@@ -13,8 +14,8 @@
         <div class="current-turn">
             
         </div>
-        <div class="player-list">
+        <!-- <div class="player-list">
             <p *ngFor="let p of players"><i [ngStyle]="{'color': p.color}" class="fas fa-{{p.icon}}"></i> - {{p.player.username}} {{p.turnOrder}}</p>
-        </div>
+        </div> -->
     </div>
 </header>

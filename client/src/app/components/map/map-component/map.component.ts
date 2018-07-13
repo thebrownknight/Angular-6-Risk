@@ -155,6 +155,8 @@ export class MapComponent implements OnInit, OnDestroy {
                         }
                     };
 
+                    const newPlots = {};
+
                     if (assignNewTerritories) {
                         // We do the random distribution of territories to the players
                         this.gameState = this.mapService.assignTerritories(this.gamePlayers);
@@ -162,6 +164,9 @@ export class MapComponent implements OnInit, OnDestroy {
 
                     // Now we grab the territoryMeta from each player and fill the colors of the territories with the players' colors
                     const playerColorMap = {}, playerUsernameMap = {};
+
+                    // Loop through the players, grab the player colors and player usernames and store them in objects
+                    // Update legend information here
                     this.gamePlayers.forEach(player => {
                         playerColorMap[player.player._id] = player.color;
                         playerUsernameMap[player.player._id] = player.player.username;
@@ -179,23 +184,59 @@ export class MapComponent implements OnInit, OnDestroy {
                         });
                     });
 
+                    // Since we don't have player information except for ID in the gameState, use the objects we created above
+                    // to grab the player color and usernames to set value and fill
                     this.gameState.forEach(playerMeta => {
                         // console.log(playerMeta);
                         playerMeta.territoryMeta.forEach(territory => {
                             const territoryName = this.mapService.getName(territory.id);
+                            const playerUsername = playerUsernameMap[playerMeta.player];
+
                             newData.areas[territory.id] = {
                                 value: playerUsernameMap[playerMeta.player],
                                 attrs: {
                                     fill: playerColorMap[playerMeta.player],
+                                    cursor: 'pointer',
                                     stroke: '#FFFFFF',
                                     'stroke-width': 1
                                 },
                                 attrsHover: {
-                                    fill: playerColorMap[playerMeta.player]
+                                    fill: this.utils.lightDarkenColor(playerColorMap[playerMeta.player], -20)
                                 },
                                 tooltip: {
-                                    content: `<p class="territory-name">${territoryName}</p>
-                                        <p class="occupant">Current Occupant : ${playerUsernameMap[playerMeta.player]}</p>`
+                                    content: this.generateTooltip(territoryName, playerUsername),
+                                    offset: {
+                                        left: 0,
+                                        top: 20
+                                    }
+                                }
+                            };
+
+                            newPlots[territory.id + '_plot'] = {
+                                type: 'circle',
+                                size: 15,
+                                plotsOn: territory.id,
+                                attrs: {
+                                    fill: '#FFFFFF',
+                                    'fill-opacity': 0.8,
+                                    stroke: '#B5B4B4',
+                                    'stroke-width': 1
+                                },
+                                attrsHover: {
+                                    fill: '#FFFFFF',
+                                    'fill-opacity': 1,
+                                    'stroke-width': 1
+                                },
+                                text: {
+                                    content: territory.troops + '',
+                                    position: 'inner',
+                                    attrs: {
+                                        'font-size': 8,
+                                        fill: '#5A5A5A'
+                                    },
+                                    attrsHover: {
+                                        fill: '#5A5A5A'
+                                    }
                                 }
                             };
                         });
@@ -204,7 +245,8 @@ export class MapComponent implements OnInit, OnDestroy {
                     console.log(newData);
 
                     this.$mapArea.trigger('update', [{
-                        mapOptions: newData
+                        mapOptions: newData,
+                        newPlots: newPlots
                     }]);
                 }
             },
@@ -221,6 +263,10 @@ export class MapComponent implements OnInit, OnDestroy {
 
     clearZoom() {
         this.$mapArea.trigger('zoom', { level: 0 });
+    }
+
+    private generateTooltip(territoryName: string, occupant: string) {
+        return '<span class="territory-name">' + territoryName + '</span><span class="occupant">' + occupant + '</span>';
     }
 
     ngOnDestroy() {

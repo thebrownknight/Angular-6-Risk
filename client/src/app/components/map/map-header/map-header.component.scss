@@ -4,6 +4,8 @@
 header {
     padding: 10px 0;
     width: 100%;
+    background-color: lighten($light-gray, 10%);
+    box-shadow: 0px 0px 3px $dark-gray;
 
     &:after {
         display: block;
@@ -22,6 +24,14 @@ header {
             position: relative;
 
             .user-icon {
+                > span {
+                    @include rem(font-size, 14px);
+                    margin-left: 5px;
+                    color: $dark-gray;
+                    @include opensans-regular();
+                    display: inline-block;
+                    vertical-align: middle;
+                }
                 > i {
                     @include rem(font-size, 30px);
                     vertical-align: middle;
@@ -35,12 +45,16 @@ header {
 
             .manager-dropdown {
                 position: absolute;
-                top: 40px;
-                background: $tan;
+                top: 50px;
+                background: $white;
                 box-shadow: 0px 1px 2px $light-gray;
                 @include rem(padding, 10px);
+                left: 0px;
+                width: 141px;
+                text-align: center;
+                border: 2px solid $powder;
 
-                &:after {
+                &:after, &:before {
                     bottom: 100%;
                     left: 50%;
                     border: solid transparent;
@@ -49,9 +63,17 @@ header {
                     width: 0;
                     position: absolute;
                     pointer-events: none;
-                    border-bottom-color: $tan;
-                    border-width: 20px;
-                    margin-left: -20px;
+                }
+
+                &:after {
+                    border-bottom-color: $white;
+                    border-width: 15px;
+                    margin-left: -15px;
+                }
+                &:before {
+                    border-bottom-color: $powder;
+                    border-width: 18px;
+                    margin-left: -18px;
                 }
 
                 > a {
