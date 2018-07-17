@@ -72,7 +72,12 @@ module.exports.getGameByCode = function(req, res) {
             })
             .populate('creator')
             .populate('players.player')
-            .populate('gameMeta')
+            .populate({
+                path: 'gameMeta',
+                populate: {
+                    path: 'state.player'
+                }
+            })
             .exec((err, game) => {
                 if (err) {
                     res.status(404).json(err);

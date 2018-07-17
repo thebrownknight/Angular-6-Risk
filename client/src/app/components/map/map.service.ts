@@ -153,8 +153,7 @@ export class MapService {
             console.error(err);
         });
 
-        // Emit the game state to any listeners
-        this.gameStateEventSource.next(this.gameState);
+        this.emitGameState(this.gameState);
 
         return this.gameState;
     }
@@ -262,6 +261,12 @@ export class MapService {
         });
 
         return nPlayersArr;
+    }
+
+    // Emit game state information
+    public emitGameState(gameState: any) {
+        // Emit the game state to any listeners
+        this.gameStateEventSource.next(gameState);
     }
 
 

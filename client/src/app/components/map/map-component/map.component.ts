@@ -51,7 +51,7 @@ export class MapComponent implements OnInit, OnDestroy {
             })
         ).subscribe((game) => {
             if (game) {
-                // console.log(game);
+                console.log(game);
                 // Send the map name and game ID to the service to set the common game information to reference in the service
                 this.mapService.setGameConfiguration({
                     map: game.map,
@@ -68,6 +68,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
                 if (game.gameMeta) {
                     this.gameState = game.gameMeta.state;
+                    this.mapService.emitGameState(this.gameState);
                     this.setupMap(false);
                 } else {
                     this.setupMap(true);
@@ -189,19 +190,20 @@ export class MapComponent implements OnInit, OnDestroy {
                     this.gameState.forEach(playerMeta => {
                         // console.log(playerMeta);
                         playerMeta.territoryMeta.forEach(territory => {
+                            const playerId = playerMeta.player._id;
                             const territoryName = this.mapService.getName(territory.id);
-                            const playerUsername = playerUsernameMap[playerMeta.player];
+                            const playerUsername = playerUsernameMap[playerId];
 
                             newData.areas[territory.id] = {
-                                value: playerUsernameMap[playerMeta.player],
+                                value: playerUsernameMap[playerId],
                                 attrs: {
-                                    fill: playerColorMap[playerMeta.player],
+                                    fill: playerColorMap[playerId],
                                     cursor: 'pointer',
                                     stroke: '#FFFFFF',
                                     'stroke-width': 1
                                 },
                                 attrsHover: {
-                                    fill: this.utils.lightDarkenColor(playerColorMap[playerMeta.player], -20)
+                                    fill: this.utils.lightDarkenColor(playerColorMap[playerId], -20)
                                 },
                                 tooltip: {
                                     content: this.generateTooltip(territoryName, playerUsername),

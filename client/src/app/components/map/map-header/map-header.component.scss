@@ -18,6 +18,10 @@ header {
         @include align-items(center);
         @include rem(padding, 0 30px);
 
+        > div {
+            flex: 0 0 1;
+        }
+
         .profile-manager {
             cursor: pointer;
             @include transition(all 0.3s);

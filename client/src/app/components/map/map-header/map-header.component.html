@@ -11,8 +11,77 @@
                 <a href (click)="logout()">Logout</a>
             </div>
         </div>
-        <div class="current-turn">
-            
+        <div *ngIf="currentTurnPlayer" class="current-turn">
+            <div class="player-icon">
+                <i class="fas fa-{{currentTurnPlayer.icon}}" [ngStyle]="{'color': currentTurnPlayer.color}"></i>
+                <span>{{currentTurnPlayer.player.username}}</span>
+            </div>
+        </div>
+        <div class="turn-steps" *ngIf="isCurrentPlayer">
+            <div class="step-1">
+                <h3>Step 1: Place Your Troops</h3>
+                <span>Troops acquired:</span>
+                <form name="troops-placement" (ngSubmit)="placeTroops()" [formGroup]="troopsPlacementForm">
+                    <label>Choose number of troops to place:</label>
+                    <select formControlName="numberOfTroops">
+                        <option *ngFor="let number of [2,3,4,5,6,7,8,9,10,11]" [value]="number">
+                            {{number}}
+                        </option>
+                    </select>
+                </form>
+            </div>
+            <div class="step-2">
+                <h3>Step 2: Attacking</h3>
+                <form name="attack-sequence" [formGroup]="attackSequenceForm" (ngSubmit)="attackCountry()">
+                    <div class="attacking-country">
+                        <label>Choose the country to attack from:</label>
+                        <span class="a-country">Egypt</span>
+                        <input type="hidden" formControlName="attackingTerritory" value="Egypt">
+                    </div>
+                    <div>vs.</div>
+                    <div class="defending-country">
+                        <label>Choose the country you want to attack:</label>
+                        <span class="d-country">North Africa</span>
+                        <input type="hidden" formControlName="defendingTerritory" value="North Africa">
+                    </div>
+                    <select name="attackNumberOfPlayers" class="select-box" formControlName="attackNumberOfPlayers">
+                        <option *ngFor="let number of [2,3,4,5,6]" [value]="number">
+                            {{number}}
+                        </option>
+                    </select>
+                    <input type="submit" class="btn btn-aqua" value="Attack">
+                </form>
+                <div class="buttons-container">
+                    <button class="btn btn-neutral" (click)="skipStep(2)">Skip</button>
+                    <button class="btn btn-vermillion">Finish</button>
+                </div>
+            </div>
+            <div class="step-3">
+                <h3>Step 3: Fortify</h3>
+                <form name="fortify-sequence" [formGroup]="fortifyTroopsForm" (ngSubmit)="fortifyCountry()">
+                    <div class="attacking-country">
+                        <label>Choose the country you want to move troops from:</label>
+                        <span class="a-country">East Africa</span>
+                        <input type="hidden" formControlName="movingTerritory" value="East Africa">
+                    </div>
+                    <div>to</div>
+                    <div class="defending-country">
+                        <label>Choose the country you want to fortify:</label>
+                        <span class="d-country">Egypt</span>
+                        <input type="hidden" formControlName="fortifiedTerritory" value="Egypt">
+                    </div>
+                    <select name="fortifyNumberOfPlayers" class="select-box" formControlName="fortifyNumberOfPlayers">
+                        <option *ngFor="let number of [2,3,4,5,6]" [value]="number">
+                            {{number}}
+                        </option>
+                    </select>
+                    <input type="submit" class="btn btn-aqua" value="Fortify">
+                </form>
+                <div class="buttons-container">
+                    <button class="btn btn-neutral" (click)="skipStep(3)">Skip</button>
+                    <button class="btn btn-vermillion">Finish</button>
+                </div>
+            </div>
         </div>
         <!-- <div class="player-list">
             <p *ngFor="let p of players"><i [ngStyle]="{'color': p.color}" class="fas fa-{{p.icon}}"></i> - {{p.player.username}} {{p.turnOrder}}</p>
