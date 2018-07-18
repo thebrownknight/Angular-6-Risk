@@ -1,4 +1,5 @@
-import { Component, Input, Output, OnInit, OnChanges, SimpleChange, EventEmitter } from '@angular/core';
+import { Component, Input, Output, OnInit, OnDestroy, SimpleChange, EventEmitter } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 
@@ -27,28 +28,30 @@ import { UserDetails } from '../../../helpers/data-models';
         ])
     ]
 })
-export class MapHeaderComponent implements OnInit, OnChanges {
-    private _players = Array<any>();
+export class MapHeaderComponent implements OnInit, OnDestroy {
+    private _players = new BehaviorSubject<any[]>([]);
     private loggedInUser: UserDetails;
-    private isCurrentPlayer: Boolean;
 
     @Input()
     set players(players: Array<any>) {
-        this._players = players;
+        this._players.next(players);
     }
 
-    get players(): Array<any> { return this._players; }
+    get players(): Array<any> { return this._players.getValue(); }
 
     @Output() playerTurnStep = new EventEmitter<string>();
 
     profileManagerState = 'closed';
     fullLoggedInUserDetails: any = {};
     currentTurnPlayer: any;
+    isCurrentPlayer: Boolean;
 
     /* Player turn steps forms */
     troopsPlacementForm: FormGroup;
     attackSequenceForm: FormGroup;
     fortifyTroopsForm: FormGroup;
+
+    currentStep = '';
 
     constructor(
         private authService: AuthenticationService,
@@ -64,42 +67,71 @@ export class MapHeaderComponent implements OnInit, OnChanges {
         this.initAttackSequenceForm();
         this.initFortifyTroopsForm();
 
-        this.mapService.gameStateUpdates$.subscribe((gameState) => {
-            console.log(gameState);
+        this._players.subscribe(pl => {
 
-            setTimeout(() => {
-                // We have the current game state now, update the current player
-                this.currentTurnPlayer = gameState.filter(elem => {
-                    let modElem = {};
-                    if (elem.status === 'CURRENTTURN') {
-                        if (this.players.length > 0) {
-                            modElem = this.players.filter(player => {
-                                return player.player._id === elem._id;
-                            })[0];
-                            elem['icon'] = modElem['icon'];
-                            elem['color'] = modElem['color'];
-                        }
-                        return elem;
-                    }
+            if (pl.length > 0) {
+                this.fullLoggedInUserDetails = pl.filter((elem) => {
+                    return elem.player._id === this.loggedInUser._id;
                 })[0];
 
-                console.log(this.currentTurnPlayer);
+                this.mapService.gameStateUpdates$.subscribe((gameState) => {
+                    // console.log(gameState);
 
-                // Check to see if the logged in player is the current player
-                this.isCurrentPlayer = this.currentTurnPlayer.player._id === this.loggedInUser._id;
-            }, 500);
-        }, error => {
-            console.log(error);
+                    // We have the current game state now, update the current player
+                    this.currentTurnPlayer = gameState.filter(elem => {
+                        let modElem = {};
+                        if (elem.status === 'CURRENTTURN' || elem.status === 'GETTROOPS'
+                            || elem.status === 'ATTACK' || elem.status === 'FORTIFY') {
+
+                            modElem = pl.filter(el => {
+                                return el.player._id === elem.player._id;
+                            })[0];
+
+                            // Set the icon and color for the current turn player since we don't have this information in the gameState
+                            // ...(nor should we)
+                            elem['icon'] = modElem['icon'];
+                            elem['color'] = modElem['color'];
+
+                            return elem;
+                        }
+                    })[0];
+
+                    // console.log(this.currentTurnPlayer);
+
+                    // Check to see if the logged in player is the current player
+                    this.isCurrentPlayer = this.currentTurnPlayer.player._id === this.loggedInUser._id;
+
+                    if (this.isCurrentPlayer) {
+                        // Set the current step to be one of the 3 steps of a turn
+                        this.currentStep = this.currentTurnPlayer.status === 'CURRENTTURN' ? 'GETTROOPS' : this.currentTurnPlayer.status;
+
+                        // Emit the current step so the main map component can adjust
+                        this.playerTurnStep.emit(this.currentStep);
+                    }
+            }, error => {
+                console.log(error);
+            });
+
+            }
         });
     }
 
-    ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
-        if (changes.players && changes.players.currentValue.length > 0) {
-            this.fullLoggedInUserDetails = changes.players.currentValue.filter((elem) => {
-                return elem.player._id === this.loggedInUser._id;
-            })[0];
-        }
+    /* Convenience getters for forms */
+    get tpForm() {
+        return this.troopsPlacementForm.controls;
     }
+    get asForm() {
+        return this.attackSequenceForm.controls;
+    }
+    get ftForm() {
+        return this.fortifyTroopsForm.controls;
+    }
+
+    // ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
+    //     if (changes.players && changes.players.currentValue.length > 0) {
+
+    //     }
+    // }
 
     /**
      * Toggle the profile manager dropdown.
@@ -136,5 +168,9 @@ export class MapHeaderComponent implements OnInit, OnChanges {
             fortifiedTerritory: ['', Validators.required],
             fortifyNumberOfPlayers: [2, Validators.required]
         });
+    }
+
+    ngOnDestroy() {
+        this._players.unsubscribe();
     }
 }

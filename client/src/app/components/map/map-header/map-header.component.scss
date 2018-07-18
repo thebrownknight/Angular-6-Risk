@@ -19,13 +19,14 @@ header {
         @include rem(padding, 0 30px);
 
         > div {
-            flex: 0 0 1;
+            flex: 1 1 auto;
         }
 
         .profile-manager {
             cursor: pointer;
             @include transition(all 0.3s);
             position: relative;
+            @include flex-grow(0.3);
 
             .user-icon {
                 > span {
@@ -90,6 +91,47 @@ header {
                         margin-bottom: 10px;
                     }
                 }
+            }
+        }
+
+        .current-turn {
+            // background-color: $light-gray;
+            @include rem(padding, 20px 10px);
+            margin-right: 10px;
+            text-align: center;
+            border: 2px solid $powder;
+            @include flex-grow(0.3);
+
+            h3 {
+                @include rem(font-size, 16px);
+                @include raleway-regular();
+            }
+
+            .player-icon {
+                i {
+                    @include border-radius(100%);
+                    width: 30px;
+                    height: 30px;
+                    border: 1px solid $powder;
+                    background-color: $off-white;
+                    @include rem(padding, 8px);
+                    @include rem(font-size, 14px);
+                }
+                span {
+                    margin-left: 5px;
+                    @include rem(font-size, 14px);
+                    @include opensans-bold();
+                }
+            }
+        }
+
+        .turn-steps {
+            @include flex-grow(2);
+
+            .step {
+                display: inline-block;
+                vertical-align: middle;
+                width: 32%;
             }
         }
     }

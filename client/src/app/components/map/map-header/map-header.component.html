@@ -1,6 +1,6 @@
 <header class="risk-map-header">
     <div class="inner-container">
-        <div class="profile-manager">
+        <div *ngIf="fullLoggedInUserDetails" class="profile-manager">
             <div class="user-icon" (click)="toggleProfileManager()">
                 <i class="fas fa-{{fullLoggedInUserDetails.icon}}" [ngStyle]="{'color': fullLoggedInUserDetails.color}"></i>
                 <span *ngIf="fullLoggedInUserDetails.player">{{fullLoggedInUserDetails.player.username}}</span>
@@ -11,17 +11,22 @@
                 <a href (click)="logout()">Logout</a>
             </div>
         </div>
-        <div *ngIf="currentTurnPlayer" class="current-turn">
+        <div *ngIf="currentTurnPlayer && players" class="current-turn">
+            <h3>Current Turn:</h3>
             <div class="player-icon">
                 <i class="fas fa-{{currentTurnPlayer.icon}}" [ngStyle]="{'color': currentTurnPlayer.color}"></i>
                 <span>{{currentTurnPlayer.player.username}}</span>
             </div>
         </div>
         <div class="turn-steps" *ngIf="isCurrentPlayer">
-            <div class="step-1">
+            <div [ngClass]="{'step step-1': true, 'active-step': currentStep === 'GETTROOPS'}">
                 <h3>Step 1: Place Your Troops</h3>
-                <span>Troops acquired:</span>
                 <form name="troops-placement" (ngSubmit)="placeTroops()" [formGroup]="troopsPlacementForm">
+                    <span>Troops acquired:</span>
+                    <div class="placement-country">
+                        <label>Choose the country to place troops in: </label>
+                        <span class="troopsPlacementTerritory">Greenland</span>
+                    </div>
                     <label>Choose number of troops to place:</label>
                     <select formControlName="numberOfTroops">
                         <option *ngFor="let number of [2,3,4,5,6,7,8,9,10,11]" [value]="number">
@@ -30,7 +35,7 @@
                     </select>
                 </form>
             </div>
-            <div class="step-2">
+            <div [ngClass]="{'step step-2': true, 'active-step': currentStep === 'ATTACK'}">
                 <h3>Step 2: Attacking</h3>
                 <form name="attack-sequence" [formGroup]="attackSequenceForm" (ngSubmit)="attackCountry()">
                     <div class="attacking-country">
@@ -56,7 +61,7 @@
                     <button class="btn btn-vermillion">Finish</button>
                 </div>
             </div>
-            <div class="step-3">
+            <div [ngClass]="{'step step-3': true, 'active-step': currentStep === 'FORTIFY'}">
                 <h3>Step 3: Fortify</h3>
                 <form name="fortify-sequence" [formGroup]="fortifyTroopsForm" (ngSubmit)="fortifyCountry()">
                     <div class="attacking-country">

@@ -1,6 +1,6 @@
 import { Injectable, Inject, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 
 import { standardMap } from '../../../assets/scripts/maps';
 import { Utils } from '../../services/utils';
@@ -25,7 +25,7 @@ export class MapService {
     gameLogUpdates$ = this.eventSource.asObservable();
 
     // Variables for emitting game state activity
-    private gameStateEventSource = new Subject<any>();
+    private gameStateEventSource = new BehaviorSubject<any>(null);
     gameStateUpdates$ = this.gameStateEventSource.asObservable();
 
     constructor(

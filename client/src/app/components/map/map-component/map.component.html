@@ -1,4 +1,4 @@
-<risk-map-header [players]="gamePlayers"></risk-map-header>
+<risk-map-header [players]="gamePlayers" (playerTurnStep)="setPlayerStep($event)"></risk-map-header>
 <div class="container">
     <div class="risk-board">
         <div class="map">Alternative content</div>
