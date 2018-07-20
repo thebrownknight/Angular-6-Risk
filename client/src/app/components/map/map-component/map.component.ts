@@ -29,10 +29,17 @@ export class MapComponent implements OnInit, OnDestroy {
 
     private tempNearbyTerritories: Array<string> = [];
     private loggedInUser: UserDetails;
+    private _mapMode: string;
+    private _currentPlayer: any;
 
     $mapArea: any;  // Reference to the jQuery Mapael object
     gamePlayers: Array<any> = [];   // Array of the players in the game
     gameState: any;
+
+    mapDataForPlayersTurn: any = { };    // The information gathered from interacting with the map on a player's turn
+
+    // Turn specific variables
+    private _troopsAcquired = 0;
 
     constructor(
         private router: Router,
@@ -94,6 +101,24 @@ export class MapComponent implements OnInit, OnDestroy {
                 defaultArea: {
                     eventHandlers: {
                         click: (e, id, mapElem) => {
+                            if (this._mapMode) {
+                                // We perform different click actions on the map based on what step the player is on
+                                // whose turn it is
+                                switch (this._mapMode) {
+                                    // Clicks grab the name of the territory clicked and update the troops count based on the
+                                    // number of troops selected in the dropdown
+                                    case 'GETTROOPS':
+                                        this.mapDataForPlayersTurn = {
+                                            troopsAcquired: this._troopsAcquired,
+                                            troopsPlacementTerritory: this.mapService.getName(id)
+                                        };
+                                        break;
+                                    case 'ATTACK':
+                                        break;
+                                    case 'FORTIFY':
+                                        break;
+                                }
+                            }
                             const newData = {
                                 areas: {}
                             };
@@ -265,6 +290,25 @@ export class MapComponent implements OnInit, OnDestroy {
 
     clearZoom() {
         this.$mapArea.trigger('zoom', { level: 0 });
+    }
+
+    /**
+     * Listen for event from child map header component that sets player's turn.
+     */
+    setMapModeAndPlayer(data: any) {
+        this._mapMode = data.playerStep;
+        this._currentPlayer = data.currentPlayer;
+
+        if (data.playerStep === 'GETTROOPS') {
+            this._troopsAcquired = this.calculatePlayerTroops(data.currentPlayer);
+            this.mapDataForPlayersTurn = {
+                troopsAcquired: this._troopsAcquired
+            };
+        }
+    }
+
+    private calculatePlayerTroops(curPlayer: any) {
+        return Math.floor(curPlayer.territoryMeta.length / 3);
     }
 
     private generateTooltip(territoryName: string, occupant: string) {

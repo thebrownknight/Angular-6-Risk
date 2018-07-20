@@ -1,16 +1,5 @@
 <header class="risk-map-header">
     <div class="inner-container">
-        <div *ngIf="fullLoggedInUserDetails" class="profile-manager">
-            <div class="user-icon" (click)="toggleProfileManager()">
-                <i class="fas fa-{{fullLoggedInUserDetails.icon}}" [ngStyle]="{'color': fullLoggedInUserDetails.color}"></i>
-                <span *ngIf="fullLoggedInUserDetails.player">{{fullLoggedInUserDetails.player.username}}</span>
-                <i [ngClass]="{'fas': true, 'fa-caret-down': profileManagerState === 'closed', 'fa-caret-up': profileManagerState === 'opened'}" [ngStyle]="{'color': fullLoggedInUserDetails.color}"></i>
-            </div>
-            <div class="manager-dropdown" [@toggleProfileManager]="profileManagerState">
-                <a href="/dashboard">Dashboard</a>
-                <a href (click)="logout()">Logout</a>
-            </div>
-        </div>
         <div *ngIf="currentTurnPlayer && players" class="current-turn">
             <h3>Current Turn:</h3>
             <div class="player-icon">
@@ -22,21 +11,26 @@
             <div [ngClass]="{'step step-1': true, 'active-step': currentStep === 'GETTROOPS'}">
                 <h3>Step 1: Place Your Troops</h3>
                 <form name="troops-placement" (ngSubmit)="placeTroops()" [formGroup]="troopsPlacementForm">
-                    <span>Troops acquired:</span>
+                    <span *ngIf="turnData && turnData.troopsAcquired">Troops acquired: {{turnData.troopsAcquired}}</span>
                     <div class="placement-country">
                         <label>Choose the country to place troops in: </label>
-                        <span class="troopsPlacementTerritory">Greenland</span>
+                        <span *ngIf="turnData && turnData.troopsPlacementTerritory" class="troopsPlacementTerritory">{{turnData.troopsPlacementTerritory}}</span>
+                        <input type="hidden" formControlName="troopsPlacementTerritory" value="Egypt">
                     </div>
                     <label>Choose number of troops to place:</label>
-                    <select formControlName="numberOfTroops">
-                        <option *ngFor="let number of [2,3,4,5,6,7,8,9,10,11]" [value]="number">
+                    <select *ngIf="turnData && turnData.troopsAcquired" formControlName="numberOfTroops">
+                        <option *ngFor="let number of troopsPlacementArray" [value]="number">
                             {{number}}
                         </option>
                     </select>
                 </form>
+                <div class="buttons-container">
+                    <button class="btn btn-vermillion" [disabled]="tpForm.troopsPlacementTerritory === ''">Finish</button>
+                </div>
+                {{this.troopsPlacementForm.value | json}}
             </div>
             <div [ngClass]="{'step step-2': true, 'active-step': currentStep === 'ATTACK'}">
-                <h3>Step 2: Attacking</h3>
+                <h3>Step 2: Attack</h3>
                 <form name="attack-sequence" [formGroup]="attackSequenceForm" (ngSubmit)="attackCountry()">
                     <div class="attacking-country">
                         <label>Choose the country to attack from:</label>
@@ -86,6 +80,17 @@
                     <button class="btn btn-neutral" (click)="skipStep(3)">Skip</button>
                     <button class="btn btn-vermillion">Finish</button>
                 </div>
+            </div>
+        </div>
+        <div *ngIf="fullLoggedInUserDetails" class="profile-manager">
+            <div class="user-icon" (click)="toggleProfileManager()">
+                <i class="fas fa-{{fullLoggedInUserDetails.icon}}" [ngStyle]="{'color': fullLoggedInUserDetails.color}"></i>
+                <span *ngIf="fullLoggedInUserDetails.player">{{fullLoggedInUserDetails.player.username}}</span>
+                <i [ngClass]="{'fas': true, 'fa-caret-down': profileManagerState === 'closed', 'fa-caret-up': profileManagerState === 'opened'}" [ngStyle]="{'color': fullLoggedInUserDetails.color}"></i>
+            </div>
+            <div class="manager-dropdown" [@toggleProfileManager]="profileManagerState">
+                <a href="/dashboard">Dashboard</a>
+                <a href (click)="logout()">Logout</a>
             </div>
         </div>
         <!-- <div class="player-list">

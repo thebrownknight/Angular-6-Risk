@@ -1,4 +1,4 @@
-import { Component, Input, Output, OnInit, OnDestroy, SimpleChange, EventEmitter } from '@angular/core';
+import { Component, Input, Output, OnInit, OnChanges, OnDestroy, SimpleChange, EventEmitter } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { trigger, state, style, animate, transition } from '@angular/animations';
@@ -28,7 +28,7 @@ import { UserDetails } from '../../../helpers/data-models';
         ])
     ]
 })
-export class MapHeaderComponent implements OnInit, OnDestroy {
+export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
     private _players = new BehaviorSubject<any[]>([]);
     private loggedInUser: UserDetails;
 
@@ -39,7 +39,9 @@ export class MapHeaderComponent implements OnInit, OnDestroy {
 
     get players(): Array<any> { return this._players.getValue(); }
 
-    @Output() playerTurnStep = new EventEmitter<string>();
+    @Input() turnData: any; // Get the information from the map when a user interacts with it for their turn steps
+
+    @Output() modeAndPlayer = new EventEmitter<any>();
 
     profileManagerState = 'closed';
     fullLoggedInUserDetails: any = {};
@@ -50,6 +52,9 @@ export class MapHeaderComponent implements OnInit, OnDestroy {
     troopsPlacementForm: FormGroup;
     attackSequenceForm: FormGroup;
     fortifyTroopsForm: FormGroup;
+
+    /* Troops Placement variables */
+    troopsPlacementArray: Array<number> = [];
 
     currentStep = '';
 
@@ -66,6 +71,9 @@ export class MapHeaderComponent implements OnInit, OnDestroy {
         this.initTroopsPlacementForm();
         this.initAttackSequenceForm();
         this.initFortifyTroopsForm();
+
+        // Listen for changes
+        this.onTroopsPlacementFormChanges();
 
         this._players.subscribe(pl => {
 
@@ -106,7 +114,7 @@ export class MapHeaderComponent implements OnInit, OnDestroy {
                         this.currentStep = this.currentTurnPlayer.status === 'CURRENTTURN' ? 'GETTROOPS' : this.currentTurnPlayer.status;
 
                         // Emit the current step so the main map component can adjust
-                        this.playerTurnStep.emit(this.currentStep);
+                        this.modeAndPlayer.emit({ playerStep: this.currentStep, currentPlayer: this.currentTurnPlayer });
                     }
             }, error => {
                 console.log(error);
@@ -127,11 +135,16 @@ export class MapHeaderComponent implements OnInit, OnDestroy {
         return this.fortifyTroopsForm.controls;
     }
 
-    // ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
-    //     if (changes.players && changes.players.currentValue.length > 0) {
-
-    //     }
-    // }
+    ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
+        if (changes.turnData) {
+            // Set the array to loop over the number of troops left to assign
+            if (changes.turnData.currentValue.troopsAcquired) {
+                for (let i = 1; i <= changes.turnData.currentValue.troopsAcquired; i++) {
+                    this.troopsPlacementArray.push(i);
+                }
+            }
+        }
+    }
 
     /**
      * Toggle the profile manager dropdown.
@@ -152,7 +165,8 @@ export class MapHeaderComponent implements OnInit, OnDestroy {
      */
     private initTroopsPlacementForm() {
         this.troopsPlacementForm = this.formBuilder.group({
-            numberOfTroops: [2, Validators.required]
+            troopsPlacementTerritory: ['', Validators.required],
+            numberOfTroops: [1, Validators.required]
         });
     }
     private initAttackSequenceForm() {
@@ -167,6 +181,12 @@ export class MapHeaderComponent implements OnInit, OnDestroy {
             movingTerritory: ['', Validators.required],
             fortifiedTerritory: ['', Validators.required],
             fortifyNumberOfPlayers: [2, Validators.required]
+        });
+    }
+
+    private onTroopsPlacementFormChanges() {
+        this.troopsPlacementForm.valueChanges.subscribe(val => {
+
         });
     }
 

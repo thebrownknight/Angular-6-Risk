@@ -95,16 +95,16 @@ header {
         }
 
         .current-turn {
-            // background-color: $light-gray;
+            background-color: #f0f8ff;
             @include rem(padding, 20px 10px);
-            margin-right: 10px;
+            margin-right: 20px;
             text-align: center;
             border: 2px solid $powder;
             @include flex-grow(0.3);
 
             h3 {
                 @include rem(font-size, 16px);
-                @include raleway-regular();
+                @include raleway-bold();
             }
 
             .player-icon {
@@ -127,11 +127,41 @@ header {
 
         .turn-steps {
             @include flex-grow(2);
+            @include flexbox();
 
             .step {
                 display: inline-block;
                 vertical-align: middle;
-                width: 32%;
+                width: 18%;
+                @include transition(width 0.3s ease-in);
+                @include rem(padding, 10px 0);
+                text-align: center;
+
+                &:not(:last-child) {
+                    border-right: 1px solid $powder;
+                }
+
+                h3 {
+                    @include rem(font-size, 16px);
+                    @include raleway-bold();
+                }
+
+                form, .buttons-container {
+                    display: none;
+                }
+
+                &.active-step {
+                    width: 60%;
+                    text-align: left;
+
+                    h3 {
+                        color: $aqua;
+                    }
+
+                    form, .buttons-container {
+                        display: block;
+                    }
+                }
             }
         }
     }
