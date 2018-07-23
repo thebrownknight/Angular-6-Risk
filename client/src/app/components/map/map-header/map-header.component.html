@@ -11,18 +11,21 @@
             <div [ngClass]="{'step step-1': true, 'active-step': currentStep === 'GETTROOPS'}">
                 <h3>Step 1: Place Your Troops</h3>
                 <form name="troops-placement" (ngSubmit)="placeTroops()" [formGroup]="troopsPlacementForm">
-                    <span *ngIf="turnData && turnData.troopsAcquired">Troops acquired: {{turnData.troopsAcquired}}</span>
+                    <span *ngIf="turnMapData && turnMapData.troopsAcquired">Troops acquired: {{turnMapData.troopsAcquired}}</span>
                     <div class="placement-country">
                         <label>Choose the country to place troops in: </label>
-                        <span *ngIf="turnData && turnData.troopsPlacementTerritory" class="troopsPlacementTerritory">{{turnData.troopsPlacementTerritory}}</span>
-                        <input type="hidden" formControlName="troopsPlacementTerritory" value="Egypt">
+                        <span *ngIf="turnMapData && turnMapData.troopsPlacementTerritory" class="troopsPlacementTerritory">{{turnMapData.troopsPlacementTerritory.name}}</span>
+                        <input type="hidden" formControlName="troopsPlacementTerritory" value="">
                     </div>
-                    <label>Choose number of troops to place:</label>
-                    <select *ngIf="turnData && turnData.troopsAcquired" formControlName="numberOfTroops">
-                        <option *ngFor="let number of troopsPlacementArray" [value]="number">
-                            {{number}}
-                        </option>
-                    </select>
+                    <div *ngIf="turnMapData && turnMapData.troopsAcquired && turnMapData.troopsPlacementTerritory" class="troops-placement-container">
+                        <label>Choose number of troops to place:</label>
+                        <select formControlName="numberOfTroops">
+                            <option disabled selected [value]="undefined">- Select Number -</option>
+                            <option *ngFor="let number of troopsPlacementArray" [value]="number">
+                                {{number}}
+                            </option>
+                        </select>
+                    </div>
                 </form>
                 <div class="buttons-container">
                     <button class="btn btn-vermillion" [disabled]="tpForm.troopsPlacementTerritory === ''">Finish</button>

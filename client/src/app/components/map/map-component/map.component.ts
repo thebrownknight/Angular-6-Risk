@@ -108,9 +108,25 @@ export class MapComponent implements OnInit, OnDestroy {
                                     // Clicks grab the name of the territory clicked and update the troops count based on the
                                     // number of troops selected in the dropdown
                                     case 'GETTROOPS':
+                                        // const updatedArea = {
+                                        //     areas: {}
+                                        // };
+                                        // updatedArea.areas[id] = {
+                                        //     attrs: {
+                                        //         stroke: '#5F5F5F',
+                                        //         'stroke-width': 3
+                                        //     }
+                                        // };
+
+                                        // this.$mapArea.trigger('update', [{
+                                        //     mapOptions: updatedArea
+                                        // }]);
                                         this.mapDataForPlayersTurn = {
                                             troopsAcquired: this._troopsAcquired,
-                                            troopsPlacementTerritory: this.mapService.getName(id)
+                                            troopsPlacementTerritory: {
+                                                id: id,
+                                                name: this.mapService.getName(id)
+                                            }
                                         };
                                         break;
                                     case 'ATTACK':
@@ -299,6 +315,10 @@ export class MapComponent implements OnInit, OnDestroy {
         this._mapMode = data.playerStep;
         this._currentPlayer = data.currentPlayer;
 
+        // Set the map to gray out all other territories except the current player's
+        // This should happen on any step
+        this.disableOtherTerritories(data.currentPlayer);
+
         if (data.playerStep === 'GETTROOPS') {
             this._troopsAcquired = this.calculatePlayerTroops(data.currentPlayer);
             this.mapDataForPlayersTurn = {
@@ -307,12 +327,105 @@ export class MapComponent implements OnInit, OnDestroy {
         }
     }
 
+    /**
+     * Listen for event from child map header component for turn form data being passed
+     * to the map component.
+     */
+    setTurnFormData(data: any) {
+        if (data.playerStep === 'GETTROOPS') {
+            this.updateTroopsCount(data.troopsPlacementTerritory, data.numberOfTroops);
+        }
+    }
+
+    private disableOtherTerritories(curPlayer: any) {
+        // Map update variables
+        const newData = {
+            areas: {}
+        };
+
+        // Grab the territories of the other players
+        const otherTerritoriesTemp = this.gameState.filter(playerMeta => {
+            return playerMeta.player._id !== curPlayer.player._id;
+        }).map(pm => {
+            return pm.territoryMeta;
+        });
+        let otherTerritories = [];
+
+        otherTerritoriesTemp.forEach(elem => {
+            otherTerritories = otherTerritories.concat(elem);
+        });
+
+        console.log(otherTerritories);
+
+        otherTerritories.forEach(territory => {
+            newData.areas[territory.id] = {
+                eventHandlers: {
+                    click: (e, id, mapElem) => {
+                        return;
+                    }
+                },
+                attrs: {
+                    fill: '#5F5F5F',
+                    'fill-opacity': 0.2,
+                    cursor: 'none',
+                    stroke: '#FFFFFF',
+                    'stroke-width': 1
+                }
+            };
+        });
+
+        console.log(newData);
+
+        this.$mapArea.trigger('update', [{
+            mapOptions: newData
+        }]);
+
+    }
+
     private calculatePlayerTroops(curPlayer: any) {
         return Math.floor(curPlayer.territoryMeta.length / 3);
     }
 
     private generateTooltip(territoryName: string, occupant: string) {
         return '<span class="territory-name">' + territoryName + '</span><span class="occupant">' + occupant + '</span>';
+    }
+
+    // Helper method to get the number of troops
+    // We're doing it here instead of the map service since the map data is going to change a lot
+    // until it is saved in the DB through the map service
+    private getNumTroops(territoryId: string): string {
+        // First filter the game state for the current turn player, and then filter the territory meta for the territory ID
+        // and grab the troops from the object
+        return this.gameState.filter(playerMeta => {
+            return playerMeta.player._id === this._currentPlayer.player._id;
+        })[0].territoryMeta.filter(territory => {
+            return territory.id === territoryId;
+        })[0].troops;
+    }
+
+    private updateTroopsCount(territoryId: string, numTroops: string) {
+        const curNumTroops = this.getNumTroops(territoryId);
+        const updatedNumTroops = parseInt(curNumTroops, 10) + parseInt(numTroops, 10);
+
+        console.log(updatedNumTroops);
+
+        // Map update variables
+        const plotId = territoryId + '_plot';
+        const newData = {
+            plots: {}
+        };
+
+        newData.plots[plotId] = {
+            value: updatedNumTroops,
+            plotsOn: territoryId,
+            text: {
+                content: updatedNumTroops + ''
+            }
+        };
+
+        this.$mapArea.trigger('update', [{
+            mapOptions: newData
+        }]);
     }
 
     ngOnDestroy() {
