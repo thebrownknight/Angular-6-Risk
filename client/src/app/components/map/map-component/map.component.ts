@@ -32,6 +32,9 @@ export class MapComponent implements OnInit, OnDestroy {
     private _mapMode: string;
     private _currentPlayer: any;
 
+    private _playerColorMap: any = {};
+    private _playerUsernameMap: any = {};
+
     $mapArea: any;  // Reference to the jQuery Mapael object
     gamePlayers: Array<any> = [];   // Array of the players in the game
     gameState: any;
@@ -73,6 +76,12 @@ export class MapComponent implements OnInit, OnDestroy {
                     this.gamePlayers = this.utils.sortPlayers(game.players, 'asc');
                 }
 
+                // Set the player usernames and colors in easily referenced maps
+                this.gamePlayers.forEach(player => {
+                    this._playerColorMap[player.player._id] = player.color;
+                    this._playerUsernameMap[player.player._id] = player.player.username;
+                });
+
                 if (game.gameMeta) {
                     this.gameState = game.gameMeta.state;
                     this.mapService.emitGameState(this.gameState);
@@ -108,19 +117,17 @@ export class MapComponent implements OnInit, OnDestroy {
                                     // Clicks grab the name of the territory clicked and update the troops count based on the
                                     // number of troops selected in the dropdown
                                     case 'GETTROOPS':
-                                        // const updatedArea = {
-                                        //     areas: {}
-                                        // };
-                                        // updatedArea.areas[id] = {
-                                        //     attrs: {
-                                        //         stroke: '#5F5F5F',
-                                        //         'stroke-width': 3
-                                        //     }
-                                        // };
+                                        const tHighlightColor =
+                                            '#5f5f5f';
 
-                                        // this.$mapArea.trigger('update', [{
-                                        //     mapOptions: updatedArea
-                                        // }]);
+                                        // console.log(mapElem);
+                                        mapElem.attr({
+                                            fill: tHighlightColor
+                                        });
+
+                                        mapElem.originalAttrs.fill = tHighlightColor;
+                                        mapElem.attrsHover.fill = tHighlightColor;
+
                                         this.mapDataForPlayersTurn = {
                                             troopsAcquired: this._troopsAcquired,
                                             troopsPlacementTerritory: {
@@ -205,15 +212,14 @@ export class MapComponent implements OnInit, OnDestroy {
                     }
 
                     // Now we grab the territoryMeta from each player and fill the colors of the territories with the players' colors
-                    const playerColorMap = {}, playerUsernameMap = {};
 
                     // Loop through the players, grab the player colors and player usernames and store them in objects
                     // Update legend information here
                     this.gamePlayers.forEach(player => {
-                        playerColorMap[player.player._id] = player.color;
-                        playerUsernameMap[player.player._id] = player.player.username;
+                        // playerColorMap[player.player._id] = player.color;
+                        // playerUsernameMap[player.player._id] = player.player.username;
 
-                        const isLoggedIn = this.loggedInUser._id === player.player._id;
+                        // const isLoggedIn = this.loggedInUser._id === player.player._id;
 
                         // Set the legend here too so we can save looping again
                         newData.legend.area.slices.push({
@@ -233,18 +239,18 @@ export class MapComponent implements OnInit, OnDestroy {
                         playerMeta.territoryMeta.forEach(territory => {
                             const playerId = playerMeta.player._id;
                             const territoryName = this.mapService.getName(territory.id);
-                            const playerUsername = playerUsernameMap[playerId];
+                            const playerUsername = this._playerUsernameMap[playerId];
 
                             newData.areas[territory.id] = {
-                                value: playerUsernameMap[playerId],
+                                value: this._playerUsernameMap[playerId],
                                 attrs: {
-                                    fill: playerColorMap[playerId],
+                                    fill: this._playerColorMap[playerId],
                                     cursor: 'pointer',
                                     stroke: '#FFFFFF',
                                     'stroke-width': 1
                                 },
                                 attrsHover: {
-                                    fill: this.utils.lightDarkenColor(playerColorMap[playerId], -20)
+                                    fill: this.utils.lightDarkenColor(this._playerColorMap[playerId], -20)
                                 },
                                 tooltip: {
                                     content: this.generateTooltip(territoryName, playerUsername),
@@ -335,6 +341,26 @@ export class MapComponent implements OnInit, OnDestroy {
         if (data.playerStep === 'GETTROOPS') {
             this.updateTroopsCount(data.troopsPlacementTerritory, data.numberOfTroops);
         }
+    }
+
+    /**
+     * Helper method to grab the current owner's color of the territory.
+     * @param territoryId ID of the territory.
+     */
+    private getTerritoryColor(territoryId: string): string {
+        // const tColor = '';
+
+        // // First filter the game state for the current turn player, and then filter the territory meta for the territory ID
+        // // and grab the troops from the object
+        // return this.gameState.filter(playerMeta => {
+        //     return playerMeta.player._id === this._currentPlayer.player._id;
+        // })[0].territoryMeta.filter(territory => {
+        //     return territory.id === territoryId;
+        // })[0].troops;
+
+        // return tColor;
+
+        return '';
     }
 
     private disableOtherTerritories(curPlayer: any) {

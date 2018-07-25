@@ -306,7 +306,7 @@ export class MapService {
     }
 
     // Add to game log
-    private addToGameLog(playerObj: any, type: TurnType, data: any): void {
+    public addToGameLog(playerObj: any, type: TurnType, data: any): void {
         const record = {
             player: playerObj,
             turnType: type,

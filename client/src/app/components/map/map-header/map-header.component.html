@@ -9,9 +9,8 @@
         </div>
         <div class="turn-steps" *ngIf="isCurrentPlayer">
             <div [ngClass]="{'step step-1': true, 'active-step': currentStep === 'GETTROOPS'}">
-                <h3>Step 1: Place Your Troops</h3>
+                <h3>Step 1: Place Your Troops - <span class="troops-acquired" *ngIf="turnMapData && turnMapData.troopsAcquired">{{turnMapData.troopsAcquired}} troops acquired</span></h3>
                 <form name="troops-placement" (ngSubmit)="placeTroops()" [formGroup]="troopsPlacementForm">
-                    <span *ngIf="turnMapData && turnMapData.troopsAcquired">Troops acquired: {{turnMapData.troopsAcquired}}</span>
                     <div class="placement-country">
                         <label>Choose the country to place troops in: </label>
                         <span *ngIf="turnMapData && turnMapData.troopsPlacementTerritory" class="troopsPlacementTerritory">{{turnMapData.troopsPlacementTerritory.name}}</span>

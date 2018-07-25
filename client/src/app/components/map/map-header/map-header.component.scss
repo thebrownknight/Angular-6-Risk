@@ -162,6 +162,21 @@ header {
                         display: block;
                     }
                 }
+
+                form {
+                    label {
+                        @include opensans-bold();
+                        @include rem(font-size, 12px);
+                    }
+                }
+
+                &.step-1 {
+                    .troops-acquired {
+                        @include opensans-bold();
+                        @include rem(font-size, 12px);
+                        @include rem(padding, 3px);
+                    }
+                }
             }
         }
     }
