@@ -55,7 +55,9 @@ export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
     fortifyTroopsForm: FormGroup;
 
     /* Troops Placement variables */
-    troopsPlacementArray: Array<number> = [];
+    placementResults: Array<any> = [];
+    troopsAcquired = -1;
+    troopsLeftToPlace = -1;
 
     currentStep = '';
 
@@ -74,7 +76,7 @@ export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
         this.initFortifyTroopsForm();
 
         // Listen for changes
-        this.onTroopsPlacementFormChanges();
+        // this.onTroopsPlacementFormChanges();
 
         this._players.subscribe(pl => {
 
@@ -140,10 +142,10 @@ export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
         if (changes.turnMapData) {
             // Set the array to loop over the number of troops left to assign
             if (changes.turnMapData.currentValue.troopsAcquired) {
-                if (this.troopsPlacementArray.length === 0) {
-                    for (let i = 1; i <= changes.turnMapData.currentValue.troopsAcquired; i++) {
-                        this.troopsPlacementArray.push(i);
-                    }
+                if (this.troopsAcquired === -1) {
+                    // We're getting the number of troops acquired for the first time
+                    this.troopsAcquired = changes.turnMapData.currentValue.troopsAcquired;
+                    this.troopsLeftToPlace = this.troopsAcquired;
                 }
             }
 
@@ -151,6 +153,19 @@ export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
                 this.troopsPlacementForm.patchValue({
                     troopsPlacementTerritory: changes.turnMapData.currentValue.troopsPlacementTerritory.id
                 });
+            }
+
+            if (changes.turnMapData.currentValue.placementTerritories) {
+                this.placementResults = changes.turnMapData.currentValue.placementTerritories;
+
+                // Do the calculation for number of troops left to place
+                let troopsAdded = 0;
+
+                this.placementResults.forEach(result => {
+                   troopsAdded += result.troopsAdded;
+                });
+
+                this.troopsLeftToPlace = this.troopsAcquired - troopsAdded;
             }
         }
     }
@@ -170,12 +185,21 @@ export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     /**
+     * Undo troops placement.
+     */
+    undoTroopsPlacement(): void {
+        this.turnFormData.emit({
+            playerStep: this.currentStep,
+            action: 'undo'
+        });
+    }
+
+    /**
      * Initialize the player forms.
      */
     private initTroopsPlacementForm() {
         this.troopsPlacementForm = this.formBuilder.group({
-            troopsPlacementTerritory: ['', Validators.required],
-            numberOfTroops: [undefined, Validators.required]
+            placementTerritories: ['', Validators.required]
         });
     }
     private initAttackSequenceForm() {
@@ -201,6 +225,9 @@ export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
                     troopsPlacementTerritory: this.troopsPlacementForm.get('troopsPlacementTerritory').value,
                     numberOfTroops: val
                 });
+
+                // Reduce the number of troops available
+                this.troopsLeftToPlace = this.troopsAcquired - val;
             }
         });
     }

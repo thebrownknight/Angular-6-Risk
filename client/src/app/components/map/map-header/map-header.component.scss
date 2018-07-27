@@ -134,7 +134,7 @@ header {
                 vertical-align: middle;
                 width: 18%;
                 @include transition(width 0.3s ease-in);
-                @include rem(padding, 10px 0);
+                @include rem(padding, 10px 35px 10px 0);
                 text-align: center;
 
                 &:not(:last-child) {
@@ -146,8 +146,21 @@ header {
                     @include raleway-bold();
                 }
 
+                .help-text {
+                    @include rem(font-size, 12px);
+                    @include opensans-regular();
+                }
+
                 form, .buttons-container {
                     display: none;
+                }
+
+                .buttons-container {
+                    .btn {
+                        &:not(:last-child) {
+                            margin-right: 8px;
+                        }
+                    }
                 }
 
                 &.active-step {
@@ -165,7 +178,7 @@ header {
 
                 form {
                     label {
-                        @include opensans-bold();
+                        @include opensans-regular();
                         @include rem(font-size, 12px);
                     }
                 }
@@ -175,6 +188,21 @@ header {
                         @include opensans-bold();
                         @include rem(font-size, 12px);
                         @include rem(padding, 3px);
+                    }
+
+                    .placement-results {
+                        .result {
+                            display: inline-block;
+                            background: $dark-gray;
+                            color: $white;
+                            @include rem(padding, 4px 8px);
+                            border: 1px solid $sunshine;
+                            @include opensans-regular();
+
+                            &:not(:last-child) {
+                                margin-right: 5px;
+                            }
+                        }
                     }
                 }
             }

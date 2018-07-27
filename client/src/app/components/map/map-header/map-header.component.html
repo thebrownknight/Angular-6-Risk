@@ -9,27 +9,39 @@
         </div>
         <div class="turn-steps" *ngIf="isCurrentPlayer">
             <div [ngClass]="{'step step-1': true, 'active-step': currentStep === 'GETTROOPS'}">
-                <h3>Step 1: Place Your Troops - <span class="troops-acquired" *ngIf="turnMapData && turnMapData.troopsAcquired">{{turnMapData.troopsAcquired}} troops acquired</span></h3>
+                <h3>Step 1: Place Your Troops - <span class="troops-acquired" *ngIf="troopsLeftToPlace !== -1">{{troopsLeftToPlace}} troops left to place</span></h3>
+                <p class="help-text">Click each territory below to place your available troops. You can click one multiple times to add more troops to that territory. Use the 'Undo' and 'Reset' buttons to remove/reset any misplaced troops.</p>
                 <form name="troops-placement" (ngSubmit)="placeTroops()" [formGroup]="troopsPlacementForm">
-                    <div class="placement-country">
+                    <div *ngIf="placementResults.length > 0" class="placement-results">
+                        <p class="result" *ngFor="let result of placementResults">
+                            {{result.name}} - {{result.troopsAdded}}
+                        </p>
+                    </div>
+                    <input type="hidden" formControlName="placementTerritories" value="placementResults.join(',')">
+                    <!-- <div class="placement-country">
                         <label>Choose the country to place troops in: </label>
-                        <span *ngIf="turnMapData && turnMapData.troopsPlacementTerritory" class="troopsPlacementTerritory">{{turnMapData.troopsPlacementTerritory.name}}</span>
+                        <div class="tpt-container">
+                            <span *ngIf="turnMapData && turnMapData.troopsPlacementTerritory" class="troops-placement-territory">{{turnMapData.troopsPlacementTerritory.name}}</span>
+                        </div>
                         <input type="hidden" formControlName="troopsPlacementTerritory" value="">
                     </div>
-                    <div *ngIf="turnMapData && turnMapData.troopsAcquired && turnMapData.troopsPlacementTerritory" class="troops-placement-container">
+                    <div *ngIf="turnMapData && turnMapData.troopsAcquired && turnMapData.troopsPlacementTerritory" class="troops-placement-number select-container">
                         <label>Choose number of troops to place:</label>
-                        <select formControlName="numberOfTroops">
-                            <option disabled selected [value]="undefined">- Select Number -</option>
+                        <select class="select-box" formControlName="numberOfTroops">
+                            <option disabled selected value="">- Select Number -</option>
                             <option *ngFor="let number of troopsPlacementArray" [value]="number">
                                 {{number}}
                             </option>
                         </select>
-                    </div>
+                        <i class="fas fa-angle-down"></i>
+                    </div> -->
                 </form>
                 <div class="buttons-container">
-                    <button class="btn btn-vermillion" [disabled]="tpForm.troopsPlacementTerritory === ''">Finish</button>
+                    <button class="btn btn-sunshine" [disabled]="placementResults.length === 0" (click)="undoTroopsPlacement()">Undo</button>
+                    <button class="btn btn-vermillion" [disabled]="placementResults.length === 0">Reset</button>
+                    <button *ngIf="troopsLeftToPlace === 0" class="btn btn-vermillion" [disabled]="tpForm.troopsPlacementTerritory === ''">Finish</button>
                 </div>
-                {{this.troopsPlacementForm.value | json}}
+                <!-- {{this.troopsPlacementForm.value | json}} -->
             </div>
             <div [ngClass]="{'step step-2': true, 'active-step': currentStep === 'ATTACK'}">
                 <h3>Step 2: Attack</h3>

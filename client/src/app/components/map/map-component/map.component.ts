@@ -43,6 +43,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
     // Turn specific variables
     private _troopsAcquired = 0;
+    private _placementTerritories: Array<any> = [];
+    private _placementCounter = 0;
 
     constructor(
         private router: Router,
@@ -117,6 +119,9 @@ export class MapComponent implements OnInit, OnDestroy {
                                     // Clicks grab the name of the territory clicked and update the troops count based on the
                                     // number of troops selected in the dropdown
                                     case 'GETTROOPS':
+                                        // Increment the placement counter to update the changeset for undoing purposes
+                                        this._placementCounter++;
+
                                         const tHighlightColor =
                                             '#5f5f5f';
 
@@ -128,13 +133,37 @@ export class MapComponent implements OnInit, OnDestroy {
                                         mapElem.originalAttrs.fill = tHighlightColor;
                                         mapElem.attrsHover.fill = tHighlightColor;
 
+                                        // Check to see if the territory already exists
+                                        if (!this._placementTerritories.some(t => t.id === id)) {
+                                            // We don't have it so add it to the array of territories the user
+                                            // has placed troops in
+                                            this._placementTerritories.push({
+                                                id: id,
+                                                name: this.mapService.getName(id),
+                                                totalTroops: this.updateTroopsCount(id, '1'),
+                                                troopsAdded: 1,
+                                                changeset: [this._placementCounter]
+                                            });
+                                        } else {
+                                            // Just update the record in the array with the new number of troops
+                                            this._placementTerritories.map(t => {
+                                                if (t.id === id) {
+                                                    console.log(t.changeset);
+                                                    t.totalTroops = this.updateTroopsCount(id, '1');
+                                                    t.troopsAdded = t.troopsAdded + 1;
+                                                    t.changeset.push(this._placementCounter);
+                                                }
+                                                return t;
+                                            });
+                                        }
+
                                         this.mapDataForPlayersTurn = {
                                             troopsAcquired: this._troopsAcquired,
-                                            troopsPlacementTerritory: {
-                                                id: id,
-                                                name: this.mapService.getName(id)
-                                            }
+                                            placementTerritories: this._placementTerritories
                                         };
+
+                                        console.log('After selecting territory: ' + this._placementCounter);
+                                        console.log(this._placementTerritories);
                                         break;
                                     case 'ATTACK':
                                         break;
@@ -339,7 +368,31 @@ export class MapComponent implements OnInit, OnDestroy {
      */
     setTurnFormData(data: any) {
         if (data.playerStep === 'GETTROOPS') {
-            this.updateTroopsCount(data.troopsPlacementTerritory, data.numberOfTroops);
+            // The only things we're listening for is undoing and resetting the player's troops placements
+            if (data.action === 'undo') {
+                console.log('Before undoing: ' + this._placementCounter);
+                console.log(this._placementTerritories);
+                // Grab the latest changeset and revert it (we simply decrease the total troops and troops added)
+                this._placementTerritories.map(t => {
+                    if (t.changeset.includes(this._placementCounter)) {
+                        t.totalTroops = this.updateTroopsCount(t.id, '-1');
+                        t.troopsAdded = t.troopsAdded - 1;
+                        t.changeset.splice(-1);   // Remove the last changeset
+
+                        this._placementCounter--;   // Not sure if needed
+                    }
+                    return t;
+                });
+
+                // Filter out the territories that don't have any troops added
+                this._placementTerritories = this._placementTerritories.filter(t => {
+                    return t.troopsAdded !== 0;
+                });
+
+                this.mapDataForPlayersTurn = {
+                    placementTerritories: this._placementTerritories
+                };
+            }
         }
     }
 
@@ -422,18 +475,31 @@ export class MapComponent implements OnInit, OnDestroy {
     private getNumTroops(territoryId: string): string {
         // First filter the game state for the current turn player, and then filter the territory meta for the territory ID
         // and grab the troops from the object
-        return this.gameState.filter(playerMeta => {
-            return playerMeta.player._id === this._currentPlayer.player._id;
-        })[0].territoryMeta.filter(territory => {
-            return territory.id === territoryId;
-        })[0].troops;
+        let numTroops = '';
+
+        // Check to see if the territory exists in the placementTerritories array
+        if (this._placementTerritories.some(e => e.id === territoryId)) {
+            // Grab the troops number from here
+            numTroops = this._placementTerritories.filter(t => t.id === territoryId)[0].totalTroops;
+        } else {
+            // We have to look at the game state and grab the number from here
+            numTroops = this.gameState.filter(playerMeta => {
+                return playerMeta.player._id === this._currentPlayer.player._id;
+            })[0].territoryMeta.filter(territory => {
+                return territory.id === territoryId;
+            })[0].troops;
+        }
+        return numTroops;
     }
 
-    private updateTroopsCount(territoryId: string, numTroops: string) {
+    /**
+     * Helper method to update the troops count on the map and return back the updated number.
+     */
+    private updateTroopsCount(territoryId: string, numTroops: string): number {
         const curNumTroops = this.getNumTroops(territoryId);
         const updatedNumTroops = parseInt(curNumTroops, 10) + parseInt(numTroops, 10);
 
-        console.log(updatedNumTroops);
+        // console.log(updatedNumTroops);
 
         // Map update variables
         const plotId = territoryId + '_plot';
@@ -452,6 +518,8 @@ export class MapComponent implements OnInit, OnDestroy {
         this.$mapArea.trigger('update', [{
             mapOptions: newData
         }]);
+
+        return updatedNumTroops;
     }
 
     ngOnDestroy() {
