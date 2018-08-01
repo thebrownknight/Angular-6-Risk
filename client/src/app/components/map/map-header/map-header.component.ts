@@ -195,6 +195,30 @@ export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     /**
+     * Reset troops placement.
+     */
+    resetTroopsPlacement(): void {
+        this.turnFormData.emit({
+            playerStep: this.currentStep,
+            action: 'reset'
+        });
+    }
+
+    /**
+     * Finish troops placement and move on to the next step.
+     */
+    finishTroopsPlacement(): void {
+        // this.currentStep = 'ATTACK';
+        // this.turnFormData.emit({
+        //     playerStep: this.currentStep
+        // });
+        this.turnFormData.emit({
+            playerStep: this.currentStep,
+            action: 'save'
+        });
+    }
+
+    /**
      * Initialize the player forms.
      */
     private initTroopsPlacementForm() {

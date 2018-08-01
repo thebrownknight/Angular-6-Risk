@@ -186,8 +186,13 @@ header {
                 &.step-1 {
                     .troops-acquired {
                         @include opensans-bold();
-                        @include rem(font-size, 12px);
+                        @include rem(font-size, 14px);
                         @include rem(padding, 3px);
+                        color: darken($sky-blue, 10%);
+
+                        &.zero-troops {
+                            color: $vermillion;
+                        }
                     }
 
                     .placement-results {

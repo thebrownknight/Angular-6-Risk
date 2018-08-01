@@ -23,7 +23,7 @@
     &.btn-aqua {
         background: $aqua;
 
-        &:hover, &:focus, &:active {
+        &:hover {
             background: darken($aqua, 10%);
         }
     }
@@ -31,7 +31,7 @@
     &.btn-neutral {
         background: $light-gray;
 
-        &:hover, &:focus, &:active {
+        &:hover {
             background: darken($light-gray, 10%);
         }
     }
@@ -39,7 +39,7 @@
     &.btn-sunshine {
         background: $sunshine;
 
-        &:hover, &:focus, &:active {
+        &:hover {
             background: darken($sunshine, 10%);
         }
     }
@@ -47,7 +47,7 @@
     &.btn-vermillion {
         background: $vermillion;
 
-        &:hover, &:focus, &:active {
+        &:hover {
             background: darken($vermillion, 10%);
         }
     }

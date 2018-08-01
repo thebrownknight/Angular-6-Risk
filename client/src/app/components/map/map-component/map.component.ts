@@ -63,7 +63,7 @@ export class MapComponent implements OnInit, OnDestroy {
             })
         ).subscribe((game) => {
             if (game) {
-                console.log(game);
+                // console.log(game);
                 // Send the map name and game ID to the service to set the common game information to reference in the service
                 this.mapService.setGameConfiguration({
                     map: game.map,
@@ -115,11 +115,12 @@ export class MapComponent implements OnInit, OnDestroy {
                             this.mapClickActions(e, id, mapElem);
                         },
                         dblclick: (e, id, mapElem, textElem) => {
-                            console.log(id);
-                            this.$mapArea.trigger('zoom', {
-                                area: id,
-                                areaMargin: 10
-                            });
+                            // console.log(id);
+                            // this.$mapArea.trigger('zoom', {
+                            //     area: id,
+                            //     areaMargin: 10
+                            // });
+                            return;
                         }
                     },
                     attrs: {
@@ -270,8 +271,7 @@ export class MapComponent implements OnInit, OnDestroy {
                     this._placementCounter++;
 
                     const originalColor = mapElem.originalAttrs.fill;
-                    const tHighlightColor =
-                        '#44b57d';
+                    const tHighlightColor = '#44b57d';
 
                     updatedOptions.areas[id] = {
                         attrs: {
@@ -287,9 +287,9 @@ export class MapComponent implements OnInit, OnDestroy {
                     }]);
 
                     // console.log(mapElem);
-                    // mapElem.attr({
-                    //     fill: tHighlightColor
-                    // });
+                    mapElem.attr({
+                        fill: tHighlightColor
+                    });
 
                     // mapElem.originalAttrs.fill = tHighlightColor;
                     // mapElem.attrsHover.fill = tHighlightColor;
@@ -310,7 +310,7 @@ export class MapComponent implements OnInit, OnDestroy {
                         // Just update the record in the array with the new number of troops
                         this._placementTerritories.map(t => {
                             if (t.id === id) {
-                                console.log(t.changeset);
+                                // console.log(t.changeset);
                                 t.totalTroops = this.updateTroopsCount(id, '1');
                                 t.troopsAdded = t.troopsAdded + 1;
                                 t.changeset.push(this._placementCounter);
@@ -405,15 +405,19 @@ export class MapComponent implements OnInit, OnDestroy {
 
                 // Grab the latest changeset and revert it (we simply decrease the total troops and troops added)
                 this._placementTerritories.map(t => {
+                    console.log(this._placementCounter);
                     if (t.changeset.includes(this._placementCounter)) {
+                        // console.log(this._placementCounter);
+                        // console.log(t.id + ' ' + t.changeset);
                         t.totalTroops = this.updateTroopsCount(t.id, '-1');
                         t.troopsAdded = t.troopsAdded - 1;
                         t.changeset.splice(-1);   // Remove the last changeset
-
-                        this._placementCounter--;   // Not sure if needed
                     }
                     return t;
                 });
+
+                // Update the placementCounter (aka the current changeset)
+                this._placementCounter--;
 
                 // Reset the color of territories that don't have troops added to them
                 this._placementTerritories.forEach(pt => {
@@ -426,6 +430,22 @@ export class MapComponent implements OnInit, OnDestroy {
                 this._placementTerritories = this._placementTerritories.filter(t => {
                     return t.troopsAdded !== 0;
                 });
+
+                this.mapDataForPlayersTurn = {
+                    placementTerritories: this._placementTerritories
+                };
+            } else if (data.action === 'reset') {
+                this.togglePlayerTerritories(this._currentPlayer, 'enable');
+
+                // Reset the map elements - troops count and territory color
+                this._placementTerritories.forEach(pt => {
+                    this.updateTroopsCount(pt.id, -Math.abs(pt.troopsAdded) + '');
+                    this.setTerritoryColor(pt.id, pt.originalColor);
+                });
+
+                // Reset the variables to keep track of clicked territories
+                this._placementTerritories = [];
+                this._placementCounter = 0;
 
                 this.mapDataForPlayersTurn = {
                     placementTerritories: this._placementTerritories
@@ -474,14 +494,10 @@ export class MapComponent implements OnInit, OnDestroy {
             }
         };
 
-        console.log(newData);
-
         this.$mapArea.trigger('update', [{
             mapOptions: newData,
             animDuration: 200
         }]);
-
-        // console.log(this.$mapArea);
     }
 
     /**
@@ -517,7 +533,6 @@ export class MapComponent implements OnInit, OnDestroy {
             let attrsObj = {}, attrsHoverObj = {};
             playerTerritories.forEach(territory => {
                 if (this._placementTerritories.some(t => t.id === territory.id)) {
-                    console.log(territory.id);
                     attrsObj = {
                         fill: '#44b57d',
                         cursor: 'auto'
@@ -547,13 +562,9 @@ export class MapComponent implements OnInit, OnDestroy {
             });
         }
 
-        // console.log(newData);
-
         this.$mapArea.trigger('update', [{
             mapOptions: newData
         }]);
-
-        // console.log(this.$mapArea);
     }
 
     /**
@@ -599,7 +610,7 @@ export class MapComponent implements OnInit, OnDestroy {
             };
         });
 
-        console.log(newData);
+        // console.log(newData);
 
         this.$mapArea.trigger('update', [{
             mapOptions: newData

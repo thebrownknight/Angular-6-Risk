@@ -9,7 +9,7 @@
         </div>
         <div class="turn-steps" *ngIf="isCurrentPlayer">
             <div [ngClass]="{'step step-1': true, 'active-step': currentStep === 'GETTROOPS'}">
-                <h3>Step 1: Place Your Troops - <span class="troops-acquired" *ngIf="troopsLeftToPlace !== -1">{{troopsLeftToPlace}} troops left to place</span></h3>
+                <h3>Step 1: Place Your Troops - <span [ngClass]="{'troops-acquired': true, 'zero-troops': troopsLeftToPlace === 0}" *ngIf="troopsLeftToPlace !== -1">{{troopsLeftToPlace}} troops left to place</span></h3>
                 <p class="help-text">Click each territory below to place your available troops. You can click one multiple times to add more troops to that territory. Use the 'Undo' and 'Reset' buttons to remove/reset any misplaced troops.</p>
                 <form name="troops-placement" (ngSubmit)="placeTroops()" [formGroup]="troopsPlacementForm">
                     <div *ngIf="placementResults.length > 0" class="placement-results">
@@ -38,8 +38,8 @@
                 </form>
                 <div class="buttons-container">
                     <button class="btn btn-sunshine" [disabled]="placementResults.length === 0" (click)="undoTroopsPlacement()">Undo</button>
-                    <button class="btn btn-vermillion" [disabled]="placementResults.length === 0">Reset</button>
-                    <button *ngIf="troopsLeftToPlace === 0" class="btn btn-vermillion" [disabled]="tpForm.troopsPlacementTerritory === ''">Finish</button>
+                    <button class="btn btn-vermillion" [disabled]="placementResults.length === 0" (click)="resetTroopsPlacement()">Reset</button>
+                    <button *ngIf="troopsLeftToPlace === 0" class="btn btn-vermillion" [disabled]="tpForm.troopsPlacementTerritory === ''" (click)="finishTroopsPlacement()">Finish</button>
                 </div>
                 <!-- {{this.troopsPlacementForm.value | json}} -->
             </div>
