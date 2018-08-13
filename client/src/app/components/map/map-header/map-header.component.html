@@ -45,26 +45,52 @@
             </div>
             <div [ngClass]="{'step step-2': true, 'active-step': currentStep === 'ATTACK'}">
                 <h3>Step 2: Attack</h3>
-                <form name="attack-sequence" [formGroup]="attackSequenceForm" (ngSubmit)="attackCountry()">
-                    <div class="attacking-country">
-                        <label>Choose the country to attack from:</label>
-                        <span class="a-country">Egypt</span>
-                        <input type="hidden" formControlName="attackingTerritory" value="Egypt">
+                <p class="help-text">First, choose your territory that you want to attack from. Next, choose the terrritory you want to attack (defending territory). Once you choose these, choose the number of dice to roll. You can roll up to 3 dice depending on how many troops you have in the territory. Click the 'Cancel' button to reset choosing the attacking territory and choose a different one. Click the 'Skip' button to skip the attack phase altogether and move on to fortification.</p>
+                <form name="attack-sequence" [formGroup]="attackSequenceForm" (ngSubmit)="attackTerritory()">
+                    <div *ngIf="attackingTerritory" class="attacking-territory t-info">
+                        <!-- <label>Attacking territory:</label> -->
+                        <span class="a-territory" [ngStyle]="{'background-color': attackingTerritory.color}">{{attackingTerritory.name}}</span>
+                        <input type="hidden" formControlName="attackingTerritory" value="{{attackingTerritory.id}}">
                     </div>
-                    <div>vs.</div>
-                    <div class="defending-country">
-                        <label>Choose the country you want to attack:</label>
-                        <span class="d-country">North Africa</span>
-                        <input type="hidden" formControlName="defendingTerritory" value="North Africa">
+                    <div *ngIf="attackingTerritory" class="vs-separator t-info">vs.</div>
+                    <div *ngIf="defendingTerritory" class="defending-territory t-info">
+                        <!-- <label>Defending territory:</label> -->
+                        <span class="d-territory" [ngStyle]="{'background-color': defendingTerritory.color}">{{defendingTerritory.name}}</span>
+                        <input type="hidden" formControlName="defendingTerritory" value="{{defendingTerritory.id}}">
                     </div>
-                    <select name="attackNumberOfPlayers" class="select-box" formControlName="attackNumberOfPlayers">
-                        <option *ngFor="let number of [2,3,4,5,6]" [value]="number">
-                            {{number}}
-                        </option>
-                    </select>
-                    <input type="submit" class="btn btn-aqua" value="Attack">
+                    <div *ngIf="attackingTerritory && defendingTerritory && attackingTerritoryTroops.length > 0" class="t-info select-container">
+                        <select name="attackNumberOfPlayers" class="select-box" formControlName="attackNumberOfPlayers">
+                            <!-- <option disabled selected value="">- Select Number of Armies To Attack With -</option> -->
+                            <option *ngFor="let number of attackingTerritoryTroops" [value]="number">
+                                {{number}}
+                            </option>
+                        </select>
+                        <i class="fas fa-angle-down"></i>
+                    </div>
                 </form>
-                <div class="buttons-container">
+                <!-- <table class="attack-results">
+                    <thead>
+                        <tr>
+                            <th>Attacking Country</th>
+                            <th>Defending Country</th>
+                            <th>Armies Used</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let ar of attackResults">
+                            <td>{{ar.attackingCountry}}</td>
+                            <td>{{ar.defendingCountry}}</td>
+                            <td>{{ar.armiesUsed}}</td>
+                            <td>{{ar.result}}</td>
+                        </tr>
+                    </tbody>
+                </table> -->
+                <div class="buttons-container left-align">
+                    <button [disabled]="!attackingTerritory" class="btn btn-vermillion" (click)="cancelAttackSelection()">Cancel</button>
+                    <button *ngIf="attackingTerritory && defendingTerritory" type="submit" class="btn btn-aqua">Attack</button>
+                </div>
+                <div class="buttons-container right-align">
                     <button class="btn btn-neutral" (click)="skipStep(2)">Skip</button>
                     <button class="btn btn-vermillion">Finish</button>
                 </div>

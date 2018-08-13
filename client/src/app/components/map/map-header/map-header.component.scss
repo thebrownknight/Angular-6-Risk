@@ -134,7 +134,7 @@ header {
                 vertical-align: middle;
                 width: 18%;
                 @include transition(width 0.3s ease-in);
-                @include rem(padding, 10px 35px 10px 0);
+                @include rem(padding, 10px 25px);
                 text-align: center;
 
                 &:not(:last-child) {
@@ -147,11 +147,11 @@ header {
                 }
 
                 .help-text {
-                    @include rem(font-size, 12px);
+                    @include rem(font-size, 11px);
                     @include opensans-regular();
                 }
 
-                form, .buttons-container {
+                form, .buttons-container, .help-text {
                     display: none;
                 }
 
@@ -160,6 +160,13 @@ header {
                         &:not(:last-child) {
                             margin-right: 8px;
                         }
+                    }
+
+                    &.left-align {
+                        text-align: left;
+                    }
+                    &.right-align {
+                        text-align: right;
                     }
                 }
 
@@ -171,7 +178,7 @@ header {
                         color: $aqua;
                     }
 
-                    form, .buttons-container {
+                    form, .buttons-container, .help-text {
                         display: block;
                     }
                 }
@@ -180,6 +187,31 @@ header {
                     label {
                         @include opensans-regular();
                         @include rem(font-size, 12px);
+                    }
+
+                    .select-container {
+                        position: relative;
+        
+                        .select-box {
+                            width: 100%;
+                            border: 2px solid $aqua;
+                            background: transparent;
+                            @include opensans-regular();
+                            @include rem(font-size, 14px);
+                            @include rem(padding, 10px 15px);
+                            color: $dark-gray;
+                            @include appearance(none);
+                            @include border-radius(0);
+                            outline: 0;
+                        }
+        
+                        i {
+                            position: absolute;
+                            right: 8px;
+                            bottom: 6px;
+                            color: $aqua;
+                            @include rem(font-size, 16px);
+                        }
                     }
                 }
 
@@ -208,6 +240,51 @@ header {
                                 margin-right: 5px;
                             }
                         }
+                    }
+
+                    .buttons-container {
+                        text-align: right;
+                    }
+                }
+
+                &.step-2 {
+                    .t-info {
+                        display: inline-block;
+                    }
+                    .a-territory, .d-territory {
+                        color: $white;
+                        border: 1px solid $white;
+                        @include rem(padding, 4px 8px);
+                        @include opensans-regular();
+                        @include rem(font-size, 14px);
+                    }
+                    .a-territory {
+                        margin: 0 5px 0 0;
+                    }
+                    .d-territory {
+                        margin: 0 0 0 5px;
+                    }
+                    .vs-separator {
+                        @include rem(font-size, 13px);
+                        @include opensans-bold();
+                        margin: 0 10px;
+                    }
+
+                    form {
+                        .buttons-container {
+                            display: inline-block;
+                            margin-left: 10px;
+                        }
+                        .select-container {
+                            margin-left: 10px;
+                            .select-box {
+                                @include rem(padding, 1px 30px 1px 5px);
+                            }
+                        }
+                    }
+
+                    > .buttons-container {
+                        margin-top: 10px;
                     }
                 }
             }

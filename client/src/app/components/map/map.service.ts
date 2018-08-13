@@ -69,7 +69,7 @@ export class MapService {
      * Assign the territories randomly (for now) to the players.
      *
      * Params:
-     * 1) players: Array<any> -- array of player objects in the game
+     * @param players: Array<any> -- array of player objects in the game
      *
      * Returns an object with the game meta information, current state of board
      * and all assignments added to the log.

@@ -118,7 +118,7 @@ const standardMap = {
                 },
                 'east_africa': {
                     name: 'East Africa',
-                    nearbyTerritories: ['middle_east', 'egypt', 'madagascar', 'congo', 'south_africa']
+                    nearbyTerritories: ['middle_east', 'egypt', 'madagascar', 'congo', 'south_africa', 'north_africa']
                 },
                 'egypt': {
                     name: 'Egypt',

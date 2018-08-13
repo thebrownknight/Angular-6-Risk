@@ -41,10 +41,16 @@ export class MapComponent implements OnInit, OnDestroy {
 
     mapDataForPlayersTurn: any = { };    // The information gathered from interacting with the map on a player's turn
 
-    // Turn specific variables
+    /* Turn specific variables */
+    // Troops placement
     private _troopsAcquired = 0;
     private _placementTerritories: Array<any> = [];
     private _placementCounter = 0;
+
+    // Attacking
+    private _tempAttackingTerritory = '';
+    private _tempDefendingTerritory = '';
+    private _attacksArray: Array<any> = [];
 
     constructor(
         private router: Router,
@@ -275,7 +281,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
                     updatedOptions.areas[id] = {
                         attrs: {
-                            fill: tHighlightColor
+                            fill: tHighlightColor,
+                            cursor: 'pointer'
                         },
                         attrsHover: {
                             fill: tHighlightColor
@@ -329,49 +336,57 @@ export class MapComponent implements OnInit, OnDestroy {
                     }
                     break;
                 case 'ATTACK':
+                    if (this._tempAttackingTerritory === '') {
+                        console.log('ATTACKING');
+                        this._tempAttackingTerritory = id;
+                        this.resetHighlightedTerritories();
+                        this.highlightNearbyTerritories(this._currentPlayer, id);
+
+                        // Disable selection of user's territories
+                        this.togglePlayerTerritories(this._currentPlayer, 'disable');
+
+                        // Send the data to the map header to show user
+                        this.mapDataForPlayersTurn = {
+                            attackingTerritory: {
+                                id: id,
+                                name: this.mapService.getName(id),
+                                color: this.getTerritoryColor(id),
+                                troops: this.getNumTroops(id)
+                            }
+                        };
+                    } else {
+                        // We're choosing the defending territory
+                        console.log('DEFENDING TERRITORY: ' + id);
+                        this._tempDefendingTerritory = id;
+
+                        this.mapDataForPlayersTurn = {
+                            attackingTerritory: {
+                                id: this._tempAttackingTerritory,
+                                name: this.mapService.getName(this._tempAttackingTerritory),
+                                color: this.getTerritoryColor(this._tempAttackingTerritory),
+                                troops: this.getNumTroops(this._tempAttackingTerritory)
+                            },
+                            defendingTerritory: {
+                                id: id,
+                                name: this.mapService.getName(id),
+                                color: this.getTerritoryColor(id),
+                                troops: this.getNumTroops(id)
+                            }
+                        };
+                    }
+                    // Send the data to the map header to show user
+                    // this.mapDataForPlayersTurn = {
+                    //     attackingTerritory: {
+                    //         id: id,
+                    //         name: this.mapService.getName(id)
+                    //     },
+                    //     attacks: this._attacksArray
+                    // };
                     break;
                 case 'FORTIFY':
                     break;
             }
         }
-        // const newData = {
-        //     areas: {}
-        // };
-
-        /* Reset the color of the continent before we highlight the nearby areas */
-        // First get the continent that the territory resides in
-        // const continentId = this.mapService.getContinent(id);
-        // const continentDefaultColor = this.mapService.getDefaultColorByContinent(continentId);
-
-        // Second we check if there are already selected nearbyTerritories and if so,
-        // we just reset them instead of the whole map
-        // if (this.tempNearbyTerritories.length > 0) {
-        //     this.tempNearbyTerritories.forEach((territoryId) => {
-        //         // Get the continent of the territory and get the default color to reset to
-        //         newData.areas[territoryId] = {
-        //             attrs: {
-        //                 fill: continentDefaultColor
-        //             }
-        //         };
-        //     });
-        // }
-
-        // Set a reference to the nearby territories so we can reset them on click of a different
-        // territory
-        // this.tempNearbyTerritories = this.mapService.getNearbyTerritories(id);
-        // this.tempNearbyTerritories.forEach((territoryId) => {
-        //     newData.areas[territoryId] = {
-        //         attrs: {
-        //             fill: '#FF0000'
-        //         }
-        //     };
-        // });
-
-        // Finally we set the colors of all the territories to the correct ones based on the logic above
-        // this.$mapArea.trigger('update', [{
-        //     mapOptions: newData,
-        //     animDuration: 200
-        // }]);
     }
 
     /**
@@ -400,58 +415,114 @@ export class MapComponent implements OnInit, OnDestroy {
     setTurnFormData(data: any) {
         if (data.playerStep === 'GETTROOPS') {
             // The only things we're listening for is undoing and resetting the player's troops placements
-            if (data.action === 'undo') {
-                this.togglePlayerTerritories(this._currentPlayer, 'enable');
+            switch (data.action) {
+                case 'undo':
+                    this.togglePlayerTerritories(this._currentPlayer, 'enable');
 
-                // Grab the latest changeset and revert it (we simply decrease the total troops and troops added)
-                this._placementTerritories.map(t => {
-                    console.log(this._placementCounter);
-                    if (t.changeset.includes(this._placementCounter)) {
-                        // console.log(this._placementCounter);
-                        // console.log(t.id + ' ' + t.changeset);
-                        t.totalTroops = this.updateTroopsCount(t.id, '-1');
-                        t.troopsAdded = t.troopsAdded - 1;
-                        t.changeset.splice(-1);   // Remove the last changeset
-                    }
-                    return t;
-                });
+                    // Grab the latest changeset and revert it (we simply decrease the total troops and troops added)
+                    this._placementTerritories.map(t => {
+                        console.log(this._placementCounter);
+                        if (t.changeset.includes(this._placementCounter)) {
+                            // console.log(this._placementCounter);
+                            // console.log(t.id + ' ' + t.changeset);
+                            t.totalTroops = this.updateTroopsCount(t.id, '-1');
+                            t.troopsAdded = t.troopsAdded - 1;
+                            t.changeset.splice(-1);   // Remove the last changeset
+                        }
+                        return t;
+                    });
 
-                // Update the placementCounter (aka the current changeset)
-                this._placementCounter--;
+                    // Update the placementCounter (aka the current changeset)
+                    this._placementCounter--;
 
-                // Reset the color of territories that don't have troops added to them
-                this._placementTerritories.forEach(pt => {
-                    if (pt.troopsAdded === 0) {
+                    // Reset the color of territories that don't have troops added to them
+                    this._placementTerritories.forEach(pt => {
+                        if (pt.troopsAdded === 0) {
+                            this.setTerritoryColor(pt.id, pt.originalColor);
+                        }
+                    });
+
+                    // Filter out the territories that don't have any troops added
+                    this._placementTerritories = this._placementTerritories.filter(t => {
+                        return t.troopsAdded !== 0;
+                    });
+
+                    this.mapDataForPlayersTurn = {
+                        placementTerritories: this._placementTerritories
+                    };
+                    break;
+                case 'reset':
+                    this.togglePlayerTerritories(this._currentPlayer, 'enable');
+
+                    // Reset the map elements - troops count and territory color
+                    this._placementTerritories.forEach(pt => {
+                        this.updateTroopsCount(pt.id, -Math.abs(pt.troopsAdded) + '');
                         this.setTerritoryColor(pt.id, pt.originalColor);
-                    }
-                });
+                    });
 
-                // Filter out the territories that don't have any troops added
-                this._placementTerritories = this._placementTerritories.filter(t => {
-                    return t.troopsAdded !== 0;
-                });
+                    // Reset the variables to keep track of clicked territories
+                    this._placementTerritories = [];
+                    this._placementCounter = 0;
 
-                this.mapDataForPlayersTurn = {
-                    placementTerritories: this._placementTerritories
-                };
-            } else if (data.action === 'reset') {
-                this.togglePlayerTerritories(this._currentPlayer, 'enable');
+                    this.mapDataForPlayersTurn = {
+                        placementTerritories: this._placementTerritories
+                    };
+                    break;
+                case 'save':
+                    // Update the game state with the updated troop counts
+                    this.saveGameState(this._currentPlayer, this.gameState);
+                    this.mapService.emitGameState(this.gameState);
 
-                // Reset the map elements - troops count and territory color
-                this._placementTerritories.forEach(pt => {
-                    this.updateTroopsCount(pt.id, -Math.abs(pt.troopsAdded) + '');
-                    this.setTerritoryColor(pt.id, pt.originalColor);
-                });
+                    // Reset territory colors
+                    this._placementTerritories.forEach(pt => {
+                        this.setTerritoryColor(pt.id, pt.originalColor);
+                    });
 
-                // Reset the variables to keep track of clicked territories
-                this._placementTerritories = [];
-                this._placementCounter = 0;
+                    // Reset the variables to keep track of clicked territories
+                    this._placementTerritories = [];
+                    this._placementCounter = 0;
 
-                this.mapDataForPlayersTurn = {
-                    placementTerritories: this._placementTerritories
-                };
+                    // Set the mapMode to ATTACK
+                    this._mapMode = 'ATTACK';
+
+                    // Enable click actions on map again
+                    this.togglePlayerTerritories(this._currentPlayer, 'enable');
+                    break;
+            }
+        } else if (data.playerStep === 'ATTACK') {
+            switch (data.action) {
+                case 'cancel':
+                    this._tempAttackingTerritory = '';
+                    this.resetHighlightedTerritories();
+
+                    this.mapDataForPlayersTurn = {
+                        attackingTerritory: {},
+                        defendingTerritory: {}
+                    };
+                    break;
             }
         }
+    }
+
+    private saveGameState(curPlayer: any, gameState: any): void {
+        this.gameState = gameState.map(playerMeta => {
+            if (playerMeta.player._id === curPlayer.player._id) {
+                playerMeta.status = 'ATTACK';
+                playerMeta.territoryMeta = playerMeta.territoryMeta.map(tm => {
+                    // If the territory is one of the territories the player has added,
+                    // update the troops count in the territoryMeta array
+                    if (this._placementTerritories.some(e => e.id === tm.id)) {
+                        const tPos = this._placementTerritories.map(pt => pt.id).indexOf(tm.id);
+                        tm.troops = this._placementTerritories[tPos].totalTroops;
+                    }
+
+                    return tm;
+                });
+            }
+            return playerMeta;
+        });
+
+        console.log(this.gameState);
     }
 
     /**
@@ -459,19 +530,11 @@ export class MapComponent implements OnInit, OnDestroy {
      * @param territoryId ID of the territory.
      */
     private getTerritoryColor(territoryId: string): string {
-        // const tColor = '';
+        const territoryOwner = this.gameState.filter((playerMeta, index) => {
+            return playerMeta.territoryMeta.some(tm => tm.id === territoryId);
+        })[0];
 
-        // // First filter the game state for the current turn player, and then filter the territory meta for the territory ID
-        // // and grab the troops from the object
-        // return this.gameState.filter(playerMeta => {
-        //     return playerMeta.player._id === this._currentPlayer.player._id;
-        // })[0].territoryMeta.filter(territory => {
-        //     return territory.id === territoryId;
-        // })[0].troops;
-
-        // return tColor;
-
-        return '';
+        return this._playerColorMap[territoryOwner.player._id];
     }
 
     /**
@@ -603,7 +666,7 @@ export class MapComponent implements OnInit, OnDestroy {
                 attrs: {
                     // fill: '#5f5f5f',
                     'fill-opacity': 0.2,
-                    cursor: 'none',
+                    cursor: 'auto',
                     stroke: '#FFFFFF',
                     'stroke-width': 1
                 }
@@ -615,6 +678,79 @@ export class MapComponent implements OnInit, OnDestroy {
         this.$mapArea.trigger('update', [{
             mapOptions: newData
         }]);
+    }
+
+    /**
+     * Helper method to highlight nearby territories to attack when it's a player's turn to attack.
+     * @param curPlayer Player whose turn it currently is.
+     * @param territoryId The territory ID as a string.
+     */
+    private highlightNearbyTerritories(curPlayer: any, territoryId: string): void {
+        // Get the territoryMeta objects of the other players in the game so we can highlight those
+        let otherTerritories = [];
+        const updatedOptions = {
+            areas: {}
+        };
+
+        const otherTerritoriesTemp = this.gameState
+            .filter(playerMeta => playerMeta.player._id !== curPlayer.player._id)
+            .map(pm => pm.territoryMeta);
+
+        otherTerritoriesTemp.forEach(elem => {
+            otherTerritories = otherTerritories.concat(elem);
+        });
+
+        otherTerritories = otherTerritories.map(ot => ot.id);
+
+        // Use the MapService to grab the nearbyTerritories from map configuration
+        // We get back an array of territory IDs
+        const nearbyTerritories = this.mapService.getNearbyTerritories(territoryId);
+
+        // Loop over the nearbyTerritories, check it against the otherTerritories id property
+        nearbyTerritories.forEach(tId => {
+            if (otherTerritories.includes(tId)) {
+                this.tempNearbyTerritories.push(tId);
+                updatedOptions.areas[tId] = {
+                    eventHandlers: {
+                        click: (e, id, mapElem) => {
+                            this.mapClickActions(e, id, mapElem);
+                        }
+                    },
+                    attrs: {
+                        'fill-opacity': 1,
+                        cursor: 'pointer'
+                    }
+                };
+            }
+        });
+
+        this.$mapArea.trigger('update', [{
+            mapOptions: updatedOptions,
+            animDuration: 300
+        }]);
+    }
+
+    private resetHighlightedTerritories(): void {
+        if (this.tempNearbyTerritories.length > 0) {
+            const updatedOptions = {
+                areas: {}
+            };
+            this.tempNearbyTerritories.forEach((territoryId) => {
+                // Get the continent of the territory and get the default color to reset to
+                updatedOptions.areas[territoryId] = {
+                    attrs: {
+                        'fill-opacity': 0.2,
+                        cursor: 'auto'
+                    }
+                };
+            });
+
+            this.$mapArea.trigger('update', [{
+                mapOptions: updatedOptions
+            }]);
+
+            this.tempNearbyTerritories = [];
+        }
     }
 
     private calculatePlayerTroops(curPlayer: any) {
@@ -640,7 +776,7 @@ export class MapComponent implements OnInit, OnDestroy {
         } else {
             // We have to look at the game state and grab the number from here
             numTroops = this.gameState.filter(playerMeta => {
-                return playerMeta.player._id === this._currentPlayer.player._id;
+                return playerMeta.territoryMeta.some(tm => tm.id === territoryId);
             })[0].territoryMeta.filter(territory => {
                 return territory.id === territoryId;
             })[0].troops;

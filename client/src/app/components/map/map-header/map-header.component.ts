@@ -42,7 +42,7 @@ export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
     @Input() turnMapData: any; // Get the information from the map when a user interacts with it for their turn steps
 
     @Output() modeAndPlayer = new EventEmitter<any>();
-    @Output() turnFormData = new EventEmitter<any>();
+    @Output() turnFormData = new EventEmitter<any>();   // Send information to map from header from user interactions
 
     profileManagerState = 'closed';
     fullLoggedInUserDetails: any = {};
@@ -58,6 +58,11 @@ export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
     placementResults: Array<any> = [];
     troopsAcquired = -1;
     troopsLeftToPlace = -1;
+
+    /* Attack Phase variables */
+    attackingTerritory: any;
+    attackingTerritoryTroops: Array<number> = [];
+    defendingTerritory: any;
 
     currentStep = '';
 
@@ -167,6 +172,17 @@ export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
 
                 this.troopsLeftToPlace = this.troopsAcquired - troopsAdded;
             }
+
+            if (changes.turnMapData.currentValue.attackingTerritory) {
+                this.attackingTerritory = changes.turnMapData.currentValue.attackingTerritory;
+                for (let i = 1; i <= this.attackingTerritory.troops; i++) {
+                    this.attackingTerritoryTroops.push(i);
+                }
+            }
+
+            if (changes.turnMapData.currentValue.defendingTerritory) {
+                this.defendingTerritory = changes.turnMapData.currentValue.defendingTerritory;
+            }
         }
     }
 
@@ -219,6 +235,20 @@ export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     /**
+     * Cancel attack selection.
+     */
+    cancelAttackSelection(): void {
+        this.turnFormData.emit({
+            playerStep: this.currentStep,
+            action: 'cancel'
+        });
+    }
+
+    /**
+     * Skip to step (or finish and change turns if at the end).
+     */
+
+    /**
      * Initialize the player forms.
      */
     private initTroopsPlacementForm() {
@@ -230,7 +260,7 @@ export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
         this.attackSequenceForm = this.formBuilder.group({
             attackingTerritory: ['', Validators.required],
             defendingTerritory: ['', Validators.required],
-            attackNumberOfPlayers: [2, Validators.required]
+            attackNumberOfPlayers: [1, Validators.required]
         });
     }
     private initFortifyTroopsForm() {
