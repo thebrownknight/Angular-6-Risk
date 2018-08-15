@@ -5,6 +5,7 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
 
 import { AuthenticationService } from '../../../services/authentication.service';
 import { MapService } from '../map.service';
+import { Utils } from '../../../services/utils';
 
 import { UserDetails } from '../../../helpers/data-models';
 
@@ -60,16 +61,19 @@ export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
     troopsLeftToPlace = -1;
 
     /* Attack Phase variables */
+    attackCompleted = false;
     attackingTerritory: any;
-    attackingTerritoryTroops: Array<number> = [];
+    attackingTerritoryDice: Array<number> = [];
     defendingTerritory: any;
+    attackResults: Array<any> = [];
 
     currentStep = '';
 
     constructor(
         private authService: AuthenticationService,
         private mapService: MapService,
-        private formBuilder: FormBuilder
+        private formBuilder: FormBuilder,
+        private utils: Utils
     ) {
         // Get and store user details for customized output on games lists
         this.loggedInUser = this.authService.getUserDetails();
@@ -174,14 +178,37 @@ export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
             }
 
             if (changes.turnMapData.currentValue.attackingTerritory) {
-                this.attackingTerritory = changes.turnMapData.currentValue.attackingTerritory;
-                for (let i = 1; i <= this.attackingTerritory.troops; i++) {
-                    this.attackingTerritoryTroops.push(i);
+                if (!this.utils.isEmpty(changes.turnMapData.currentValue.attackingTerritory)) {
+                    this.attackingTerritory = changes.turnMapData.currentValue.attackingTerritory;
+                    if (this.attackingTerritory) {
+                        this.asForm.attackingTerritory.setValue(this.attackingTerritory.id);
+                    }
+                    if (this.attackingTerritoryDice.length === 0) {
+                        const attackNumDice = changes.turnMapData.currentValue.attackingTerritory.troops > 3
+                            ? 3 : changes.turnMapData.currentValue.attackingTerritory.troops - 1;
+                        for (let i = 1; i <= attackNumDice; i++) {
+                            this.attackingTerritoryDice.push(i);
+                        }
+                    }
+                } else {
+                    this.attackingTerritory = null;
+                    this.attackingTerritoryDice = [];   // Reset the number of dice being rolled
                 }
             }
 
             if (changes.turnMapData.currentValue.defendingTerritory) {
-                this.defendingTerritory = changes.turnMapData.currentValue.defendingTerritory;
+                if (!this.utils.isEmpty(changes.turnMapData.currentValue.defendingTerritory)) {
+                    this.defendingTerritory = changes.turnMapData.currentValue.defendingTerritory;
+                    if (this.defendingTerritory) {
+                        this.asForm.defendingTerritory.setValue(this.defendingTerritory.id);
+                    }
+                } else {
+                    this.defendingTerritory = null;
+                }
+            }
+
+            if (changes.turnMapData.currentValue.attackResults && changes.turnMapData.currentValue.attackResults.length > 0) {
+                this.attackResults = changes.turnMapData.currentValue.attackResults;
             }
         }
     }
@@ -235,6 +262,25 @@ export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     /**
+     * Attack territory with chosen number of troops.
+     */
+    attackTerritory(): void {
+        if (this.attackSequenceForm.valid) {
+            console.log(this.attackSequenceForm.value);
+
+            this.turnFormData.emit({
+                playerStep: this.currentStep,
+                action: 'attack',
+                attackData: {
+                    attackTerritory: this.attackingTerritory,
+                    defendingTerritory: this.defendingTerritory,
+                    numberOfDice: this.asForm.attackNumberOfDice.value
+                }
+            });
+        }
+    }
+
+    /**
      * Cancel attack selection.
      */
     cancelAttackSelection(): void {
@@ -247,6 +293,16 @@ export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
     /**
      * Skip to step (or finish and change turns if at the end).
      */
+    skipToStep(step: string): void {
+        switch (step) {
+            case 'fortify':
+                this.turnFormData.emit({
+                    playerStep: this.currentStep,
+                    action: 'skip'
+                });
+                break;
+        }
+    }
 
     /**
      * Initialize the player forms.
@@ -260,7 +316,7 @@ export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
         this.attackSequenceForm = this.formBuilder.group({
             attackingTerritory: ['', Validators.required],
             defendingTerritory: ['', Validators.required],
-            attackNumberOfPlayers: [1, Validators.required]
+            attackNumberOfDice: [1, Validators.required]
         });
     }
     private initFortifyTroopsForm() {

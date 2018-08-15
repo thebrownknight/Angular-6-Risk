@@ -22,6 +22,19 @@ export class DiceService {
         return greatestValue;
     }
 
+    /**
+     * Method that returns the all the rolls that were done.
+     */
+    fullRoll(numberOfDice: number): Array<number> {
+        const rollArray = [];
+        // Roll the number of dice specified, add each roll to the return array
+        for (let i = 0; i < numberOfDice; i++) {
+            rollArray.push(Math.ceil(Math.random() * this.numberOfSides));
+        }
+
+        return rollArray;
+    }
+
     /* Convenience methods */
     /**
      * Method to determine winner in an attack scenario.
@@ -32,8 +45,40 @@ export class DiceService {
      * Defending player may roll 1 or 2 dice so long as the number of armies in their territory
      * matches or exceeds the number of dice they roll
      */
-    attackRoll(attackPlayerMeta: any, defensePlayerMeta: any) {
+    attackRoll(attackNumberOfDice: any, defenseTroops: any) {
+        // The number of dice we can use is 1, 2, or 3.
+        const aDiceRoll = this.fullRoll(attackNumberOfDice);
 
+        const defendNumDice = defenseTroops >= 2 ? 2 : 1;
+        const dDiceRoll = this.fullRoll(defendNumDice);
+
+        let attackerVictories = 0, attackerLosses = 0, defenderVictories = 0, defenderLosses = 0;
+
+        // We have our rolls, loop through the attack rolls array and compare them
+        aDiceRoll.forEach((roll, index) => {
+            if (dDiceRoll[index]) {
+                if (roll > dDiceRoll[index]) {
+                    attackerVictories++;
+                    defenderLosses++;
+                } else {
+                    defenderVictories++;
+                    attackerLosses++;
+                }
+            }
+        });
+
+        return {
+            attackerRolls: aDiceRoll,
+            defenderRolls: dDiceRoll,
+            attackerInfo: {
+                victories: attackerVictories,
+                losses: attackerLosses
+            },
+            defenderInfo: {
+                victories: defenderVictories,
+                losses: defenderLosses
+            }
+        };
     }
 
     /**

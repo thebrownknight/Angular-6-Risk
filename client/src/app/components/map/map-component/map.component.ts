@@ -4,6 +4,7 @@ import { switchMap } from 'rxjs/operators';
 
 import { AuthenticationService } from '../../../services/authentication.service';
 import { MapService } from '../map.service';
+import { DiceService } from '../dice.service';
 
 import { Utils } from '../../../services/utils';
 import { UserDetails } from '../../../helpers/data-models';
@@ -57,6 +58,7 @@ export class MapComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private authService: AuthenticationService,
         private mapService: MapService,
+        private diceService: DiceService,
         private utils: Utils
     ) {
         this.loggedInUser = this.authService.getUserDetails();
@@ -374,14 +376,6 @@ export class MapComponent implements OnInit, OnDestroy {
                             }
                         };
                     }
-                    // Send the data to the map header to show user
-                    // this.mapDataForPlayersTurn = {
-                    //     attackingTerritory: {
-                    //         id: id,
-                    //         name: this.mapService.getName(id)
-                    //     },
-                    //     attacks: this._attacksArray
-                    // };
                     break;
                 case 'FORTIFY':
                     break;
@@ -469,8 +463,11 @@ export class MapComponent implements OnInit, OnDestroy {
                     };
                     break;
                 case 'save':
+                    // Set the mapMode to ATTACK
+                    this._mapMode = 'ATTACK';
+
                     // Update the game state with the updated troop counts
-                    this.saveGameState(this._currentPlayer, this.gameState);
+                    this.saveGameState(this._currentPlayer, this.gameState, this._mapMode);
                     this.mapService.emitGameState(this.gameState);
 
                     // Reset territory colors
@@ -482,9 +479,6 @@ export class MapComponent implements OnInit, OnDestroy {
                     this._placementTerritories = [];
                     this._placementCounter = 0;
 
-                    // Set the mapMode to ATTACK
-                    this._mapMode = 'ATTACK';
-
                     // Enable click actions on map again
                     this.togglePlayerTerritories(this._currentPlayer, 'enable');
                     break;
@@ -493,21 +487,60 @@ export class MapComponent implements OnInit, OnDestroy {
             switch (data.action) {
                 case 'cancel':
                     this._tempAttackingTerritory = '';
+                    this._tempDefendingTerritory = '';
                     this.resetHighlightedTerritories();
+
+                    // Re-enable territory selection for player's territories
+                    this.togglePlayerTerritories(this._currentPlayer, 'enable');
 
                     this.mapDataForPlayersTurn = {
                         attackingTerritory: {},
                         defendingTerritory: {}
                     };
                     break;
+                case 'skip':
+                    this._tempAttackingTerritory = '';
+                    this._tempDefendingTerritory = '';
+                    this.resetHighlightedTerritories();
+
+                    this._mapMode = 'FORTIFY';
+
+                    // Update the game state with new player status
+                    this.saveGameState(this._currentPlayer, this.gameState, this._mapMode);
+                    this.mapService.emitGameState(this.gameState);
+                    break;
+                case 'attack':
+                    console.log(data.attackData);
+                    const rollResult = this.diceService.attackRoll(
+                        data.attackData.numberOfDice,
+                        data.attackData.defendingTerritory.troops);
+
+                    // Add the attack to the attacks array
+                    this._attacksArray.push({
+                        attack: this._tempAttackingTerritory,
+                        defend: this._tempDefendingTerritory,
+                        rollResult: rollResult
+                    });
+                    // Send the data to the map header to show user
+                    this.mapDataForPlayersTurn = {
+                        attackingTerritory: {},
+                        defendingTerritory: {},
+                        attackResults: this._attacksArray
+                    };
+
+                    // Clear out the temporary attack and defend territories
+                    this._tempAttackingTerritory = '';
+                    this._tempDefendingTerritory = '';
+                    this.resetHighlightedTerritories();
+                    break;
             }
         }
     }
 
-    private saveGameState(curPlayer: any, gameState: any): void {
+    private saveGameState(curPlayer: any, gameState: any, newStatus: string): void {
         this.gameState = gameState.map(playerMeta => {
             if (playerMeta.player._id === curPlayer.player._id) {
-                playerMeta.status = 'ATTACK';
+                playerMeta.status = newStatus;
                 playerMeta.territoryMeta = playerMeta.territoryMeta.map(tm => {
                     // If the territory is one of the territories the player has added,
                     // update the troops count in the territoryMeta array
@@ -738,6 +771,11 @@ export class MapComponent implements OnInit, OnDestroy {
             this.tempNearbyTerritories.forEach((territoryId) => {
                 // Get the continent of the territory and get the default color to reset to
                 updatedOptions.areas[territoryId] = {
+                    eventHandlers: {
+                        click: (e, id, mapElem) => {
+                            return;
+                        }
+                    },
                     attrs: {
                         'fill-opacity': 0.2,
                         cursor: 'auto'

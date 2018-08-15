@@ -184,11 +184,6 @@ header {
                 }
 
                 form {
-                    label {
-                        @include opensans-regular();
-                        @include rem(font-size, 12px);
-                    }
-
                     .select-container {
                         position: relative;
         
@@ -250,13 +245,22 @@ header {
                 &.step-2 {
                     .t-info {
                         display: inline-block;
+                        vertical-align: middle;
+                    }
+                    label {
+                        display: block;
+                        @include opensans-bold();
+                        @include rem(font-size, 12px);
                     }
                     .a-territory, .d-territory {
+                        display: inline-block;
                         color: $white;
                         border: 1px solid $white;
                         @include rem(padding, 4px 8px);
                         @include opensans-regular();
-                        @include rem(font-size, 14px);
+                        @include rem(font-size, 13px);
+                        text-align: center;
+                        max-width: 100px;
                     }
                     .a-territory {
                         margin: 0 5px 0 0;
@@ -274,11 +278,21 @@ header {
                         .buttons-container {
                             display: inline-block;
                             margin-left: 10px;
+                            vertical-align: middle;
+
+                            .btn {
+                                display: block;
+                                @include rem(font-size, 14px);
+                                
+                                &:not(:last-child) {
+                                    margin: 0 0 8px 0;
+                                }
+                            }
                         }
                         .select-container {
                             margin-left: 10px;
                             .select-box {
-                                @include rem(padding, 1px 30px 1px 5px);
+                                @include rem(padding, 3px 30px 3px 5px);
                             }
                         }
                     }
