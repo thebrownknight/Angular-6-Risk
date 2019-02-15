@@ -7,7 +7,7 @@ import { MapService } from '../map.service';
 import { DiceService } from '../dice.service';
 
 import { Utils } from '../../../services/utils';
-import { UserDetails } from '../../../helpers/data-models';
+import { UserDetails, Territory } from '../../../helpers/data-models';
 
 // jQuery declaration
 declare var $: any;
@@ -23,6 +23,14 @@ declare var $: any;
 //           useClass: class ExtendMapConfig { }
 //       }
 //   ]
+// have a clear/cancel button after user selects attacking territory
+// make possible defending countries more prominent
+// have an alert or box within header looking like
+// 		Attacker's rolls: 6 2
+// 		Defender's rolls: 6 4
+// 		Attacker lost 2 unit(s)
+// 		Defender lost 0 unit(s)
+// for history - URL structure (start=[beginning number]&end=[end number]&move=[specific move number])
 })
 export class MapComponent implements OnInit, OnDestroy {
     // private mapW = 708.11981;
@@ -517,8 +525,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
                     // Add the attack to the attacks array
                     this._attacksArray.push({
-                        attack: this._tempAttackingTerritory,
-                        defend: this._tempDefendingTerritory,
+                        attack: this.getTerritoryDetails(this._tempAttackingTerritory),
+                        defend: this.getTerritoryDetails(this._tempDefendingTerritory),
                         rollResult: rollResult
                     });
                     // Send the data to the map header to show user
@@ -527,6 +535,7 @@ export class MapComponent implements OnInit, OnDestroy {
                         defendingTerritory: {},
                         attackResults: this._attacksArray
                     };
+                    console.log(this._attacksArray);
 
                     // Clear out the temporary attack and defend territories
                     this._tempAttackingTerritory = '';
@@ -537,6 +546,27 @@ export class MapComponent implements OnInit, OnDestroy {
         }
     }
 
+    /**
+     * Method to create a new Territory object that will be used when passing
+     * back and forth between the map and the map header.
+     */
+    private getTerritoryDetails(id: string): Territory {
+        const td = {} as Territory;
+        td.id = id;
+        td.name = this.mapService.getName(id);
+        td.color = this.getTerritoryColor(id);
+        td.troops = this.getNumTroops(id);
+        td.owner = this.getTerritoryOwner(id);
+
+        return td;
+    }
+
+    /**
+     * Method to save the game state for a specific user (all territories, cards, turn status) and update the user's status.
+     * @param curPlayer
+     * @param gameState
+     * @param newStatus
+     */
     private saveGameState(curPlayer: any, gameState: any, newStatus: string): void {
         this.gameState = gameState.map(playerMeta => {
             if (playerMeta.player._id === curPlayer.player._id) {
@@ -559,15 +589,27 @@ export class MapComponent implements OnInit, OnDestroy {
     }
 
     /**
+     * Helper method to get the owner of a territory.
+     * @param territoryId ID of the territory.
+     */
+    private getTerritoryOwner(territoryId: string): UserDetails {
+        let owner = {} as UserDetails;
+
+        owner = this.gameState.filter((playerMeta) => {
+            return playerMeta.territoryMeta.some(tm => tm.id === territoryId);
+        })[0].player;
+
+        return owner;
+    }
+
+    /**
      * Helper method to grab the current owner's color of the territory.
      * @param territoryId ID of the territory.
      */
     private getTerritoryColor(territoryId: string): string {
-        const territoryOwner = this.gameState.filter((playerMeta, index) => {
-            return playerMeta.territoryMeta.some(tm => tm.id === territoryId);
-        })[0];
+        const territoryOwner = this.getTerritoryOwner(territoryId);
 
-        return this._playerColorMap[territoryOwner.player._id];
+        return this._playerColorMap[territoryOwner._id];
     }
 
     /**

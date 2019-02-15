@@ -3,16 +3,20 @@ const config = require('../../config.json');
 const argv = require('minimist')(process.argv.slice(2));
 
 const dbURI = config["mongodbUri"];
+const dbUser = config["mongodbUser"];
+const dbPass = config["mongodbPass"];
 
+// OUTDATED - 02/15/2019 - we're just using a config file to grab the credentials
+//      We'll need to add support for ENV variables
 // Make sure we have the password for MongoDB before we proceed
-if (!argv.mongou || !argv.mongop) {
-    process.exit(0);
-}
+// if (!argv.mongou || !argv.mongop) {
+//     process.exit(0);
+// }
 
 let gracefulShutdown;
 const options = {
-    user: `${argv.mongou}`,
-    pass: `${argv.mongop}`
+    user: dbUser,
+    pass: dbPass
 };
 
 mongoose.connect(dbURI, options);

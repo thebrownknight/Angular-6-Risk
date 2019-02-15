@@ -68,6 +68,18 @@ export interface InProgressGameDetails extends GameDetails {
 }
 
 /****************************************/
+/** Territory data model               **/
+/****************************************/
+export interface Territory {
+    id: string;
+    name: string;
+    color: string;
+    troops: string;
+    owner: UserDetails;
+}
+
+
+/****************************************/
 // Alert data models.
 /****************************************/
 export class Alert {

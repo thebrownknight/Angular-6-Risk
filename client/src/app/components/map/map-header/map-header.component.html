@@ -65,9 +65,14 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let ar of attackResults">
-                            <td>{{ar.attackingCountry.name}}</td>
-                            <td>{{ar.defendingCountry.name}}</td>
-                            <td>{{ar.rollResult.attackerInfo.victories}}</td>
+                            <td>{{ar.attack.name}}</td>
+                            <td>{{ar.defend.name}}</td>
+                            <td>
+                                <tr>
+                                    <td>Dice Rolls: </td>
+                                </tr>
+                                Wins: {{ar.rollResult.attackerInfo.victories}}, Losses: {{ar.rollResult.attackerInfo.losses}}
+                            </td>
                         </tr>
                     </tbody>
                 </table>
