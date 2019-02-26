@@ -1,4 +1,4 @@
-<div #alertBox *ngFor="let alert of alerts; let i=index" [style.bottom.px]="getAlertPosition(alertBox, i)" [ngClass]="{ 'rs-alert rs-box rs-bar rs-effect-slidetop': true, 'rs-hide': removingAlert, 'rs-alert-success': alert.type === 0, 'rs-alert-warning': alert.type === 3 }">
+<div #alertBox *ngFor="let alert of alerts; let i=index" [style.bottom.px]="getAlertPosition(alertBox, i)" [ngClass]="{ 'rs-alert rs-box rs-bar rs-effect-slidetop': true, 'rs-hide': removingAlert, 'rs-alert-success': alert.type === 0, 'rs-alert-error': alert.type === 1, 'rs-alert-warning': alert.type === 3 }">
     <div class="alert-content" *ngIf="alertContent === 'template'">
         <ng-container *ngTemplateOutlet="alert.message"></ng-container>
     </div>

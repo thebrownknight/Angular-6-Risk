@@ -5,7 +5,7 @@ import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { standardMap } from '../../../assets/scripts/maps';
 import { Utils } from '../../services/utils';
 import { DiceService } from './dice.service';
-import { TurnType } from '../../helpers/data-models';
+import { Player, TurnType, Record } from '../../helpers/data-models';
 
 /* https://stackoverflow.com/questions/42396804/how-to-write-a-service-constructor-that-requires-parameters-in-angular-2 */
 
@@ -16,9 +16,10 @@ export class MapService {
     private activeGameID: any;
     private activeMap: any;
     private assignedTerritories: Array<any> = [];
+    private gamePlayers: Array<Player> = [];
 
     private gameState: Array<any> = [];
-    private gameLog: Array<any> = [];
+    private gameLog: Array<Record> = [];
 
     // Variables for emitting game log activity
     private eventSource = new Subject<any>();
@@ -38,6 +39,7 @@ export class MapService {
      */
     public setGameConfiguration(config: any) {
         this.activeGameID = config.gameID;
+        this.gamePlayers = config.gamePlayers as Array<Player>;
         const map = config.map;
 
         switch (map) {
@@ -119,14 +121,20 @@ export class MapService {
                     troops: 3
                 });
 
+                const gameLogRecord = {} as Record;
+                gameLogRecord.playerDetails = players[this.currentPlayerIndex].player;
+                gameLogRecord.turnType = TurnType.GetTroops;
+                gameLogRecord.data = {
+                    id: randTerritory,
+                    territoryName: this.getName(randTerritory),
+                    troops: 3
+                };
+
+                console.log(gameLogRecord);
+
                 // Add to the game log
-                // Player is getting troops at this point, start with 3 in each
-                // territory
-                this.addToGameLog(
-                    players[this.currentPlayerIndex],
-                    TurnType.GetTroops,
-                    { id: randTerritory, troops: 3 }
-                );
+                // Player is getting troops at this point, start with 3 in each territory
+                this.addToGameLog([gameLogRecord]);
 
                 this.assignedTerritories.push(randTerritory);
 
@@ -222,13 +230,13 @@ export class MapService {
 
     // Method to assign turn order to an array of players
     // We will utilize the Dice class in order to roll dice randomly to determine order
-    public assignTurnOrder(players: Array<any>): any {
+    public assignTurnOrder(players: Array<Player>): Array<Player> {
         const rTurnOrder = {
             players: {}
         };
         // First, grab the array of player IDs to pass to the dice rolling service
         const playerIdsArray = players.map(p => {
-            return p.player._id;
+            return p.playerInformation._id;
         });
 
         // Now we call the dice rolling service to return us back an object
@@ -239,15 +247,15 @@ export class MapService {
 
         // Create a new array of players with the turnOrder property populated
         let nPlayersArr = players.map(rp => {
-            rp['turnOrder'] = newTurnOrder[rp.player._id];
-            this.addToGameLog(rp, TurnType.DiceRoll, { roll: newTurnOrder[rp.player._id]});
+            rp['turnOrder'] = newTurnOrder[rp.playerInformation._id];
+            // this.addToGameLog(rp, TurnType.DiceRoll, { roll: newTurnOrder[rp.playerInformation._id]});
             return rp;
         });
         nPlayersArr = this.utils.sortPlayers(nPlayersArr, 'desc');
 
         nPlayersArr = nPlayersArr.map((p, index) => {
             p['turnOrder'] = index + 1;
-            rTurnOrder.players[p.player._id] = index + 1;
+            rTurnOrder.players[p.playerInformation._id] = index + 1;
             return p;
         });
 
@@ -267,6 +275,12 @@ export class MapService {
     public emitGameState(gameState: any) {
         // Emit the game state to any listeners
         this.gameStateEventSource.next(gameState);
+    }
+
+    // Emit game log information
+    public emitGameLog(records: Array<Record>) {
+        // Emit the data using the subject above - next will pass the data to any subscribers
+        this.eventSource.next(records);
     }
 
 
@@ -305,17 +319,30 @@ export class MapService {
         return inputArray;
     }
 
-    // Add to game log
-    public addToGameLog(playerObj: any, type: TurnType, data: any): void {
-        const record = {
-            player: playerObj,
-            turnType: type,
-            data: data
-        };
-        this.gameLog.push(record);
+    /**
+     * Method to add records to the game log.
+     * @param records Array<Record>
+     * @returns void
+     */
+    public addToGameLog(records: Array<Record>): void {
+        console.log(records);
+        this.gameLog = this.gameLog.concat(records);
 
-        // Emit the data using the subject above - next will pass the data to any
-        // subscribers
-        this.eventSource.next(record);
+        this.emitGameLog(records);
+    }
+
+    // Update game state
+    public updateGameMeta(state: any, log: Array<any>): void {
+        const payload = {
+            gameState: state,
+            gameLogRecords: log
+        };
+
+        // Save the game state in the db
+        this.utils.sendRequest('post', `/api/games/${this.activeGameID}/setgamemeta`, payload, true).subscribe(data => {
+            console.log(data);
+        }, err => {
+            console.error(err);
+        });
     }
 }

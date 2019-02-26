@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Player } from '../helpers/data-models';
 
 type SortDirection = 'asc' | 'desc';
 
@@ -152,7 +153,7 @@ export class Utils {
     /**
      * Method to help sort the players by turnOrder.
      */
-    public sortPlayers(playersObj: Array<any>, dir: SortDirection): Array<any> {
+    public sortPlayers(playersObj: Array<Player>, dir: SortDirection): Array<Player> {
         switch (dir) {
             case 'asc':
                 return playersObj.sort((a, b) => {
@@ -168,6 +169,40 @@ export class Utils {
 
                     return 0;
                 });
+        }
+    }
+
+    /**
+     * Method to get the intersection of two arrays of objects.
+     * @param arr1 The first array of objects
+     * @param arr2 The second array of objects
+     * @param property The property on the object to check for intersection
+     * @param merge Boolean to determine whether or not the values from arr2 should overwrite the ones from arr1.
+     */
+    public getArrayIntersection(arr1, arr2, property, merge = false) {
+        const checkIntersection = () => {
+            const tempArr1 = [...arr1];
+            return tempArr1.filter(elem => {
+                return arr2.some(elem2 => {
+                    return elem2[property] === elem[property];
+                });
+            }).length > 0;
+        };
+
+        if (merge) {
+            console.log(checkIntersection());
+            if (checkIntersection()) {
+                return Object.entries(Object.assign({}, ...arr1, ...arr2))
+                    .map(([key, value]) => (
+                        { [key]: value }
+                    ));
+            }
+        } else {
+            return arr1.filter(elem => {
+                return arr2.some(elem2 => {
+                    return elem2[property] === elem[property];
+                });
+            });
         }
     }
 }

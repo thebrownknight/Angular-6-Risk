@@ -6,6 +6,9 @@
 @import './assets/css/global/reboot';
 @import './assets/css/global/base';
 
+@import "../node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import "../node_modules/@fortawesome/fontawesome-free/scss/solid.scss";
+
 @import './assets/css/components/buttons';
 @import './assets/css/components/modals';
 @import './assets/css/components/tabs';

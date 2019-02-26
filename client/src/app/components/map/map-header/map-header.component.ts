@@ -7,7 +7,7 @@ import { AuthenticationService } from '../../../services/authentication.service'
 import { MapService } from '../map.service';
 import { Utils } from '../../../services/utils';
 
-import { UserDetails } from '../../../helpers/data-models';
+import { UserDetails, Player } from '../../../helpers/data-models';
 
 @Component({
     selector: 'risk-map-header',
@@ -34,11 +34,11 @@ export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
     private loggedInUser: UserDetails;
 
     @Input()
-    set players(players: Array<any>) {
+    set players(players: Array<Player>) {
         this._players.next(players);
     }
 
-    get players(): Array<any> { return this._players.getValue(); }
+    get players(): Array<Player> { return this._players.getValue(); }
 
     @Input() turnMapData: any; // Get the information from the map when a user interacts with it for their turn steps
 
@@ -208,6 +208,8 @@ export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
             }
 
             if (changes.turnMapData.currentValue.attackResults && changes.turnMapData.currentValue.attackResults.length > 0) {
+                // An attack has been completed, we can show the Finish button
+                this.attackCompleted = true;
                 this.attackResults = changes.turnMapData.currentValue.attackResults;
             }
         }

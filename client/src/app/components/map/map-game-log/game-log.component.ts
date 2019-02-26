@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 
 import { MapService } from '../map.service';
-import { TurnType } from '../../../helpers/data-models';
+import { TurnType, Record } from '../../../helpers/data-models';
 
 // When we include a service in 'providers', it is instantiated and this state is
 // maintained between its component as well as its child components
@@ -31,17 +31,16 @@ import { TurnType } from '../../../helpers/data-models';
     ]
 })
 export class GameLogComponent implements OnInit {
-    gameLog: Array<any> = [];
+    gameLog: Array<Record> = [];
     logState = 'closed';
 
     constructor(private mapService: MapService) { }
 
     ngOnInit() {
         // Subscribe to game log events
-        this.mapService.gameLogUpdates$.subscribe((record) => {
-            // console.log(record);
-            record.data['territoryName'] = this.mapService.getName(record.data.id);
-            this.gameLog.push(record);
+        this.mapService.gameLogUpdates$.subscribe((records) => {
+            console.log(records);
+            this.gameLog = this.gameLog.concat(records);
         });
     }
 
@@ -49,13 +48,11 @@ export class GameLogComponent implements OnInit {
         this.logState = this.logState === 'opened' ? 'closed' : 'opened';
     }
 
-    private formatMessage(record: any): string {
-        let message = '<span class="player">' + record.player.username + '</span> ';
-
+    private setRecordData(record: any): any {
         switch (record.turnType) {
             case TurnType.GetTroops:
-                const territoryName = this.mapService.getName(record.data.id);
-                message += `received ${record.data.troops} troops for ${territoryName}`;
+                break;
+            case TurnType.Deploy:
                 break;
             case TurnType.Attack:
                 break;
@@ -65,6 +62,6 @@ export class GameLogComponent implements OnInit {
                 break;
         }
 
-        return message;
+        return record;
     }
 }

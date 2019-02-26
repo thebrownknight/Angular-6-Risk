@@ -286,11 +286,25 @@ module.exports.setGameMeta = function(req, res) {
                     // Now check to see if the gameMeta is null or not
                     if (game.gameMeta) {
                         // Get the gameMeta object from the table so we can update it
-                        GameMeta.findByIdAndUpdate(game.gameMeta, {
+                        GameMeta.findOneAndUpdate(
+                            { _id: game.gameMeta, }, 
+                            {
+                                $set: {
+                                    'state': gameState,
+                                },
+                                $push: { log: gameLogRecords } 
+                            },
+                            { new: true },
+                            (gmerr, gamemeta) => {
+                                if (gmerr) {
+                                    res.status(404).json(gmerr);
+                                    return;
+                                }
 
-                        }, (gmerr, gamemeta) => {
-
-                        });
+                                if (gamemeta) {
+                                    res.status(200).json(gamemeta);
+                                }
+                            });
                     } else {
                         // The gameMeta record in the gamemeta table doesn't exist, we have to create a new one and save it
                         let gameMetaObj = new GameMeta();

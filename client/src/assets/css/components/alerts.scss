@@ -76,6 +76,14 @@
             @include animation-name(animFade);
             @include flex(1);
         }
+
+        /** Dice rolls specific CSS **/
+        .dice-rolls {
+            .dice-rolls-label {
+                width: 128px;
+                display: inline-block;
+            }
+        }
     }
 
     &.rs-hide {
@@ -136,6 +144,34 @@
             > i {
                 @include transition(color 0.2s);
                 color: $vermillion;
+                @include rem(font-size, 20px);
+            }
+        }
+    }
+    &.rs-alert-error {
+        background: $vermillion;
+
+        .icon-container {
+
+            .icon {
+                color: $white;
+            }
+        }
+
+        p {
+            color: $white;
+        }
+
+        .rs-close {
+            &:hover, &:focus {
+                > i {
+                    color: darken($white, 10%);
+                }
+            }
+    
+            > i {
+                @include transition(color 0.2s);
+                color: $white;
                 @include rem(font-size, 20px);
             }
         }

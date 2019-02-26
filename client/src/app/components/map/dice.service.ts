@@ -32,6 +32,11 @@ export class DiceService {
             rollArray.push(Math.ceil(Math.random() * this.numberOfSides));
         }
 
+        // Sort the rolls from greatest to least
+        rollArray.sort((a, b) => {
+            return b - a;
+        });
+
         return rollArray;
     }
 

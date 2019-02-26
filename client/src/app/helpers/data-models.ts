@@ -10,6 +10,16 @@ export interface UserDetails {
 }
 
 /**
+ * Model for a player.
+ */
+export interface Player extends UserDetails {
+    status: string;
+    color: string;
+    icon: string;
+    turnOrder: number;
+}
+
+/**
  * Model for token payload to send with login and register requests.
  */
 export interface TokenPayload {
@@ -65,6 +75,15 @@ export interface InProgressGameDetails extends GameDetails {
     currentLeader: any;
     duration: string;
     playerMeta: Array<any>;
+}
+
+/****************************************/
+/** Game log record data model         **/
+/****************************************/
+export interface Record {
+    playerDetails: any;
+    turnType: TurnType;
+    data: any;
 }
 
 /****************************************/
@@ -135,6 +154,7 @@ export interface SocketMessage {
 /****************************************/
 export enum TurnType {
     GetTroops,
+    Deploy,
     Attack,
     Fortify,
     DiceRoll
