@@ -4,7 +4,7 @@
             <h3>Current Turn:</h3>
             <div class="player-icon">
                 <i class="fas fa-{{currentTurnPlayer.icon}}" [ngStyle]="{'color': currentTurnPlayer.color}"></i>
-                <span>{{currentTurnPlayer.player.username}}</span>
+                <span>{{currentTurnPlayer.playerInformation.username}}</span>
             </div>
         </div>
         <div class="turn-steps" *ngIf="isCurrentPlayer">
@@ -108,11 +108,11 @@
                 </div>
             </div>
         </div>
-        <div *ngIf="fullLoggedInUserDetails" class="profile-manager">
+        <div *ngIf="currentTurnPlayer" class="profile-manager">
             <div class="user-icon" (click)="toggleProfileManager()">
-                <i class="fas fa-{{fullLoggedInUserDetails.icon}}" [ngStyle]="{'color': fullLoggedInUserDetails.color}"></i>
-                <span *ngIf="fullLoggedInUserDetails.player">{{fullLoggedInUserDetails.player.username}}</span>
-                <i [ngClass]="{'fas': true, 'fa-caret-down': profileManagerState === 'closed', 'fa-caret-up': profileManagerState === 'opened'}" [ngStyle]="{'color': fullLoggedInUserDetails.color}"></i>
+                <i class="fas fa-{{currentTurnPlayer.icon}}" [ngStyle]="{'color': currentTurnPlayer.color}"></i>
+                <span *ngIf="currentTurnPlayer.playerInformation">{{currentTurnPlayer.playerInformation.username}}</span>
+                <i [ngClass]="{'fas': true, 'fa-caret-down': profileManagerState === 'closed', 'fa-caret-up': profileManagerState === 'opened'}" [ngStyle]="{'color': currentTurnPlayer.color}"></i>
             </div>
             <div class="manager-dropdown" [@toggleProfileManager]="profileManagerState">
                 <a href="/dashboard">Dashboard</a>

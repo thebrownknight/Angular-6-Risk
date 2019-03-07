@@ -30,7 +30,7 @@ import { UserDetails, Player } from '../../../helpers/data-models';
     ]
 })
 export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
-    private _players = new BehaviorSubject<any[]>([]);
+    private _players = new BehaviorSubject<Player[]>([]);
     private loggedInUser: UserDetails;
 
     @Input()
@@ -47,7 +47,7 @@ export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
 
     profileManagerState = 'closed';
     fullLoggedInUserDetails: any = {};
-    currentTurnPlayer: any;
+    currentTurnPlayer: Player;
     isCurrentPlayer: Boolean;
 
     /* Player turn steps forms */
@@ -90,36 +90,30 @@ export class MapHeaderComponent implements OnInit, OnChanges, OnDestroy {
         this._players.subscribe(pl => {
 
             if (pl.length > 0) {
-                this.fullLoggedInUserDetails = pl.filter((elem) => {
-                    return elem.player._id === this.loggedInUser._id;
-                })[0];
+                // this.fullLoggedInUserDetails = pl.filter((elem) => {
+                //     return elem.player._id === this.loggedInUser._id;
+                // })[0];
 
                 this.mapService.gameStateUpdates$.subscribe((gameState) => {
                     // console.log(gameState);
 
                     // We have the current game state now, update the current player
-                    this.currentTurnPlayer = gameState.filter(elem => {
-                        let modElem = {};
-                        if (elem.status === 'CURRENTTURN' || elem.status === 'GETTROOPS'
-                            || elem.status === 'ATTACK' || elem.status === 'FORTIFY') {
-
-                            modElem = pl.filter(el => {
-                                return el.player._id === elem.player._id;
-                            })[0];
-
-                            // Set the icon and color for the current turn player since we don't have this information in the gameState
-                            // ...(nor should we)
-                            elem['icon'] = modElem['icon'];
-                            elem['color'] = modElem['color'];
-
-                            return elem;
-                        }
+                    const ctpGameState = gameState.filter(elem => {
+                        return (elem.status === 'CURRENTTURN' || elem.status === 'GETTROOPS'
+                            || elem.status === 'ATTACK' || elem.status === 'FORTIFY');
                     })[0];
+
+                    this.currentTurnPlayer = pl.map(player => {
+                        if (player.playerInformation._id === ctpGameState.player) {
+                            player.status = ctpGameState.status;
+                        }
+                        return player;
+                    }).filter(p => p.playerInformation._id === ctpGameState.player)[0];
 
                     // console.log(this.currentTurnPlayer);
 
                     // Check to see if the logged in player is the current player
-                    this.isCurrentPlayer = this.currentTurnPlayer.player._id === this.loggedInUser._id;
+                    this.isCurrentPlayer = this.currentTurnPlayer.playerInformation._id === this.loggedInUser._id;
 
                     if (this.isCurrentPlayer) {
                         // Set the current step to be one of the 3 steps of a turn

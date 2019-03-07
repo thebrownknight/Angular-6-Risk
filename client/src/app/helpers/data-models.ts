@@ -12,11 +12,12 @@ export interface UserDetails {
 /**
  * Model for a player.
  */
-export interface Player extends UserDetails {
+export interface Player {
     status: string;
     color: string;
     icon: string;
     turnOrder: number;
+    playerInformation: UserDetails;
 }
 
 /**
@@ -81,7 +82,7 @@ export interface InProgressGameDetails extends GameDetails {
 /** Game log record data model         **/
 /****************************************/
 export interface Record {
-    playerDetails: any;
+    playerDetails: Player;
     turnType: TurnType;
     data: any;
 }
@@ -94,9 +95,16 @@ export interface Territory {
     name: string;
     color: string;
     troops: string;
-    owner: UserDetails;
+    owner?: UserDetails;
 }
 
+/****************************************/
+/** Card data model               **/
+/****************************************/
+export interface Card {
+    name: string;
+    type: string;
+}
 
 /****************************************/
 // Alert data models.

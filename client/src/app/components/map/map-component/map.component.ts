@@ -42,13 +42,13 @@ export class MapComponent implements OnInit, OnDestroy {
     private tempNearbyTerritories: Array<string> = [];
     private loggedInUser: UserDetails;
     private _mapMode: string;
-    private _currentPlayer: any;
+    private _currentPlayer: Player;
 
     private _playerColorMap: any = {};
     private _playerUsernameMap: any = {};
 
     $mapArea: any;  // Reference to the jQuery Mapael object
-    gamePlayers: Array<any> = [];   // Array of the players in the game
+    gamePlayers: Array<Player> = [];   // Array of the players in the game
     gameState: any;
 
     mapDataForPlayersTurn: any = { };    // The information gathered from interacting with the map on a player's turn
@@ -83,22 +83,25 @@ export class MapComponent implements OnInit, OnDestroy {
             })
         ).subscribe((game) => {
             if (game) {
+                // Grab the players and create a coherent array of objects of all player
+                // information
+                const nPlayersArr = [] as Array<Player>;
+                game.players.forEach(playerDetails => {
+                    const playerObj = {} as Player;
+                    playerObj.playerInformation = {} as UserDetails;
+
+                    playerObj.status = playerDetails.status;
+                    playerObj.color = playerDetails.color;
+                    playerObj.icon = playerDetails.icon;
+                    playerObj.turnOrder = playerDetails.turnOrder;
+                    playerObj.playerInformation = playerDetails.player;
+
+                    nPlayersArr.push(playerObj);
+                });
+
                 // Assign turn order for the players
                 // Only do this if the turnOrder is not set yet
-                const nPlayersArr = [] as Array<Player>;
                 if (game.players[0].turnOrder === -1) {
-                    game.players.forEach(playerDetails => {
-                        const playerObj = {} as Player;
-                        playerObj.playerInformation = {} as UserDetails;
-
-                        playerObj.status = playerDetails.status;
-                        playerObj.color = playerDetails.color;
-                        playerObj.icon = playerDetails.icon;
-                        playerObj.turnOrder = playerDetails.turnOrder;
-                        playerObj.playerInformation = playerDetails.player;
-
-                        nPlayersArr.push(playerObj);
-                    });
                     this.gamePlayers = this.mapService.assignTurnOrder(nPlayersArr);
                 } else {
                     this.gamePlayers = this.utils.sortPlayers(nPlayersArr, 'asc');
@@ -114,8 +117,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
                 // Set the player usernames and colors in easily referenced maps
                 this.gamePlayers.forEach(player => {
-                    this._playerColorMap[player.player._id] = player.color;
-                    this._playerUsernameMap[player.player._id] = player.player.username;
+                    this._playerColorMap[player.playerInformation._id] = player.color;
+                    this._playerUsernameMap[player.playerInformation._id] = player.playerInformation.username;
                 });
 
                 if (game.gameMeta) {
@@ -123,16 +126,17 @@ export class MapComponent implements OnInit, OnDestroy {
                     this.mapService.emitGameState(this.gameState);
 
                     // Reformat the game log to display it
-                    let formattedLog = game.gameMeta.log as Array<Record>;
-                    formattedLog = formattedLog.map((record: Record) => {
+                    let formattedLog = Array<Record>();
+                    formattedLog = game.gameMeta.log.map((record) => {
                         const newRecord = {} as Record;
-                        newRecord.turnType = record.turnType;
-                        newRecord.playerDetails = this.gamePlayers.filter(x => x.player._id === record.playerDetails);
+                        newRecord.turnType = parseInt(record.turnType, 10);
+                        newRecord.playerDetails = this.gamePlayers.filter(
+                            x => x.playerInformation._id === record.player)[0];
                         newRecord.data = record.data;
 
                         return newRecord;
                     });
-                    console.log(formattedLog);
+                    // console.log(formattedLog);
                     this.mapService.emitGameLog(formattedLog);
                     this.setupMap(false);
                 } else {
@@ -211,8 +215,8 @@ export class MapComponent implements OnInit, OnDestroy {
                             legendSpecificAttrs: {
                                 fill: player.color
                             },
-                            sliceValue: player.player.username,
-                            label: player.player.username,
+                            sliceValue: player.playerInformation.username,
+                            label: player.playerInformation.username,
                             // clicked: isLoggedIn
                         });
                     });
@@ -222,7 +226,7 @@ export class MapComponent implements OnInit, OnDestroy {
                     this.gameState.forEach(playerMeta => {
                         // console.log(playerMeta);
                         playerMeta.territoryMeta.forEach(territory => {
-                            const playerId = playerMeta.player._id;
+                            const playerId = playerMeta.player;
                             const territoryName = this.mapService.getName(territory.id);
                             const playerUsername = this._playerUsernameMap[playerId];
 
@@ -506,7 +510,22 @@ export class MapComponent implements OnInit, OnDestroy {
                     this._mapMode = 'ATTACK';
 
                     // Update the game state with the updated troop counts
-                    this.saveGameState(this._currentPlayer, this.gameState, this._mapMode);
+                    // this.saveGameState(this._currentPlayer, this.gameState, this._mapMode);
+
+                    // Update the territories
+                    const updatedTerritories = this._placementTerritories.map(territory => {
+                        return {
+                            id: territory.id,
+                            troops: territory.totalTroops
+                        };
+                    });
+                    this.updateGameState(this.gameState, GameStateUpdateType.Territories, updatedTerritories);
+
+                    // Update the status of the player
+                    this.updateGameState(this.gameState, GameStateUpdateType.PlayerStatus, this._mapMode);
+
+                    console.log(this.gameState);
+
                     this.mapService.emitGameState(this.gameState);
 
                     // Loop through the placement territories, add these to
@@ -534,7 +553,9 @@ export class MapComponent implements OnInit, OnDestroy {
                     // Update game state and log in the db
                     this.mapService.updateGameMeta(this.gameState, deploymentRecords);
 
-                    // CLEANUP
+                    /************
+                     * CLEANUP
+                     ***********/
                     // Reset territory colors
                     this._placementTerritories.forEach(pt => {
                         this.setTerritoryColor(pt.id, pt.originalColor);
@@ -571,7 +592,7 @@ export class MapComponent implements OnInit, OnDestroy {
                     this._mapMode = 'FORTIFY';
 
                     // Update the game state with new player status
-                    this.saveGameState(this._currentPlayer, this.gameState, this._mapMode);
+                    // this.saveGameState(this._currentPlayer, this.gameState, this._mapMode);
                     this.mapService.emitGameState(this.gameState);
                     break;
                 case 'attack':
@@ -661,8 +682,8 @@ export class MapComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Method to update the game state without saving it. Useful to keep game state locally until it's ready to be saved
-     * in the DB.
+     * Method to update the game state without saving it. Useful to keep game state locally
+     * until it's ready to be saved in the DB. Also useful
      *
      * @param gameState The global game state - separated this to allow function to be testable
      * @param type The type of update to make (cards, territories, status)
@@ -675,7 +696,7 @@ export class MapComponent implements OnInit, OnDestroy {
              */
             case GameStateUpdateType.Cards:
                 gameState = gameState.map(playerMeta => {
-                    if (playerMeta.player._id === this._currentPlayer.player._id) {
+                    if (playerMeta.player === this._currentPlayer.playerInformation._id) {
                         playerMeta.cards = data;
                     }
                     return playerMeta;
@@ -702,7 +723,7 @@ export class MapComponent implements OnInit, OnDestroy {
              */
             case GameStateUpdateType.PlayerStatus:
                 gameState = gameState.map(playerMeta => {
-                    if (playerMeta.player._id === this._currentPlayer.player._id) {
+                    if (playerMeta.player === this._currentPlayer.playerInformation._id) {
                         playerMeta.status = data;
                     }
                     return playerMeta;
@@ -719,26 +740,28 @@ export class MapComponent implements OnInit, OnDestroy {
      * @param gameState
      * @param newStatus
      */
-    private saveGameState(curPlayer: any, gameState: any, newStatus: string): void {
-        this.gameState = gameState.map(playerMeta => {
-            if (playerMeta.player._id === curPlayer.player._id) {
-                playerMeta.status = newStatus;
-                playerMeta.territoryMeta = playerMeta.territoryMeta.map(tm => {
-                    // If the territory is one of the territories the player has added,
-                    // update the troops count in the territoryMeta array
-                    if (this._placementTerritories.some(e => e.id === tm.id)) {
-                        const tPos = this._placementTerritories.map(pt => pt.id).indexOf(tm.id);
-                        tm.troops = this._placementTerritories[tPos].totalTroops;
-                    }
+    // private saveGameState(curPlayer: Player, gameState: any, newStatus: string): void {
+    //     this.gameState = gameState.map(playerMeta => {
+    //         // Only update the user making the changes (obviously)
+    //         // Update the user's status
+    //         if (playerMeta.player === curPlayer.playerInformation._id) {
+    //             playerMeta.status = newStatus;
+    //             playerMeta.territoryMeta = playerMeta.territoryMeta.map(tm => {
+    //                 // If the territory is one of the territories the player has added,
+    //                 // update the troops count in the territoryMeta array
+    //                 if (this._placementTerritories.some(e => e.id === tm.id)) {
+    //                     const tPos = this._placementTerritories.map(pt => pt.id).indexOf(tm.id);
+    //                     tm.troops = this._placementTerritories[tPos].totalTroops;
+    //                 }
 
-                    return tm;
-                });
-            }
-            return playerMeta;
-        });
+    //                 return tm;
+    //             });
+    //         }
+    //         return playerMeta;
+    //     });
 
-        console.log(this.gameState);
-    }
+    //     console.log(this.gameState);
+    // }
 
     /**
      * Helper method to get the owner of a territory.
@@ -794,14 +817,14 @@ export class MapComponent implements OnInit, OnDestroy {
      * Helper method to enable/disable a player's territories.
      * Used when the player shouldn't perform
      */
-    private togglePlayerTerritories(curPlayer: any, toggleState: string): void {
+    private togglePlayerTerritories(curPlayer: Player, toggleState: string): void {
         const newData = {
             areas: {}
         };
 
         // Grab the player's territories
         const playerTerritories = this.gameState.filter(playerMeta => {
-            return playerMeta.player._id === curPlayer.player._id;
+            return playerMeta.player === curPlayer.playerInformation._id;
         }).map(pm => pm.territoryMeta)[0];
 
         // console.log(curPlayer);
@@ -863,7 +886,7 @@ export class MapComponent implements OnInit, OnDestroy {
      * or when fortifying.
      * @param curPlayer The player whose turn it is currently.
      */
-    private disableOtherTerritories(curPlayer: any): void {
+    private disableOtherTerritories(curPlayer: Player): void {
         // Map update variables
         const newData = {
             areas: {}
@@ -871,7 +894,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
         // Grab the territories of the other players
         const otherTerritoriesTemp = this.gameState.filter(playerMeta => {
-            return playerMeta.player._id !== curPlayer.player._id;
+            return playerMeta.player !== curPlayer.playerInformation._id;
         }).map(pm => {
             return pm.territoryMeta;
         });
@@ -920,7 +943,7 @@ export class MapComponent implements OnInit, OnDestroy {
         };
 
         const otherTerritoriesTemp = this.gameState
-            .filter(playerMeta => playerMeta.player._id !== curPlayer.player._id)
+            .filter(playerMeta => playerMeta.player !== curPlayer.player._id)
             .map(pm => pm.territoryMeta);
 
         otherTerritoriesTemp.forEach(elem => {
@@ -985,8 +1008,13 @@ export class MapComponent implements OnInit, OnDestroy {
         }
     }
 
-    private calculatePlayerTroops(curPlayer: any) {
-        return Math.floor(curPlayer.territoryMeta.length / 3);
+    private calculatePlayerTroops(curPlayer: Player) {
+        // We have to use the game state to grab the territories for the player
+        const playerTerritories = this.gameState.filter(playerMeta => {
+            return playerMeta.player === curPlayer.playerInformation._id;
+        })[0].territoryMeta;
+
+        return Math.floor(playerTerritories.length / 3);
     }
 
     private generateTooltip(territoryName: string, occupant: string) {

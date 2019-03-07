@@ -8,24 +8,24 @@
             <!-- Get troops at beginning of game -->
             <p *ngIf="record.turnType === 0">
                 <i class="fas fa-child"></i>
-                <span class="player-tag" [ngStyle]="{'background-color': record.player.color}">{{record.playerDetails.player.username}}</span> received
+                <span class="player-tag" [ngStyle]="{'background-color': record.playerDetails.color}">{{record.playerDetails.playerInformation.username}}</span> received
                 <span class="outcome">{{record.data.troops}} troops for {{record.data.territoryName}}</span>
             </p>
 
             <!-- Deploy troops at beginning of every turn -->
             <p *ngIf="record.turnType === 1">
                 <i class="fas fa-chess-knight"></i>
-                <span class="player-tag" [ngStyle]="{'background-color': record.player.color}">{{record.playerDetails.player.username}}</span> deploys
+                <span class="player-tag" [ngStyle]="{'background-color': record.playerDetails.color}">{{record.playerDetails.playerInformation.username}}</span> deploys
                 <span class="outcome">{{record.data.troopsAdded}} troops to {{record.data.territoryName}}</span>
             </p>
             <!-- <p *ngIf="record.turnType === 2">
                 <i class="fas fa-chess-knight"></i>
-                <span class="player-tag" [ngStyle]="{'background-color': record.player.color}">{{record.playerDetails.player.username}}</span> attacks
+                <span class="player-tag" [ngStyle]="{'background-color': record.player.color}">{{record.playerDetails.playerInformation.username}}</span> attacks
                 <span class="player-tag" [ngStyle]="{'background-color': record.defender.color}">{{record.defender.username}}</span> 
             </p> -->
             <p *ngIf="record.turnType === 4">
                 <i class="fas fa-dice"></i>
-                <span class="player-tag" [ngStyle]="{'background-color': record.player.color}">{{record.playerDetails.player.username}}</span> rolled
+                <span class="player-tag" [ngStyle]="{'background-color': record.playerDetails.color}">{{record.playerDetails.playerInformation.username}}</span> rolled
                 <span class="outcome">{{record.data.roll}}</span>
             </p>
         </div>

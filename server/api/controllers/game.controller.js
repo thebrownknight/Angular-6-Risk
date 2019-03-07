@@ -73,10 +73,10 @@ module.exports.getGameByCode = function(req, res) {
             .populate('creator')
             .populate('players.player')
             .populate({
-                path: 'gameMeta',
-                populate: {
-                    path: 'state.player'
-                }
+                path: 'gameMeta'
+                // populate: {
+                //     path: 'state.player'
+                // }
             })
             .exec((err, game) => {
                 if (err) {
@@ -310,7 +310,13 @@ module.exports.setGameMeta = function(req, res) {
                         let gameMetaObj = new GameMeta();
 
                         gameMetaObj.state = gameState;
-                        gameMetaObj.log = gameLogRecords;
+                        gameMetaObj.log = gameLogRecords.map(record => {
+                            return {
+                                player: record.playerDetails.playerInformation._id,
+                                turnType: record.turnType,
+                                data: record.data
+                            };
+                        });
 
                         gameMetaObj.save((gmobjerr, gmobj) => {
                             if (gmobjerr) {

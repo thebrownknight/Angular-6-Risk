@@ -27,6 +27,7 @@ header {
             @include transition(all 0.3s);
             position: relative;
             @include flex-grow(0.3);
+            @include flex-shrink(0);
 
             .user-icon {
                 > span {

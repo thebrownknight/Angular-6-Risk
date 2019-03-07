@@ -76,7 +76,7 @@ export class MapService {
      * Returns an object with the game meta information, current state of board
      * and all assignments added to the log.
      */
-    public assignTerritories(players: Array<any>): any {
+    public assignTerritories(players: Array<Player>): any {
         // We'll be pushing our information into here and then sending them
         // to the backend route to handle adding to db
         // const gameState = [];
@@ -85,7 +85,7 @@ export class MapService {
         // these objects themselves won't be changing, just the territoryMeta inside
         players.forEach((player, index) => {
             const playerStateObj = {
-                player: player.player._id, // for player reference
+                player: player.playerInformation._id, // for player reference
                 status: (index === 0) ? 'CURRENTTURN' : 'WAITING',  // initial player status
                 // turnOrder: (index + 1), // player's turn order
                 territoryMeta: [],  // list of territories the player controls
@@ -122,7 +122,7 @@ export class MapService {
                 });
 
                 const gameLogRecord = {} as Record;
-                gameLogRecord.playerDetails = players[this.currentPlayerIndex].player;
+                gameLogRecord.playerDetails = players[this.currentPlayerIndex];
                 gameLogRecord.turnType = TurnType.GetTroops;
                 gameLogRecord.data = {
                     id: randTerritory,
@@ -130,7 +130,7 @@ export class MapService {
                     troops: 3
                 };
 
-                console.log(gameLogRecord);
+                // console.log(gameLogRecord);
 
                 // Add to the game log
                 // Player is getting troops at this point, start with 3 in each territory
@@ -148,6 +148,8 @@ export class MapService {
             });
 
         });
+
+        console.log(this.gameState);
 
         const payload = {
             gameState: this.gameState,
@@ -268,6 +270,8 @@ export class MapService {
             console.error(error);
         });
 
+        console.log(nPlayersArr);
+
         return nPlayersArr;
     }
 
@@ -325,7 +329,7 @@ export class MapService {
      * @returns void
      */
     public addToGameLog(records: Array<Record>): void {
-        console.log(records);
+        // console.log(records);
         this.gameLog = this.gameLog.concat(records);
 
         this.emitGameLog(records);

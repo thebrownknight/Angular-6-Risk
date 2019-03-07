@@ -54,6 +54,7 @@ let gameMetaSchema = new mongoose.Schema({
         }]
     }],
     log: [{
+        _id: false,
         player: {
             type: mongoose.Schema.ObjectId,
             ref: 'User'
