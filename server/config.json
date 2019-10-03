@@ -2,7 +2,7 @@
     "port": 3000,
     "socketPort": 8988,
     "mongodbUri": "mongodb://206.189.183.156:27017/riskdb",
-    "mongodbUser": "risk_admin",
-    "mongodbPass": "ledzep1288",
-    "secretKey": "*G0biB3ar"
+    "mongodbUser": "[my_mongo_user]",
+    "mongodbPass": "[my_mongo_pwd]",
+    "secretKey": "[my_secret_key]"
 }
