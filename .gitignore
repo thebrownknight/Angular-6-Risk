@@ -8,7 +8,6 @@
 # dependencies
 /client/node_modules
 /server/node_modules
-/server/config.json
 
 # IDEs and editors
 /.idea
@@ -39,3 +38,6 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Server configuration
+/server/config.json
