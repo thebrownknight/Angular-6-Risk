@@ -16,7 +16,10 @@ const dbPass = config["mongodbPass"];
 let gracefulShutdown;
 const options = {
     user: dbUser,
-    pass: dbPass
+    pass: dbPass,
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true
 };
 
 mongoose.connect(dbURI, options);

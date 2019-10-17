@@ -24,5 +24,8 @@
         "rootpath": "^0.1.2",
         "socket.io": "^2.1.1"
     },
-    "license": "MIT"
+    "license": "MIT",
+    "devDependencies": {
+        "nodemon": "^1.19.4"
+    }
 }
