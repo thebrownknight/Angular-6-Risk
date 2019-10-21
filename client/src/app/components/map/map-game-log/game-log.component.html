@@ -13,7 +13,7 @@
             </p>
 
             <!-- Deploy troops at beginning of every turn -->
-            <p *ngIf="record.turnType === 1">
+            <p *ngIf="record.turnType === 1 && record.playerDetails">
                 <i class="fas fa-chess-knight"></i>
                 <span class="player-tag" [ngStyle]="{'background-color': record.playerDetails.color}">{{record.playerDetails.playerInformation.username}}</span> deploys
                 <span class="outcome">{{record.data.troopsAdded}} troops to {{record.data.territoryName}}</span>

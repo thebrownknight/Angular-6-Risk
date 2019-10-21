@@ -827,8 +827,6 @@ export class MapComponent implements OnInit, OnDestroy {
             return playerMeta.player === curPlayer.playerInformation._id;
         }).map(pm => pm.territoryMeta)[0];
 
-        // console.log(curPlayer);
-
         if (toggleState === 'enable') {
             playerTerritories.forEach(territory => {
                 newData.areas[territory.id] = {
@@ -935,7 +933,7 @@ export class MapComponent implements OnInit, OnDestroy {
      * @param curPlayer Player whose turn it currently is.
      * @param territoryId The territory ID as a string.
      */
-    private highlightNearbyTerritories(curPlayer: any, territoryId: string): void {
+    private highlightNearbyTerritories(curPlayer: Player, territoryId: string): void {
         // Get the territoryMeta objects of the other players in the game so we can highlight those
         let otherTerritories = [];
         const updatedOptions = {
@@ -943,7 +941,7 @@ export class MapComponent implements OnInit, OnDestroy {
         };
 
         const otherTerritoriesTemp = this.gameState
-            .filter(playerMeta => playerMeta.player !== curPlayer.player._id)
+            .filter(playerMeta => playerMeta.player !== curPlayer.playerInformation._id)
             .map(pm => pm.territoryMeta);
 
         otherTerritoriesTemp.forEach(elem => {
