@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // <-- NgModel lives here
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { routing } from './app.routing';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
@@ -32,10 +33,9 @@ import { SocketConfig, SocketModule } from './services/sockets/index';
 
 
 
-
 // Sockets configuration
 const config: SocketConfig = {
-    url: 'http://localhost:3000',
+    url: environment.apiUrl,
     options: {},
     connectOnAppLoad: false
 };

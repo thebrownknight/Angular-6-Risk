@@ -65,6 +65,7 @@ header {
 
             .manager-dropdown {
                 display: none;
+                min-width: 120px;
                 position: absolute;
                 left: 30%;
                 background-color: $powder;
