@@ -4,42 +4,42 @@
  * Module dependencies
  */
 
-var app = require('../app');
-var http = require('http');
-const io = require('socket.io')();
+const app = require('../app');
+const httpServer = require('http').createServer(app);
+const io = require('socket.io')(httpServer);
 var config = require('../config.json');
 const jwt = require('jsonwebtoken');
 
 /**
  * Get port from environment and store in Express
  */
-var port = normalizePort(process.env.PORT || config.port);
-let socketPort = normalizePort(process.env.SOCKETPORT || config.socketPort);
+const port = normalizePort(process.env.PORT || config.port);
+//let socketPort = normalizePort(process.env.SOCKETPORT || config.socketPort);
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
-var server = http.createServer(app);
-
-/**
- * Listen on provided port, on all network interfaces.
- */
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+// var server = http.createServer(app);
 
 /**
  * Setup socket.io connection and add methods for handling
  * different events.
  */
-let socketServer = http.createServer(app);
-io.attach(socketServer);
+//let socketServer = http.createServer(app);
+// io.attach(server);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+httpServer.listen(port);
+httpServer.on('error', onError);
+httpServer.on('listening', onListening);
 
 // Initialize our websocket server on port socketPort
-socketServer.listen(socketPort, () => {
-    console.log('Socket server started on port ' + socketPort);
-});
+// socketServer.listen(socketPort, () => {
+//     console.log('Socket server started on port ' + socketPort);
+// });
 
 io.use((socket, next) => {
     if (socket.handshake.query && socket.handshake.query.token) {
@@ -54,7 +54,7 @@ io.use((socket, next) => {
 
 io.on('connection', (socket) => {
     // Log whenever a user connects
-    console.log('Connected client on port ' + socketPort + ' with id ' + socket.id);
+    console.log('Connected client on port ' + port + ' with id ' + socket.id);
 
     // Log whenever a client disconnects from our websocket server
     socket.on('disconnect', function() {
@@ -172,7 +172,7 @@ function onError(error) {
  * Event listener for HTTP server "listening" event.
  */
 function onListening() {
-    var addr = server.address();
+    var addr = httpServer.address();
     var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;

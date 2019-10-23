@@ -1,9 +1,8 @@
-import { Directive, Component, Input, AfterViewInit } from '@angular/core';
-import { ContentChildren, ViewChildren, QueryList, ElementRef, ViewChild } from '@angular/core';
-
 import { animate, AnimationBuilder, AnimationFactory, AnimationPlayer, style } from '@angular/animations';
-
+import { AfterViewInit, Component, ContentChildren, Directive, ElementRef, Input, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { RiskCarouselItemDirective } from './carousel-item.directive';
+
+
 
 // We use this for calculating width dynamically
 @Directive({
@@ -61,7 +60,7 @@ export class RiskCarouselComponent implements AfterViewInit {
         this.player.play();
     }
 
-    private buildAnimation(offset) {
+    private buildAnimation(offset: number) {
         return this.builder.build([
             animate(this.timing, style({
                 transform: `translateX(-${offset}px)`

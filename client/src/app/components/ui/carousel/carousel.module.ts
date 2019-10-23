@@ -1,8 +1,8 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { NgModule } from '@angular/core';
 import { RiskCarouselItemDirective } from './carousel-item.directive';
-import { RiskCarouselComponent } from './carousel.component';
+import { CItemElementDirective, RiskCarouselComponent } from './carousel.component';
+
 
 @NgModule({
     imports: [
@@ -10,6 +10,7 @@ import { RiskCarouselComponent } from './carousel.component';
     ],
     declarations: [
         RiskCarouselItemDirective,
+        CItemElementDirective,
         RiskCarouselComponent
     ],
     exports: [
