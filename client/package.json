@@ -26,7 +26,7 @@
     "@types/socket.io-client": "^1.4.32",
     "@types/zxcvbn": "^4.4.0",
     "core-js": "^2.5.7",
-    "jquery": "^3.3.1",
+    "jquery": "^3.5.0",
     "jquery-mapael": "^2.2.0",
     "npm": "^6.8.0",
     "raphael": "^2.2.7",
